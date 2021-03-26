@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ScreenOverwriter</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/bulma/css/bulma.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a class="navbar-item" asp-area="" asp-controller="Home" asp-action="Index">
+                        <label class="label is-large">ScreenOverwriter</label>
+                    </a>
+                </div>
+                <div id="navbarBasicExample" class="navbar-menu">
+                    <div class="navbar-start">
+                        <a class="navbar-item" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="navbar-item" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <environment include="Development">
+        <script src="~/lib/vue/vue.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/vue/vue.min.js"></script>
+    </environment>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

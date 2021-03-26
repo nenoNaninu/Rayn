@@ -14,7 +14,6 @@ namespace ScreenOverwriter
 
         private IMessageReceiver<string> _messageReceiver;
 
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         private async void Start()
         {
@@ -22,9 +21,9 @@ namespace ScreenOverwriter
 
             var server = await ServiceLocator.ResolveAsync<IServer<string>>();
 
-            await server.WaitUntilConnectAsync(_cancellationTokenSource.Token);
+            await server.WaitUntilConnectAsync(this.GetCancellationTokenOnDestroy());
 
-            _messageReceiver = await server.GetMessageReceiverAsync(_cancellationTokenSource.Token);
+            _messageReceiver = await server.GetMessageReceiverAsync(this.GetCancellationTokenOnDestroy());
 
             _messageReceiver
                 .OnMessage()
@@ -47,11 +46,6 @@ namespace ScreenOverwriter
             obj.gameObject.SetActive(false);
 
             _flowingTextPool.Return(obj);
-        }
-
-        private void OnDestroy()
-        {
-            _cancellationTokenSource.Cancel();
         }
     }
 }

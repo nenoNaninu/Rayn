@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Diagnostics;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 
 namespace ScreenOverwriter

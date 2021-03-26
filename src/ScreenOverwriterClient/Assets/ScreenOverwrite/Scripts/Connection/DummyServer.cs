@@ -61,19 +61,18 @@ namespace ScreenOverwriter
             return _waitConnectionCompletionSource.Task;
         }
 
-        public  UniTask<IMessageReceiver<string>> ConnectAsync(string url, CancellationToken cancellationToken = default)
+        public async UniTask<IMessageReceiver<string>> ConnectAsync(string url, CancellationToken cancellationToken = default)
         {
-            //await UniTask.Delay(TimeSpan.FromSeconds(2f), cancellationToken: cancellationToken);
+            await UniTask.Delay(TimeSpan.FromSeconds(2f), cancellationToken: cancellationToken);
 
             var receiver = new DummyReceiver();
-            //receiver.Start().Forget();
+            receiver.Start().Forget();
             _messageReceiver = receiver;
             
             _getSocketCompletionSource.TrySetResult();
             _waitConnectionCompletionSource.TrySetResult();
 
-            return UniTask.FromResult(receiver as IMessageReceiver<string>);
-            //return receiver;
+            return receiver;
         }
 
         public async UniTask<IMessageReceiver<string>> GetMessageReceiverAsync(CancellationToken cancellationToken = default)

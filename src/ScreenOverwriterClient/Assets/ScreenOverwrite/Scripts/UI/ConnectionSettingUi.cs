@@ -42,18 +42,15 @@ namespace ScreenOverwriter
             _connectButton
                 .onClick
                 .AsObservable()
-                .Subscribe(async _ =>
+                .Subscribe(_ =>
                 {
-                    await this.OnClickConnectionButton();
+                    this.OnClickConnectionButton().Forget();
                 });
         }
 
-        private int _counter = 0;
 
         private async UniTask OnClickConnectionButton()
         {
-            Debug.Log($"_counter: {_counter}");
-            _counter++;
             try
             {
                 await _viewModel.ConnectToServerAsync(_urlInputField.text, _cancellationTokenSource.Token);
@@ -63,8 +60,7 @@ namespace ScreenOverwriter
             catch (Exception e)
             {
                 Debug.Log("Catch Exception!!!!!!");
-                Debug.Log($"_counter: {_counter}");
-                Debug.Log(e.Message);
+                Debug.LogError(e.Message);
             }
         }
     }
