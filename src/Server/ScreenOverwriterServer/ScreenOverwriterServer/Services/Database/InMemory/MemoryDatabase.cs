@@ -9,7 +9,7 @@ namespace ScreenOverwriterServer.Services.Database
     {
         private readonly ConcurrentBag<ThreadModel> _threadDataStore = new();
         private readonly ConcurrentBag<CommentModel> _commentDataStore = new();
-
+        private int _commentId = 0;
 
         public ThreadModel CreateThread(DateTime beginningTime, string title)
         {
@@ -33,6 +33,13 @@ namespace ScreenOverwriterServer.Services.Database
                 .ToArray();
 
             return comments;
+        }
+
+        public void InsertComment(byte[] message, DateTime writtenTime, Guid threadId)
+        {
+            var commentModel = new CommentModel(_commentId, threadId, writtenTime, message);
+            _commentDataStore.Add(commentModel);
+            _commentId++;
         }
     }
 }

@@ -13,9 +13,10 @@ namespace ScreenOverwriterServer.Services.Database
             _memoryDatabase = memoryDatabase;
         }
 
-        public ValueTask<ThreadModel> SearchThreadModel(Guid threadId)
+        public ValueTask<ThreadModel> SearchThreadModelAsync(Guid threadId)
         {
             var threadModel = _memoryDatabase.SearchThread(threadId);
+            return ValueTask.FromResult(threadModel);
         }
     }
 }

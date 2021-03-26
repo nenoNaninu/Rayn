@@ -7,6 +7,6 @@ namespace ScreenOverwriterServer.Services.Realtime
     public interface IThreadRoom
     {
         ThreadModel ThreadModel { get; }
-        ValueTask Add(IWebSocketClient newcomer);
+        ValueTask AddAsync(IWebSocketClient newcomer);
     }
 }

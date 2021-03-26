@@ -9,13 +9,13 @@ namespace ScreenOverwriter
             where TValue : TKey
         {
             Cache<TKey>.Instance = value;
-            Cache<TKey>.Enable = true;
+            Cache<TKey>.HasValue = true;
             Cache<TKey>.Source.TrySetResult();
         }
 
         public static async UniTask<TKey> ResolveAsync<TKey>(CancellationToken cancellation = default)
         {
-            if (Cache<TKey>.Enable)
+            if (Cache<TKey>.HasValue)
             {
                 return Cache<TKey>.Instance;
             }
@@ -27,10 +27,10 @@ namespace ScreenOverwriter
 
         public static void Clear<TKey>()
         {
-            if (Cache<TKey>.Enable)
+            if (Cache<TKey>.HasValue)
             {
                 Cache<TKey>.Instance = default;
-                Cache<TKey>.Enable = false;
+                Cache<TKey>.HasValue = false;
                 Cache<TKey>.Source = new UniTaskCompletionSource();
             }
         }
@@ -39,7 +39,7 @@ namespace ScreenOverwriter
         {
             public static UniTaskCompletionSource Source { get; set; } = new UniTaskCompletionSource();
             public static T Instance { get; set; }
-            public static bool Enable { get; set; } = false;
+            public static bool HasValue { get; set; } = false;
         }
     }
 }

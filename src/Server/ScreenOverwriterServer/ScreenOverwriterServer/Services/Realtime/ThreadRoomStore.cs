@@ -4,22 +4,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RxWebSocket.Threading;
+using ScreenOverwriterServer.Services.Database.Interfaces;
 
 namespace ScreenOverwriterServer.Services.Realtime
 {
-    // シングルトンでDI
+    // シングルトン想定
     public class ThreadRoomStore : IThreadRoomStore
     {
         private readonly AsyncLock _asyncLock = new();
         private readonly List<IThreadRoom> _threadRoomList = new();
         private readonly ILogger<IThreadRoom> _logger;
+        private readonly IThreadRoomCreator _threadRoomCreator;
+        private readonly IThreadDbReader _threadDbReader;
 
-        public ThreadRoomStore(ILogger<IThreadRoom> logger)
+        public ThreadRoomStore(IThreadRoomCreator threadRoomCreator, IThreadDbReader threadDbReader, ILogger<IThreadRoom> logger)
         {
             _logger = logger;
+            _threadRoomCreator = threadRoomCreator;
+            _threadDbReader = threadDbReader;
         }
 
-        public async ValueTask<IThreadRoom> FetchThreadRoom(Guid threadId)
+        public async ValueTask<IThreadRoom> FetchThreadRoomAsync(Guid threadId)
         {
             // 重複してroomが作成される事をおそれてセマフォかけてる。
             using (await _asyncLock.LockAsync())
@@ -32,16 +37,18 @@ namespace ScreenOverwriterServer.Services.Realtime
                     return room;
                 }
 
-                var newRoom = this.CreateThreadRoom();
+                var newRoom = await this.CreateThreadRoomAsync(threadId);
                 _threadRoomList.Add(newRoom);
 
                 return newRoom;
             }
         }
 
-        private IThreadRoom CreateThreadRoom(Guid threadId)
+        private async ValueTask<IThreadRoom> CreateThreadRoomAsync(Guid threadId)
         {
-            var room = new ThreadRoom(threadId, _logger);
+            var model = await _threadDbReader.SearchThreadModelAsync(threadId);
+            var room = await _threadRoomCreator.CreateRoomAsync(model);
+            return room;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace ScreenOverwriterServer.Services.Realtime
             var query = context.Request.Query;
             
             string threadIdString = query["threadId"].ToString();
-            var guid = Guid.Parse(threadIdString);
+            var threadId = Guid.Parse(threadIdString);
 
             var socket = await context.WebSockets.AcceptWebSocketAsync();
 
@@ -38,9 +38,12 @@ namespace ScreenOverwriterServer.Services.Realtime
 
             await rxSocket.ConnectAsync();
 
-            
+            // 接続したら、threadに対応するthreadRoomを取得して、そこに登録。
 
-            //If you do not wait here, the connection will be disconnected.
+            var threadRoom = await _threadRoomStore.FetchThreadRoomAsync(threadId);
+
+            await threadRoom.AddAsync(rxSocket);
+
             await rxSocket.WaitUntilCloseAsync();
         }
     }

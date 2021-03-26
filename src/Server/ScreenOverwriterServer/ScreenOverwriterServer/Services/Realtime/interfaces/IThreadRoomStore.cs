@@ -5,6 +5,6 @@ namespace ScreenOverwriterServer.Services.Realtime
 {
     public interface IThreadRoomStore
     {
-        ValueTask<IThreadRoom> FetchThreadRoom(Guid threadId);
+        ValueTask<IThreadRoom> FetchThreadRoomAsync(Guid threadId);
     }
 }

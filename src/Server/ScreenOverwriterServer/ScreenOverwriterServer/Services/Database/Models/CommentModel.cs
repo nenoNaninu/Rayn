@@ -7,14 +7,14 @@ namespace ScreenOverwriterServer.Services.Database.Models
         public int Id { get; }
         public Guid ThreadId { get; }
         public DateTime WrittenTime { get; }
-        public string Text { get; }
+        public byte[] Message { get; }
 
-        public CommentModel(int id, Guid threadId, DateTime writtenTime, string text)
+        public CommentModel(int id, Guid threadId, DateTime writtenTime, byte[] message)
         {
             Id = id;
             ThreadId = threadId;
             WrittenTime = writtenTime;
-            Text = text;
+            Message = message;
         }
     }
 }

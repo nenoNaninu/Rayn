@@ -1,35 +1,31 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ScreenOverwriter</title>
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/bulma/css/bulma.css" />
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico">
 </head>
 <body>
     <header>
-        <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+        <nav class="navbar is-light">
             <div class="container">
                 <div class="navbar-brand">
-                    <a class="navbar-item" asp-area="" asp-controller="Home" asp-action="Index">
+                    <a class="navbar-item" asp-controller="Home" asp-action="Index">
                         <label class="label is-large">ScreenOverwriter</label>
                     </a>
                 </div>
-                <div id="navbarBasicExample" class="navbar-menu">
-                    <div class="navbar-start">
-                        <a class="navbar-item" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        <a class="navbar-item" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </div>
+                <div class="navbar-end">
+                    <a class="navbar-item" asp-controller="Home" asp-action="Index">Home</a>
+                    <a class="navbar-item" asp-controller="Home" asp-action="CreateNewThread">Create</a>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main">
-            @RenderBody()
-        </main>
-    </div>
+    <main>
+        @RenderBody()
+    </main>
 
     <environment include="Development">
         <script src="~/lib/vue/vue.js"></script>

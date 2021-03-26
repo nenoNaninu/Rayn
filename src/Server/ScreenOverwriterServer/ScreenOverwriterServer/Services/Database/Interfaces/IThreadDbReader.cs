@@ -6,6 +6,6 @@ namespace ScreenOverwriterServer.Services.Database.Interfaces
 {
     public interface IThreadDbReader
     {
-        ValueTask<ThreadModel> SearchThreadModel(Guid threadId);
+        ValueTask<ThreadModel> SearchThreadModelAsync(Guid threadId);
     }
 }

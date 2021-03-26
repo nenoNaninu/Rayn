@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RxWebSocket;
+using ScreenOverwriterServer.Services.Database.Interfaces;
 using ScreenOverwriterServer.Services.Database.Models;
+using ScreenOverwriterServer.Services.Realtime.Models;
 using ScreenOverwriterServer.Services.Threading;
 
 namespace ScreenOverwriterServer.Services.Realtime
@@ -15,7 +19,7 @@ namespace ScreenOverwriterServer.Services.Realtime
     {
         public ThreadModel ThreadModel { get; }
 
-        private readonly Channel<string> _messageChannel = Channel.CreateUnbounded<string>(
+        private readonly Channel<byte[]> _messageChannel = Channel.CreateUnbounded<byte[]>(
                 new UnboundedChannelOptions()
                 {
                     AllowSynchronousContinuations = false,
@@ -23,21 +27,23 @@ namespace ScreenOverwriterServer.Services.Realtime
                     SingleWriter = false
                 });
 
-        private readonly ChannelReader<string> _channelReader;
-        private readonly ChannelWriter<string> _channelWriter;
+        private readonly ChannelReader<byte[]> _channelReader;
+        private readonly ChannelWriter<byte[]> _channelWriter;
 
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
+        private readonly ICommentAccessor _commentAccessor;
         private readonly ILogger<IThreadRoom> _logger;
         private readonly Task _broadcastTask;
-        
+
         private ImmutableList<IWebSocketClient> _webSocketClients = ImmutableList<IWebSocketClient>.Empty;
         private int _isStopRequested = 0;
 
 
-        public ThreadRoom(ThreadModel threadModel, ILogger<IThreadRoom> logger)
+        public ThreadRoom(ThreadModel threadModel, ICommentAccessor commentAccessor, ILogger<IThreadRoom> logger)
         {
             ThreadModel = threadModel;
+            _commentAccessor = commentAccessor;
             _channelReader = _messageChannel.Reader;
             _channelWriter = _messageChannel.Writer;
             _logger = logger;
@@ -51,7 +57,7 @@ namespace ScreenOverwriterServer.Services.Realtime
             {
                 while (_isStopRequested == 0 && await _channelReader.WaitToReadAsync(_cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    while (_isStopRequested == 0 && _channelReader.TryRead(out var message))
+                    while (_isStopRequested == 0 && _channelReader.TryRead(out byte[] message))
                     {
                         try
                         {
@@ -90,26 +96,56 @@ namespace ScreenOverwriterServer.Services.Realtime
         }
 
 
-        public ValueTask Add(IWebSocketClient newcomer)
+        public async ValueTask AddAsync(IWebSocketClient newcomer)
         {
+            // 新しい人が来たら、ソケットに対していくつかの設定を行う。
+            // 1.新しい人に今までのスレッドを一機に放出。
+            // 2.メッセージをソケットが受信した時の設定。
+            // 3.ソケットが切断した時の設定
+
+            var pastComments = await _commentAccessor.ReadCommentAsync(this.ThreadModel.ThreadId);
+
+            foreach (var comment in pastComments)
+            {
+                newcomer.Send(comment.Message);
+            }
+
             _webSocketClients = _webSocketClients.Add(newcomer);
-            return ValueTask.CompletedTask;
+
+            newcomer.BinaryMessageReceived
+                .Subscribe(x =>
+                {
+                    var timeStamp = DateTime.UtcNow;
+                    this.BroadCast(x);
+                    _commentAccessor.InsertCommentAsync(x, this.ThreadModel.ThreadId, timeStamp).Forget(_logger);
+                });
+
+            newcomer.CloseMessageReceived
+                .Subscribe(x =>
+                {
+                    _webSocketClients = _webSocketClients.Remove(newcomer);
+
+                    if (_webSocketClients == ImmutableList<IWebSocketClient>.Empty)
+                    {
+                        this.Destory();
+                    }
+                });
         }
 
-        private void OnClose(WebSocketClient client)
+        private void OnClose(IWebSocketClient client)
         {
             _webSocketClients = _webSocketClients.Remove(client);
         }
 
         private void Destory()
         {
-
+            Interlocked.Increment(ref _isStopRequested);
+            _cancellationTokenSource.Cancel();
         }
 
-        public void BroadCast()
+        public void BroadCast(byte[] data)
         {
-
+            _channelWriter.TryWrite(data);
         }
-
     }
 }
