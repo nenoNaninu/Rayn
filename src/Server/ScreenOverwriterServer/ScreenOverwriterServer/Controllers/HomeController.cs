@@ -23,7 +23,7 @@ namespace ScreenOverwriterServer.Controllers
             return this.View();
         }
 
-        public IActionResult CreateNewThread()
+        public IActionResult Usage()
         {
             return this.View();
         }

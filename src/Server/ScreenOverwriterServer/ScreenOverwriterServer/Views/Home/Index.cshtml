@@ -1,100 +1,69 @@
-﻿@{
+﻿@model NewThreadRequestModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-@*<section class="hero is-fullheight is-default is-bold is-light">
-        <div class="hero-body">
-            <div class="container has-text-centerd">
-                <h1 class="title">
-                    Fullheight title
-                </h1>
-                <h2 class="subtitle">
-                    Fullheight subtitle
-                </h2>
-            </div>
-        </div>
-    </section>*@
-
 <section class="hero is-fullheight is-bold is-light">
-    <div class="hero-head">
-        <!-- <nav class="navbar">
-            <div class="container">
-                <div class="navbar-brand">
-                    <a class="navbar-item" href="../">
-                        <img src="../images/bulma.png" alt="Logo">
-                    </a>
-                    <span class="navbar-burger burger" data-target="navbarMenu">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </span>
-                </div>
-                <div id="navbarMenu" class="navbar-menu">
-                    <div class="navbar-end">
-                        <div class="tabs is-right">
-                            <ul>
-                                <li class="is-active"><a>Home</a></li>
-                                <li><a href="">Examples</a></li>
-                                <li><a href="">Features</a></li>
-                                <li><a href="">Team</a></li>
-                                <li><a href="">Help</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav> -->
-    </div>
     <div class="hero-body">
         <div class="container has-text-centered">
-            <div class="columns is-vcentered">
-                <div class="column is-5">
-                    <figure class="image is-4by3">
-                        <img src="https://picsum.photos/800/600/?random" alt="Description">
-                    </figure>
-                </div>
-                <div class="column is-6 is-offset-1">
+            <div class="columns is-vcentered is-offset-1">
+                <div class="column is-7">
                     <h1 class="title is-2">
-                        Superhero Scaffolding
+                        ScreenOverwriter(仮)
                     </h1>
                     <h2 class="subtitle is-4">
-                        Let this cover page describe a product or service.
+                        画面共有でもニコ〇コとかビ〇ビリみたいにコメントを流そう！
                     </h2>
-                    <br>
+                    <div class="columns">
+                        <div class="column is-8 is-offset-2">
+                            <p>
+                                使い方: フォームからスレッドを作成してください。URLが発行されるので、視聴者に共有してください。
+                                視聴者はブラウザで完結します。
+                                画面共有している人はクライアントアプリ(win,mac対応)をダウンロードしてください。
+                            </p>
+                        </div>
+                    </div>
+
                     <p class="has-text-centered">
                         <a class="button is-medium is-info is-outlined">
-                            Learn more
+                            詳しい使い方
                         </a>
                     </p>
                 </div>
-            </div>
-        </div>
-    </div>
+                <div class="column is-4 is-offset-1">
+                    <div class="card ">
+                        <div class="card-content">
+                            <p class="title">
+                                新規スレッドの作成
+                            </p>
+                            @*<p class="subtitle">
+                                ん～。
+                            </p>*@
+                            <form asp-controller="Thread" asp-action="CreateNewThread">
+                                <div class="field">
+                                    <label asp-for="Title" class="label">タイトル</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="〇〇〇を語る会" asp-for="Title">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="BeginningDate" class="label">配信予定日</label>
+                                    <div class="control">
+                                        <input class="input" type="date" name="BeginningDate" id="BeginningDate">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="control">
+                                        <input class="button is-link" type="submit" value="作成">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="hero-foot">
-        <div class="container">
-            <div class="tabs is-centered">
-                <ul>
-                    <li><a>And this is the bottom</a></li>
-                </ul>
             </div>
         </div>
     </div>
 </section>
-<!--<div class="section">
-
-    <div class="hero is-success is-fullheight">
-        <h1 class="is-size-1">なんか色々説明</h1>
-        <article>
-            てすとてすと
-        </article>
-    </div>-->
-@*<div class="columns is-centered is-vcentered">
-        <div class="column is-half">
-            <p class="bd-notification is-primary">
-                aaaaaaaaaaaaa
-            </p>
-        </div>
-    </div>*@
-
-<!--</div>-->

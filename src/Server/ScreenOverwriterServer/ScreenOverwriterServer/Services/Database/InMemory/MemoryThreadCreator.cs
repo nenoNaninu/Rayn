@@ -14,9 +14,9 @@ namespace ScreenOverwriterServer.Services.Database
             _memoryDatabase = memoryDatabase;
         }
 
-        public ValueTask<ThreadModel> CreateThreadAsync(string title, DateTime beginningTime)
+        public ValueTask<ThreadModel> CreateThreadAsync(string title, DateTime beginningDate)
         {
-            var thread = _memoryDatabase.CreateThread(beginningTime, title);
+            var thread = _memoryDatabase.CreateThread(beginningDate, title);
             return ValueTask.FromResult(thread);
         }
     }

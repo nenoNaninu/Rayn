@@ -6,6 +6,6 @@ namespace ScreenOverwriterServer.Services.Database.Interfaces
 {
     public interface IThreadCreator
     {
-        ValueTask<ThreadModel> CreateThreadAsync(string title, DateTime beginningTime);
+        ValueTask<ThreadModel> CreateThreadAsync(string title, DateTime beginningDate);
     }
 }

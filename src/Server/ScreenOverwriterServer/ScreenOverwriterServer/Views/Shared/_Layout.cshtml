@@ -1,13 +1,16 @@
 ﻿<!DOCTYPE html>
+<html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ScreenOverwriter</title>
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/bulma/css/bulma.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="~/favicon.ico">
 </head>
-<body>
+<body class="wf-mplus1p">
     <header>
         <nav class="navbar is-light">
             <div class="container">
@@ -18,7 +21,8 @@
                 </div>
                 <div class="navbar-end">
                     <a class="navbar-item" asp-controller="Home" asp-action="Index">Home</a>
-                    <a class="navbar-item" asp-controller="Home" asp-action="CreateNewThread">Create</a>
+                    <a class="navbar-item" asp-controller="Home" asp-action="Usage">Usage</a>
+                    @*<a class="navbar-item" asp-controller="Home" asp-action="CreateNewThread">Create</a>*@
                 </div>
             </div>
         </nav>

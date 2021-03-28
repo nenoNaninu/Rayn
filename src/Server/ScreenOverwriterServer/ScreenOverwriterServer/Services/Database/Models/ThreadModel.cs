@@ -6,12 +6,12 @@ namespace ScreenOverwriterServer.Services.Database.Models
     {
         public Guid ThreadId { get; }
         public string ThreadTitle { get; }
-        public DateTime BeginningTime { get; }
+        public DateTime BeginningDate { get; }
 
-        public ThreadModel(Guid threadId, DateTime beginningTime, string threadTitle)
+        public ThreadModel(Guid threadId, DateTime beginningDate, string threadTitle)
         {
             ThreadId = threadId;
-            BeginningTime = beginningTime;
+            BeginningDate = beginningDate;
             ThreadTitle = threadTitle;
         }
     }

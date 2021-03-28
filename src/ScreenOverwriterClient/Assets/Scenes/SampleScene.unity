@@ -390,7 +390,6 @@ GameObject:
   - component: {fileID: 184417167}
   - component: {fileID: 184417166}
   - component: {fileID: 184417165}
-  - component: {fileID: 184417168}
   m_Layer: 5
   m_Name: ConnectionSettingCanvas
   m_TagString: Untagged
@@ -480,22 +479,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &184417168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 184417163}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02b08f3dc3a9a2e419c35a9075e8ed28, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _connectionSettingCanvas: {fileID: 867988810}
-  _connectButton: {fileID: 179092989}
-  _urlInputField: {fileID: 645548360}
-  _connectionStatusText: {fileID: 1911670515}
 --- !u!1 &187107765
 GameObject:
   m_ObjectHideFlags: 0
@@ -1482,9 +1465,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02b08f3dc3a9a2e419c35a9075e8ed28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _connectionSettingCanvas: {fileID: 184417167}
+  _connectionSettingCanvas: {fileID: 867988810}
   _connectButton: {fileID: 179092989}
-  _urlInputField: {fileID: 0}
+  _urlInputField: {fileID: 645548360}
   _connectionStatusText: {fileID: 1911670515}
 --- !u!114 &867988814
 MonoBehaviour:

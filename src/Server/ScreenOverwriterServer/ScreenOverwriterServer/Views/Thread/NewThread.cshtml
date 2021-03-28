@@ -1,0 +1,44 @@
+﻿@model ThreadViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@*
+ ここで表示するもの
+ 1. 視聴者に共有するID
+ 2. スレッドID
+*@
+
+<section class="hero is-fullheight is-bold is-light ">
+    <div class="hero-body">
+        <div class="container">
+            <h4 class="title">新規スレッド名: @Model.ThreadTitle</h4>
+            <h4 class="subtitle">開催予定日: @Model.BeginningDate.ToString("yyyy/MM/dd")</h4>
+            <div class="box">
+                <h4 class="title">参加者用URL</h4>
+                <article class="message is-primary">
+                    <div class="message-header">
+                        視聴者に共有してください。
+                    </div>
+                    <div class="message-body">
+                        @Model.ThreadUrl()
+                    </div>
+                </article>
+                @*<pre><code class="language-javascript">const test = 'test';</code></pre>*@
+            </div>
+            <div class="box">
+                <h4 class="title">スレッドID</h4>
+                <article class="message is-primary">
+                    <div class="message-header">
+                        クライアントアプリの接続に必要です。
+                    </div>
+                    <div class="message-body">
+                        @Model.ThreadId
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
