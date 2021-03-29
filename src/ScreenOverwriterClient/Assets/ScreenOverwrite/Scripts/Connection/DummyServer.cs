@@ -8,7 +8,7 @@ namespace ScreenOverwriter
     public class DummyServer : IServer<string>
     {
         private readonly UniTaskCompletionSource _getSocketCompletionSource = new UniTaskCompletionSource();
-        private readonly UniTaskCompletionSource _waitConnectionCompletionSource = new UniTaskCompletionSource();
+        private readonly UniTaskCompletionSource<bool> _waitConnectionCompletionSource = new UniTaskCompletionSource<bool>();
 
         private IMessageReceiver<string> _messageReceiver;
 
@@ -51,12 +51,7 @@ namespace ScreenOverwriter
         {
         }
 
-        public UniTask CloseAsync(CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public UniTask WaitUntilConnectAsync(CancellationToken cancellationToken = default)
+        public UniTask<bool> WaitUntilConnectAsync(CancellationToken cancellationToken = default)
         {
             return _waitConnectionCompletionSource.Task;
         }
@@ -70,7 +65,7 @@ namespace ScreenOverwriter
             _messageReceiver = receiver;
             
             _getSocketCompletionSource.TrySetResult();
-            _waitConnectionCompletionSource.TrySetResult();
+            _waitConnectionCompletionSource.TrySetResult(true);
 
             return receiver;
         }

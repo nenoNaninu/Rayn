@@ -19,7 +19,7 @@ namespace ScreenOverwriter
         {
             _flowingTextPool = new FlowingTextPool(_flowingTextPrefab, _rootCanvas.transform);
 
-            var server = await ServiceLocator.ResolveAsync<IServer<string>>();
+            var server = await ServiceLocator.GetServiceAsync<IServer<string>>();
 
             await server.WaitUntilConnectAsync(this.GetCancellationTokenOnDestroy());
 
@@ -27,6 +27,7 @@ namespace ScreenOverwriter
 
             _messageReceiver
                 .OnMessage()
+                .ObserveOnMainThread()
                 .Subscribe(x =>
                 {
                     this.FlowMessage(x).Forget();

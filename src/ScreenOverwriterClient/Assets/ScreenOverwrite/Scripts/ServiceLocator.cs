@@ -13,7 +13,7 @@ namespace ScreenOverwriter
             Cache<TKey>.Source.TrySetResult();
         }
 
-        public static async UniTask<TKey> ResolveAsync<TKey>(CancellationToken cancellation = default)
+        public static async UniTask<TKey> GetServiceAsync<TKey>(CancellationToken cancellation = default)
         {
             if (Cache<TKey>.HasValue)
             {

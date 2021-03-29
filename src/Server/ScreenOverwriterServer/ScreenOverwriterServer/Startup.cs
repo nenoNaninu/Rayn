@@ -1,14 +1,12 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using ScreenOverwriterServer.Services.DependencyInjection;
+using ScreenOverwriterServer.Services.Realtime;
 
 namespace ScreenOverwriterServer
 {
@@ -30,10 +28,11 @@ namespace ScreenOverwriterServer
             services.AddControllersWithViews();
 #endif
             services.AddMemoryDatabaseModeSetting();
+            services.AddRealtimeThreadRoomSettings();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -45,12 +44,22 @@ namespace ScreenOverwriterServer
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseWebSockets(new WebSocketOptions()
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(10)
+            });
+
+            app.MapThreadRoomMiddleware(
+                "/Realtime",
+                serviceProvider.GetService<IThreadRoomStore>(),
+                serviceProvider.GetService<ILogger<ThreadRoomMiddleware>>());
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,0 +1,135 @@
+﻿@model ThreadRoomViewModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+    Layout = "_ThreadRoomLayout";
+    ViewData["ThreadTitle"] = Model.ThreadTitle;
+}
+
+<section id="app" class="hero  is-bold is-light">
+    <div class="hero-body">
+        <div class="columns">
+            <div class="column is-8 is-offset-1">
+                <div class="field">
+                    <div class="control">
+                        <textarea class="textarea" v-model="message" placeholder="message" rows="1">
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column is-3">
+                <div class="field">
+                    <div class="control">
+                        <div class="button is-primary" v-on:click="OnSend" v-bind:disabled="isSendButtonDisable">送信</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <message-item v-for="item in chatMessages" v-bind:key="item.id" v-bind:chatdata="item"></message-item>
+    </div>
+    @*<div id="app_old" style="padding: 20px;">
+            <div class="field">
+                <div class="control">
+                    <textarea class="textarea" v-model="message" placeholder="message" rows="10"
+                              v-bind:disabled="chatTextAreaDisable">
+                    </textarea>
+                </div>
+            </div>
+
+            <div style="margin: 20px;">
+                <div class="button is-primary" v-on:click="OnConnect" v-bind:disabled="isConnectButtonDisable">Connect</div>
+                <div class="button is-primary" v-on:click="OnClose" v-bind:disabled="isCloseButtonDisable">Close</div>
+                <div class="button is-primary" v-on:click="OnSend" v-bind:disabled="isSendButtonDisable">Send</div>
+            </div>
+
+            <message-item v-for="item in chatMessages" v-bind:key="item.id" v-bind:chatdata="item"></message-item>
+        </div>*@
+</section>
+
+
+@section Scripts {
+    <script>
+
+        var socket = null;
+        var messageCount = 1;
+        const encoder = new TextEncoder("utf-8");
+        const decoder = new TextDecoder("utf-8");
+
+        Vue.component('message-item',
+            {
+                props: ['chatdata'],
+                template: `<div class="box">
+                            <p> {{chatdata.Message}}</p>
+                        </div > `
+            });
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: '',
+                uri: '@Model.RealTimeUrl()',
+                name: '',
+
+                isSendButtonDisable: false,
+
+                chatMessages: [
+                ]
+            },
+            methods: {
+                OnConnect: function() {
+                    if (!this.uri && !this.name) {
+                        return;
+                    }
+                    console.log(this.uri);
+
+                    socket = new WebSocket(this.uri);
+                    socket.binaryType = "arraybuffer";
+
+                    socket.onopen = function(event) {
+                        console.log("opened connection to ");
+                        console.log(app.uri);
+                    };
+
+                    socket.onclose = function(event) {
+                        console.log("closed websocket connection");
+                    };
+
+                    socket.onmessage = function(event) {
+                        console.log("on message!!!!!!!!!!!!!!!!!");
+                        console.log(event.data);
+
+                        let jsonContent = JSON.parse(decoder.decode(event.data));
+                        console.log(jsonContent);
+                        jsonContent["id"] = messageCount;
+                        messageCount++;
+                        app.chatMessages.unshift(jsonContent);
+                    };
+
+                    socket.onerror = function(event) {
+                        console.log("error: " + event.data);
+                    };
+
+                    this.isSendButtonDisable = false;
+
+                },
+
+                OnClose: function() {
+                    socket.close();
+                    this.isSendButtonDisable = true;
+                },
+
+                OnSend: function() {
+                    console.log("Sending: " + this.message);
+                    let jsonBytes = JSON.stringify({ "Message": this.message });
+                    console.log(jsonBytes);
+                    socket.send(encoder.encode(jsonBytes));
+                }
+            }
+        });
+
+        app.OnConnect();
+    </script>
+}

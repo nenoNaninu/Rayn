@@ -1,29 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Routing;
 using ScreenOverwriterServer.Models;
 using ScreenOverwriterServer.Services.Database.Interfaces;
 
 namespace ScreenOverwriterServer.Controllers
 {
-    public class ThreadController : Controller
+    public class ThreadRoomController : Controller
     {
-        private readonly IThreadCreator _threadCreator;
         private readonly IThreadDbReader _threadDbReader;
 
-        public ThreadController(IThreadCreator threadCreator, IThreadDbReader threadDbReader)
+        public ThreadRoomController(IThreadDbReader threadDbReader)
         {
-            _threadCreator = threadCreator;
             _threadDbReader = threadDbReader;
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateNewThread([FromForm] NewThreadRequestModel newThreadRequest)
-        {
-            var thread = await _threadCreator.CreateThreadAsync(newThreadRequest.Title, newThreadRequest.BeginningDate);
-
-            return this.RedirectToAction(nameof(this.Index), new RouteValueDictionary { { "threadId", thread.ThreadId.ToString() } });
         }
 
         [HttpGet]
@@ -38,7 +29,7 @@ namespace ScreenOverwriterServer.Controllers
             {
                 return this.RedirectToAction(nameof(this.Error));
             }
-            
+
             var thread = await _threadDbReader.SearchThreadModelAsync(threadGuid);
 
             if (thread == null)
@@ -46,13 +37,12 @@ namespace ScreenOverwriterServer.Controllers
                 return this.RedirectToAction(nameof(this.Error));
             }
 
-            string hostUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
+            var threadRoomViewModel = new ThreadRoomViewModel(thread.ThreadTitle, thread.ThreadId, HttpContext.Request.Host.Value);
 
-            var threadViewModel = new ThreadViewModel(thread.ThreadId, thread.ThreadTitle, thread.BeginningDate, hostUrl);
-
-            return this.View(threadViewModel);
+            return this.View(threadRoomViewModel);
         }
 
+        [HttpGet]
         public IActionResult Error()
         {
             return this.View();

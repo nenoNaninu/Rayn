@@ -9,7 +9,7 @@ namespace ScreenOverwriterServer.Models
         public DateTime BeginningDate { get; }
         public string HostUrl { get; }
 
-        public string ThreadUrl() => $"{HostUrl}/{ThreadId.ToString()}";
+        public string ThreadUrl() => $"{HostUrl}/ThreadRoom/?threadId={ThreadId.ToString()}";
 
         public ThreadViewModel(Guid threadId, string threadTitle, DateTime beginningDate, string hostUrl)
         {

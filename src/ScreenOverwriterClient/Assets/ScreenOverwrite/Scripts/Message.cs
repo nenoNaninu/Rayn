@@ -1,4 +1,6 @@
-﻿namespace ScreenOverwriter
+﻿using System.Text;
+
+namespace ScreenOverwriter
 {
     public class ReceiveData
     {

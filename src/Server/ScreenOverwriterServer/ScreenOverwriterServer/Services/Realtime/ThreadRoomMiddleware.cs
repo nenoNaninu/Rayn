@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Buffers;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using RxWebSocket;
 using RxWebSocket.Extensions;
+using RxWebSocket.Senders;
 
 namespace ScreenOverwriterServer.Services.Realtime
 {
@@ -18,9 +16,10 @@ namespace ScreenOverwriterServer.Services.Realtime
         private readonly ILogger<ThreadRoomMiddleware> _logger;
         private readonly IThreadRoomStore _threadRoomStore;
 
-        public ThreadRoomMiddleware(ILogger<ThreadRoomMiddleware> logger, IThreadRoomStore threadRoomStore)
+        public ThreadRoomMiddleware(RequestDelegate next, IThreadRoomStore threadRoomStore, ILogger<ThreadRoomMiddleware> logger)
         {
             _logger = logger;
+            _threadRoomStore = threadRoomStore;
         }
 
         public async Task Invoke(HttpContext context)
@@ -34,7 +33,7 @@ namespace ScreenOverwriterServer.Services.Realtime
 
             var socket = await context.WebSockets.AcceptWebSocketAsync();
 
-            using var rxSocket = new WebSocketClient(socket, logger: _logger.AsWebSocketLogger());
+            using var rxSocket = new WebSocketClient(socket, new BinaryOnlySender(), logger: _logger.AsWebSocketLogger());
 
             await rxSocket.ConnectAsync();
 

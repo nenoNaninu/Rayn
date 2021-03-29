@@ -15,7 +15,9 @@ namespace ScreenOverwriter
 
         private void RegisterForDebug()
         {
-            ServiceLocator.Register<IServer<string>, DummyServer>(new DummyServer());
+            //ServiceLocator.Register<IServer<string>, DummyServer>(new DummyServer());
+            ServiceLocator.Register<IServer<string>, Server>(new Server());
+
         }
 
         // Update is called once per frame

@@ -27,7 +27,7 @@ namespace ScreenOverwriter
         {
             _connectButton.enabled = false;
 
-            var server = await ServiceLocator.ResolveAsync<IServer<string>>();
+            var server = await ServiceLocator.GetServiceAsync<IServer<string>>();
 
             _connectButton.enabled = true;
 
@@ -53,7 +53,9 @@ namespace ScreenOverwriter
         {
             try
             {
-                await _viewModel.ConnectToServerAsync(_urlInputField.text, _cancellationTokenSource.Token);
+                var url = $"wss://localhost:5001/Realtime/?threadId={_urlInputField.text}";
+                //var url = "wss://echo.websocket.org";
+                await _viewModel.ConnectToServerAsync(url, _cancellationTokenSource.Token);
                 Debug.Log("after await");
                 _connectionStatusText.text = "Connect";
             }
