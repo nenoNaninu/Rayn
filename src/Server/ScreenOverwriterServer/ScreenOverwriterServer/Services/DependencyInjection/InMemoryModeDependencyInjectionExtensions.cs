@@ -7,7 +7,7 @@ namespace ScreenOverwriterServer.Services.DependencyInjection
 {
     public static class InMemoryModeDependencyInjectionExtensions
     {
-        public static void AddMemoryDatabaseModeSetting(this IServiceCollection services)
+        public static void AddMemoryDatabaseModeServices(this IServiceCollection services)
         {
             services.AddSingleton<MemoryDatabase>();
             services.AddSingleton<ICommentAccessor, MemoryCommentAccessor>();
@@ -15,7 +15,7 @@ namespace ScreenOverwriterServer.Services.DependencyInjection
             services.AddSingleton<IThreadDbReader, MemoryThreadReader>();
         }
 
-        public static void AddRealtimeThreadRoomSettings(this IServiceCollection services)
+        public static void AddRealtimeThreadRoomServices(this IServiceCollection services)
         {
             services.AddSingleton<IThreadRoomStore, ThreadRoomStore>();
             services.AddSingleton<IThreadRoomCreator, DefaultThreadRoomCreator>();

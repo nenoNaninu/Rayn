@@ -1,4 +1,7 @@
 using System;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,12 +26,17 @@ namespace ScreenOverwriterServer
         public void ConfigureServices(IServiceCollection services)
         {
 #if DEBUG
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                });
 #else
             services.AddControllersWithViews();
 #endif
-            services.AddMemoryDatabaseModeSetting();
-            services.AddRealtimeThreadRoomSettings();
+            services.AddMemoryDatabaseModeServices();
+            services.AddRealtimeThreadRoomServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,7 +52,8 @@ namespace ScreenOverwriterServer
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            //app.UseHttpsRedirection();
+
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

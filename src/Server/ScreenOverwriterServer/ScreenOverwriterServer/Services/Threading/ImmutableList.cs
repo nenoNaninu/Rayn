@@ -4,14 +4,14 @@ namespace ScreenOverwriterServer.Services.Threading
 {
     public class ImmutableList<T>
     {
-        public static readonly ImmutableList<T> Empty = new ImmutableList<T>();
-        readonly T[] _data;
+        public static readonly ImmutableList<T> Empty = new ();
+        private readonly T[] _data;
 
         public T[] Data => _data;
 
-        ImmutableList()
+        private ImmutableList()
         {
-            _data = new T[0];
+            _data = Array.Empty<T>();
         }
 
         public ImmutableList(T[] data)
@@ -29,7 +29,7 @@ namespace ScreenOverwriterServer.Services.Threading
 
         public ImmutableList<T> Remove(T value)
         {
-            int i = IndexOf(value);
+            int i = this.IndexOf(value);
             if (i < 0) return this;
             
             int length = _data.Length;
@@ -45,7 +45,7 @@ namespace ScreenOverwriterServer.Services.Threading
 
         public int IndexOf(T value)
         {
-            for (var i = 0; i < _data.Length; ++i)
+            for (int i = 0; i < _data.Length; ++i)
             {
                 if (object.Equals(_data[i], value)) return i;
             }

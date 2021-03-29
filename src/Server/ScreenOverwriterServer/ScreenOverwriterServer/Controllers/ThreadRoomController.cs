@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ScreenOverwriterServer.Models;
 using ScreenOverwriterServer.Services.Database.Interfaces;
+using ScreenOverwriterServer.Services.Url;
 
 namespace ScreenOverwriterServer.Controllers
 {
@@ -40,6 +39,29 @@ namespace ScreenOverwriterServer.Controllers
             var threadRoomViewModel = new ThreadRoomViewModel(thread.ThreadTitle, thread.ThreadId, HttpContext.Request.Host.Value);
 
             return this.View(threadRoomViewModel);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<StreamerConnectionResponse>> Streamer(string threadId, string ownerId)
+        {
+            if (threadId == null || !Guid.TryParse(threadId, out var threadGuid) || !Guid.TryParse(ownerId, out var ownerGuid))
+            {
+                return new StreamerConnectionResponse(StreamerConnectionRequestStatus.BadRequest, "");
+            }
+
+            var thread = await _threadDbReader.SearchThreadModelAsync(threadGuid);
+
+            if (thread == null)
+            {
+                return new StreamerConnectionResponse(StreamerConnectionRequestStatus.ThreadRoomNotExist, "");
+            }
+
+            if (ownerGuid != thread.OwnerId)
+            {
+                return new StreamerConnectionResponse(StreamerConnectionRequestStatus.BadRequest, "");
+            }
+
+            return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, UrlUtility.RealtimeThreadRoomUrl(HttpContext.Request.Host.Value, thread.ThreadId, ownerGuid));
         }
 
         [HttpGet]

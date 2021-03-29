@@ -28,13 +28,13 @@
                 @*<pre><code class="language-javascript">const test = 'test';</code></pre>*@
             </div>
             <div class="box">
-                <h4 class="title">スレッドID</h4>
+                <h4 class="title">クライアント接続用URL</h4>
                 <article class="message is-primary">
                     <div class="message-header">
                         クライアントアプリの接続に必要です。
                     </div>
                     <div class="message-body">
-                        @Model.ThreadId
+                        @Model.StreamerUrl()
                     </div>
                 </article>
             </div>

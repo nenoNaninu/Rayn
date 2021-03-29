@@ -13,7 +13,7 @@ namespace ScreenOverwriterServer.Services.Database
 
         public ThreadModel CreateThread(DateTime beginningTime, string title)
         {
-            var thread = new ThreadModel(Guid.NewGuid(), beginningTime, title);
+            var thread = new ThreadModel(Guid.NewGuid(), beginningTime, title, Guid.NewGuid());
 
             _threadDataStore.Add(thread);
             return thread;

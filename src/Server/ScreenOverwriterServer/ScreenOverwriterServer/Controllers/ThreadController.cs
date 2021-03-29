@@ -46,9 +46,7 @@ namespace ScreenOverwriterServer.Controllers
                 return this.RedirectToAction(nameof(this.Error));
             }
 
-            string hostUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
-
-            var threadViewModel = new ThreadViewModel(thread.ThreadId, thread.ThreadTitle, thread.BeginningDate, hostUrl);
+            var threadViewModel = new ThreadViewModel(thread.ThreadId, thread.ThreadTitle, thread.BeginningDate, HttpContext.Request.Host.Value, thread.OwnerId);
 
             return this.View(threadViewModel);
         }

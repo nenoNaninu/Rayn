@@ -12,6 +12,7 @@ namespace ScreenOverwriterServer.Services.Realtime
     public class ThreadRoomStore : IThreadRoomStore
     {
         private readonly AsyncLock _asyncLock = new();
+        // AsyncLockかけるから普通のListでいいや、という。
         private readonly List<IThreadRoom> _threadRoomList = new();
         private readonly ILogger<IThreadRoom> _logger;
         private readonly IThreadRoomCreator _threadRoomCreator;
@@ -39,6 +40,13 @@ namespace ScreenOverwriterServer.Services.Realtime
 
                 var newRoom = await this.CreateThreadRoomAsync(threadId);
                 _threadRoomList.Add(newRoom);
+
+                newRoom
+                    .OnDispose()
+                    .Subscribe(_ =>
+                    {
+                        _threadRoomList.Remove(newRoom);
+                    });
 
                 return newRoom;
             }

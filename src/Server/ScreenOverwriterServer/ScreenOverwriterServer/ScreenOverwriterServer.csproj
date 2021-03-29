@@ -12,4 +12,8 @@
     <PackageReference Include="RxWebSocket" Version="2.1.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Url\" />
+  </ItemGroup>
+
 </Project>

@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.ComTypes;
-using System.Security.Cryptography;
-using System.Text.Json;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -10,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using RxWebSocket;
 using ScreenOverwriterServer.Services.Database.Interfaces;
 using ScreenOverwriterServer.Services.Database.Models;
-using ScreenOverwriterServer.Services.Realtime.Models;
 using ScreenOverwriterServer.Services.Threading;
 
 namespace ScreenOverwriterServer.Services.Realtime
@@ -26,6 +24,8 @@ namespace ScreenOverwriterServer.Services.Realtime
                     SingleReader = true,
                     SingleWriter = false
                 });
+
+        private readonly Subject<Unit> _onDisposeSubject = new();
 
         private readonly ChannelReader<byte[]> _channelReader;
         private readonly ChannelWriter<byte[]> _channelWriter;
@@ -123,29 +123,41 @@ namespace ScreenOverwriterServer.Services.Realtime
             newcomer.CloseMessageReceived
                 .Subscribe(x =>
                 {
-                    _webSocketClients = _webSocketClients.Remove(newcomer);
-
-                    if (_webSocketClients == ImmutableList<IWebSocketClient>.Empty)
-                    {
-                        this.Destory();
-                    }
+                    this.OnClose(newcomer);
                 });
+        }
+
+        public IObservable<Unit> OnDispose()
+        {
+            return _onDisposeSubject.AsObservable();
         }
 
         private void OnClose(IWebSocketClient client)
         {
             _webSocketClients = _webSocketClients.Remove(client);
-        }
 
-        private void Destory()
-        {
-            Interlocked.Increment(ref _isStopRequested);
-            _cancellationTokenSource.Cancel();
+            if (_webSocketClients == ImmutableList<IWebSocketClient>.Empty)
+            {
+                this.Dispose();
+            }
         }
 
         public void BroadCast(byte[] data)
         {
             _channelWriter.TryWrite(data);
+        }
+
+        public void Dispose()
+        {
+            if (_cancellationTokenSource.IsCancellationRequested)
+            {
+                return;
+            }
+
+            Interlocked.Increment(ref _isStopRequested);
+            _cancellationTokenSource.Cancel();
+            _onDisposeSubject.OnNext(Unit.Default);
+            _onDisposeSubject.Dispose();
         }
     }
 }

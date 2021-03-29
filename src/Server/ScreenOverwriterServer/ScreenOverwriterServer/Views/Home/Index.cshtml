@@ -10,7 +10,7 @@
             <div class="columns is-vcentered is-offset-1">
                 <div class="column is-7">
                     <h1 class="title is-2">
-                        CommentShower(仮)(CoS)
+                        Reaction is All You Need.
                     </h1>
                     <h2 class="subtitle is-4">
                         画面共有でもニコ〇コとかビ〇ビリみたいにコメントを流そう！
@@ -38,8 +38,8 @@
                                 新規スレッドの作成
                             </p>
                             @*<p class="subtitle">
-                                ん～。
-                            </p>*@
+                                    ん～。
+                                </p>*@
                             <form asp-controller="Thread" asp-action="CreateNewThread">
                                 <div class="field">
                                     <label asp-for="Title" class="label">タイトル</label>
@@ -50,7 +50,7 @@
                                 <div class="field">
                                     <label for="BeginningDate" class="label">配信予定日</label>
                                     <div class="control">
-                                        <input class="input" type="date" name="BeginningDate" id="BeginningDate">
+                                        <input class="input" type="date" asp-for="BeginningDate" id="BeginningDate">
                                     </div>
                                 </div>
                                 <div class="field">
@@ -66,3 +66,15 @@
         </div>
     </div>
 </section>
+
+
+@section Scripts
+{
+    <script>
+        let date = new Date();
+        let dateStr = date.getFullYear() + "-" + String((date.getMonth() + 1)).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+        console.log(dateStr);
+        document.getElementById('BeginningDate').value = dateStr;
+    </script>
+}
+

@@ -8,46 +8,31 @@
     ViewData["ThreadTitle"] = Model.ThreadTitle;
 }
 
-<section id="app" class="hero  is-bold is-light">
-    <div class="hero-body">
-        <div class="columns">
-            <div class="column is-8 is-offset-1">
-                <div class="field">
-                    <div class="control">
-                        <textarea class="textarea" v-model="message" placeholder="message" rows="1">
-                        </textarea>
+<div id="app">
+    <div class="hero is-warning is-small">
+        <div class="hero-body is-dark">
+            <div class="columns">
+                <div class="column is-8 is-offset-1">
+                    <div class="field">
+                        <div class="control">
+                            <input type="text" class="input" v-model="message" placeholder="message" v-on:keydown.enter ="OnEnterInTextArea" />
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="column is-3">
-                <div class="field">
-                    <div class="control">
-                        <div class="button is-primary" v-on:click="OnSend" v-bind:disabled="isSendButtonDisable">送信</div>
-                    </div>
+                <div class="column is-3">
+                    <div class="button is-3 is-primary" v-on:click="OnSend" v-bind:disabled="isSendButtonDisable">送信</div>
                 </div>
             </div>
         </div>
-        <message-item v-for="item in chatMessages" v-bind:key="item.id" v-bind:chatdata="item"></message-item>
     </div>
-    @*<div id="app_old" style="padding: 20px;">
-            <div class="field">
-                <div class="control">
-                    <textarea class="textarea" v-model="message" placeholder="message" rows="10"
-                              v-bind:disabled="chatTextAreaDisable">
-                    </textarea>
-                </div>
+    <div class="hero is-light is-fullheight">
+        <div class="section">
+            <div class="container">
+                <message-item v-for="item in chatMessages" v-bind:key="item.id" v-bind:chatdata="item"></message-item>
             </div>
-
-            <div style="margin: 20px;">
-                <div class="button is-primary" v-on:click="OnConnect" v-bind:disabled="isConnectButtonDisable">Connect</div>
-                <div class="button is-primary" v-on:click="OnClose" v-bind:disabled="isCloseButtonDisable">Close</div>
-                <div class="button is-primary" v-on:click="OnSend" v-bind:disabled="isSendButtonDisable">Send</div>
-            </div>
-
-            <message-item v-for="item in chatMessages" v-bind:key="item.id" v-bind:chatdata="item"></message-item>
-        </div>*@
-</section>
+        </div>
+    </div>
+</div>
 
 
 @section Scripts {
@@ -66,7 +51,7 @@
                         </div > `
             });
 
-        var app = new Vue({
+        const app = new Vue({
             el: '#app',
             data: {
                 message: '',
@@ -121,11 +106,23 @@
                     this.isSendButtonDisable = true;
                 },
 
-                OnSend: function() {
-                    console.log("Sending: " + this.message);
-                    let jsonBytes = JSON.stringify({ "Message": this.message });
-                    console.log(jsonBytes);
-                    socket.send(encoder.encode(jsonBytes));
+                OnSend: function () {
+                    if (this.message) {
+                        console.log("Sending: " + this.message);
+                        let jsonBytes = JSON.stringify({ "Message": this.message });
+                        console.log(jsonBytes);
+                        socket.send(encoder.encode(jsonBytes));
+                        this.message = "";
+                    }
+                },
+
+                OnEnterInTextArea: function (event) {
+                    if (event.keyCode !== 13)
+                    {
+                        return;
+                    }
+
+                    app.OnSend();
                 }
             }
         });
