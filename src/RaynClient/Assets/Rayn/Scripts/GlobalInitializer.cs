@@ -10,21 +10,14 @@ namespace ScreenOverwriter
         // Start is called before the first frame update
         void Awake()
         {
-            this.RegisterForDebug();
+            this.Register();
         }
 
-        private void RegisterForDebug()
+        private void Register()
         {
             //ServiceLocator.Register<IServer<string>, DummyServer>(new DummyServer());
             ServiceLocator.Register<IServer<string>, Server>(new Server());
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            ServiceLocator.Register<IFlowingTextSettings, FlowingTextSettings>(new FlowingTextSettings());
         }
     }
-
 }

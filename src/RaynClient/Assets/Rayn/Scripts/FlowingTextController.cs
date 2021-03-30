@@ -13,25 +13,31 @@ namespace ScreenOverwriter
         private FlowingTextPool _flowingTextPool;
 
         private IMessageReceiver<string> _messageReceiver;
+        private IFlowingTextSettings _flowingTextSettings;
+        private float _fontSize = 50f;
 
+        private CancellationToken _cancellationToken;
 
         private async void Start()
         {
+            _cancellationToken = this.GetCancellationTokenOnDestroy();
             _flowingTextPool = new FlowingTextPool(_flowingTextPrefab, _rootCanvas.transform);
 
-            var server = await ServiceLocator.GetServiceAsync<IServer<string>>();
+            _flowingTextSettings = await ServiceLocator.GetServiceAsync<IFlowingTextSettings>(_cancellationToken);
 
-            await server.WaitUntilConnectAsync(this.GetCancellationTokenOnDestroy());
+            _flowingTextSettings.OnFontSizeChange()
+                .Subscribe(x => { _fontSize = x; }).AddTo(this);
 
-            _messageReceiver = await server.GetMessageReceiverAsync(this.GetCancellationTokenOnDestroy());
+            var server = await ServiceLocator.GetServiceAsync<IServer<string>>(_cancellationToken);
+
+            await server.WaitUntilConnectAsync(_cancellationToken);
+
+            _messageReceiver = await server.GetMessageReceiverAsync(_cancellationToken);
 
             _messageReceiver
                 .OnMessage()
                 .ObserveOnMainThread()
-                .Subscribe(x =>
-                {
-                    this.FlowMessage(x).Forget();
-                })
+                .Subscribe(x => { this.FlowMessage(x).Forget(); })
                 .AddTo(this);
         }
 
@@ -39,10 +45,10 @@ namespace ScreenOverwriter
         {
             var obj = _flowingTextPool.Rent();
 
-            obj.Init(_rootCanvas, message);
+            obj.Init(_rootCanvas, message, fontSize: _fontSize);
             obj.gameObject.SetActive(true);
 
-            await obj.PlayAnimation();
+            await obj.PlayAnimation(_cancellationToken);
 
             obj.gameObject.SetActive(false);
 

@@ -1,3 +1,4 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine.UI;
 
 namespace ScreenOverwriter
 {
-    // ƒAƒ“ƒJ[‚ªcanvas‚Ì’†S‚É‚ ‚é‚±‚Æ‘z’è‚µ‚Ä‘‚¢‚Ä‚éB
+    // ï¿½Aï¿½ï¿½ï¿½Jï¿½[ï¿½ï¿½canvasï¿½Ì’ï¿½ï¿½Sï¿½É‚ï¿½ï¿½é‚±ï¿½Æ‘zï¿½è‚µï¿½Äï¿½ï¿½ï¿½ï¿½Ä‚ï¿½B
     public class FlowingText : MonoBehaviour
     {
         private string _text;
@@ -18,7 +19,7 @@ namespace ScreenOverwriter
         private float _flowingTimeSpan = 0.5f;
         private float _flowingSpeedPerSec;
 
-        public void Init(Canvas canvas, string text, float flowingTimeSpan = 5f)
+        public void Init(Canvas canvas, string text, float flowingTimeSpan = 5f, float fontSize = 50f)
         {
             _textMesh ??= this.GetComponent<TextMeshProUGUI>();
             _rectTransform ??= this.GetComponent<RectTransform>();
@@ -29,28 +30,29 @@ namespace ScreenOverwriter
             _canvas = canvas;
             _flowingTimeSpan = flowingTimeSpan;
 
-            _flowingSpeedPerSec = _canvasResolution.x / _flowingTimeSpan;            
+            _flowingSpeedPerSec = _canvasResolution.x / _flowingTimeSpan;
 
             _text = text;
             _textMesh.text = text;
-            _textSize = new Vector2(_textMesh.preferredWidth, _textMesh.preferredHeight);
+            _textMesh.fontSize = fontSize;
+            _textSize = new Vector2(_textMesh.preferredWidth, _textMesh.preferredHeight) * 1.1f;
 
-            _rectTransform.anchoredPosition = new Vector3(_canvasResolution.x / 2 + _textSize.x / 2, Random.Range(-_canvasResolution.y / 2f, _canvasResolution.y / 2f), 0);
+            _rectTransform.anchoredPosition = new Vector3(_canvasResolution.x / 2 + _textSize.x / 2, Random.Range(-_canvasResolution.y / 2f, _canvasResolution.y / 2f) * 0.8f, 0);
         }
 
-        public async UniTask PlayAnimation()
+        public async UniTask PlayAnimation(CancellationToken cancellationToken)
         {
-            while (true)
+            var bound = (-_canvasResolution.x / 2 - _textSize.x / 2) * 1.1;
+            while (!cancellationToken.IsCancellationRequested)
             {
-                if (_rectTransform.position.x < -_canvasResolution.x / 2 - _textSize.x / 2)
+                if (_rectTransform.anchoredPosition.x < bound)
                 {
                     return;
                 }
 
                 _rectTransform.anchoredPosition += new Vector2(-_flowingSpeedPerSec * Time.deltaTime, 0);
-                await UniTask.NextFrame(PlayerLoopTiming.Update);
+                await UniTask.NextFrame(PlayerLoopTiming.Update, cancellationToken);
             }
         }
     }
 }
-
