@@ -1,7 +1,7 @@
 ﻿using UniRx.Toolkit;
 using UnityEngine;
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     public class FlowingTextPool : ObjectPool<FlowingText>
     {

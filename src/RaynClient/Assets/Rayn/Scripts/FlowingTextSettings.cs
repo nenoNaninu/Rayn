@@ -1,7 +1,7 @@
 using System;
 using UniRx;
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     public class FlowingTextSettings : IFlowingTextSettings
     {

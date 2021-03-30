@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     // �A���J�[��canvas�̒��S�ɂ��邱�Ƒz�肵�ď����Ă�B
     public class FlowingText : MonoBehaviour

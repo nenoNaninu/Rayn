@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UniRx;
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     public class FlowingTextController : MonoBehaviour
     {

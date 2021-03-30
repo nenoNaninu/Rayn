@@ -9,7 +9,7 @@ using RxWebSocket.Senders;
 using UniRx;
 using Utf8Json;
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     public class Server : IServer<string>
     {

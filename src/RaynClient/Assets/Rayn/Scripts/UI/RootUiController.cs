@@ -11,7 +11,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     public class RootUiController : MonoBehaviour
     {

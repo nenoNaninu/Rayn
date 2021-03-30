@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     public enum StreamerConnectionRequestStatus
     {

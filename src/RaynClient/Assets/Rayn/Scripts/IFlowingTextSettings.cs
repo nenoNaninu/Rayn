@@ -1,6 +1,6 @@
 using System;
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     public interface IFlowingTextSettings
     {

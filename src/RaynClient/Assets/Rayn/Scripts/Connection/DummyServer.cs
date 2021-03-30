@@ -3,7 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UniRx;
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     public class DummyServer : IServer<string>
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Kirurobo;
 using UnityEngine;
 
-namespace ScreenOverwriter.Sandbox
+namespace Rayn.Sandbox
 {
     public class InputForTest : MonoBehaviour
     {

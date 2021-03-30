@@ -5,7 +5,7 @@ using Cysharp.Threading.Tasks;
 using Utf8Json;
 using Utf8Json.Resolvers;
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     public class ConnectionSettingUiViewModel
     {

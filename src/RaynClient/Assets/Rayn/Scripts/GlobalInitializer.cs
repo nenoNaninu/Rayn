@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     public class GlobalInitializer : MonoBehaviour
     {

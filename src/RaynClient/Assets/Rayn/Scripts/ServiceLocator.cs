@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 
-namespace ScreenOverwriter
+namespace Rayn
 {
     public static class ServiceLocator
     {
