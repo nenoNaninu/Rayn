@@ -20,9 +20,9 @@ namespace Rayn.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateNewThread([FromForm] NewThreadRequest newThreadRequest)
+        public async Task<IActionResult> CreateNewThread([FromForm] ThreadCreateRequest threadCreateRequest)
         {
-            var thread = await _threadCreator.CreateThreadAsync(newThreadRequest.Title, newThreadRequest.BeginningDate);
+            var thread = await _threadCreator.CreateThreadAsync(threadCreateRequest.Title, threadCreateRequest.BeginningDate);
 
             return this.RedirectToAction(nameof(this.Index), new RouteValueDictionary { { "threadId", thread.ThreadId.ToString() } });
         }

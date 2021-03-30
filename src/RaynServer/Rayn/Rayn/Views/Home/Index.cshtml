@@ -41,15 +41,15 @@
                                 </p>*@
                             <form asp-controller="Thread" asp-action="CreateNewThread">
                                 <div class="field">
-                                    <label asp-for="NewThreadRequest.Title" class="label">タイトル</label>
+                                    <label asp-for="ThreadCreateRequest.Title" class="label">タイトル</label>
                                     <div class="control">
-                                        <input class="input" type="text" placeholder="〇〇〇を語る会" asp-for="NewThreadRequest.Title">
+                                        <input class="input" type="text" placeholder="〇〇〇を語る会" asp-for="ThreadCreateRequest.Title">
                                     </div>
                                 </div>
                                 <div class="field">
-                                    <label for="BeginningDate" asp-for="NewThreadRequest.BeginningDate" class="label">配信予定日</label>
+                                    <label for="BeginningDate" asp-for="ThreadCreateRequest.BeginningDate" class="label">配信予定日</label>
                                     <div class="control">
-                                        <input class="input" type="date" asp-for="NewThreadRequest.BeginningDate" id="BeginningDate">
+                                        <input class="input" type="date" asp-for="ThreadCreateRequest.BeginningDate" id="BeginningDate">
                                     </div>
                                 </div>
                                 <div class="field">
