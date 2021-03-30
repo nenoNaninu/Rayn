@@ -6,6 +6,9 @@ namespace ScreenOverwriter
     public interface IServer<T>
     {
         UniTask<IMessageReceiver<string>> ConnectAsync(string url, CancellationToken cancellationToken = default);
+
+        UniTask CloseAsync(CancellationToken cajCancellationToken);
+
         UniTask<bool> WaitUntilConnectAsync(CancellationToken cancellationToken = default);
         UniTask<IMessageReceiver<T>> GetMessageReceiverAsync(CancellationToken cancellationToken = default);
     }

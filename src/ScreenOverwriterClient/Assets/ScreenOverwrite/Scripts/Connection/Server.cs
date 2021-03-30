@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Text;
+using System.Net.WebSockets;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using RxWebSocket;
@@ -15,6 +15,7 @@ namespace ScreenOverwriter
     {
         private readonly UniTaskCompletionSource _getReceiverCompletionSource = new UniTaskCompletionSource();
         private readonly UniTaskCompletionSource<bool> _waitConnectionCompletionSource = new UniTaskCompletionSource<bool>();
+        private  WebSocketClient _socket;
 
         private IMessageReceiver<string> _messageReceiver;
 
@@ -22,10 +23,10 @@ namespace ScreenOverwriter
         {
             try
             {
-                var socket = new WebSocketClient(new Uri(url), new BinaryOnlySender(), logger: new UnityConsoleLogger());
-                await socket.ConnectAsync();
+                _socket = new WebSocketClient(new Uri(url), new BinaryOnlySender(), logger: new UnityConsoleLogger());
+                await _socket.ConnectAsync();
                 _waitConnectionCompletionSource.TrySetResult(true);
-                _messageReceiver = new MessageReceiver(socket);
+                _messageReceiver = new MessageReceiver(_socket);
 
                 _getReceiverCompletionSource.TrySetResult();
             }
@@ -36,6 +37,23 @@ namespace ScreenOverwriter
             }
 
             return _messageReceiver;
+        }
+
+        public async UniTask CloseAsync(CancellationToken cajCancellationToken)
+        {
+            if (_socket == null || _socket.IsClosed)
+            {
+                return;
+            }
+
+            try
+            {
+                await _socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Click close button");
+            }
+            catch
+            {
+                return;
+            }
         }
 
         public async UniTask<bool> WaitUntilConnectAsync(CancellationToken cancellationToken = default)

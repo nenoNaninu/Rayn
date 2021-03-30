@@ -33,5 +33,10 @@ namespace ScreenOverwriter
 
             await _server.ConnectAsync(content.RealtimeThreadRoomUrl, cancellationToken);
         }
+
+        public async UniTask CloseAsync(CancellationToken cancellationToken)
+        {
+            await _server.CloseAsync(cancellationToken);
+        }
     }
 }

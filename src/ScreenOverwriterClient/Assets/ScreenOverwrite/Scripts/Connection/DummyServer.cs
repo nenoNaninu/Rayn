@@ -51,6 +51,11 @@ namespace ScreenOverwriter
         {
         }
 
+        public UniTask CloseAsync(CancellationToken cajCancellationToken)
+        {
+            return UniTask.CompletedTask;
+        }
+
         public UniTask<bool> WaitUntilConnectAsync(CancellationToken cancellationToken = default)
         {
             return _waitConnectionCompletionSource.Task;

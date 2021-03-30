@@ -7,6 +7,7 @@ using Kirurobo;
 using TMPro;
 using UniRx;
 using UniRx.Triggers;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,7 @@ namespace ScreenOverwriter
 
         [SerializeField] private Button _connectButton;
         [SerializeField] private Button _transparentButton;
+        [SerializeField] private Button _closeButton;
         [SerializeField] private TMP_InputField _urlInputField;
 
         [SerializeField] private TextMeshProUGUI _connectionStatusText;
@@ -25,6 +27,7 @@ namespace ScreenOverwriter
         [SerializeField] private UniWindowController _uniWindowController;
 
         private ConnectionSettingUiViewModel _viewModel;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         private async void Start()
         {
@@ -50,6 +53,10 @@ namespace ScreenOverwriter
                 {
                     this.OnClickTransparentButton();
                 });
+
+            _closeButton.onClick
+                .AsObservable()
+                .Subscribe(_ => this.Close().Forget());
         }
 
         private void OnClickTransparentButton()
@@ -72,6 +79,23 @@ namespace ScreenOverwriter
             {
                 Debug.Log("Catch Exception!!!!!!");
                 Debug.LogError(e.Message);
+            }
+        }
+
+        private async UniTask Close()
+        {
+            try
+            {
+                _cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(20));
+                await _viewModel.CloseAsync(_cancellationTokenSource.Token);
+            }
+            finally
+            {
+#if UNITY_EDITOR
+                EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
             }
         }
     }
