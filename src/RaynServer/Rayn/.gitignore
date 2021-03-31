@@ -4,6 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 ServiceDependencies/
+Rayn/wwwroot/lib/vue/
+Rayn/wwwroot/bulma/
 .config/
 
 # User-specific files
