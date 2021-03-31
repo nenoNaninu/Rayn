@@ -5,3 +5,11 @@ for details on configuring this project to bundle and minify static web assets. 
     font-family: 'M PLUS 1p', sans-serif;
 }
 
+.wf-notosanjp {
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.shadow {
+    filter: drop-shadow(0 0 0.75rem crimson);
+}
+

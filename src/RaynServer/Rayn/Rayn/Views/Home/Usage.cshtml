@@ -2,13 +2,70 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    ViewData["Title"] = "Usage";
 }
-<section class="hero is-fullheight is-bold is-light">
+
+<section class="hero is-light">
     <div class="hero-body">
-        <div class="container has-text-centered">
-            <h1 class="title is-1">
-                整備中
-            </h1>
+        <div class="container">
+
+            <section class="section">
+                <div class="columns">
+                    <div class="column is-8 is-offset-2">
+                        <div class="content is-medium">
+                            <h1 class="title is-1">ダウンロード</h1>
+                            <h2 class="subtitle is-5">配信者のみ必要です。視聴者はwebで完結します。</h2>
+                            <p>
+                                こちらでOSにあったクライアントアプリをダウンロードして解凍してください。
+                            </p>
+                            <a class="button is-info">ダウンロード</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="columns">
+                    <div class="column is-8 is-offset-2">
+                        <div class="content is-medium">
+                            <h1 class="title is-2">使い方</h1>
+                            <p>
+                                まず <a class="has-text-info" asp-controller="Home" asp-action="Index">ホーム画面</a>にある<span class="has-text-danger">新規スレッドの作成</span>からスレッドを作成してください。
+                                視聴者用のURLとクライアント接続用URLが発行されます。前者は配布してください。後者はクライアントアプリの接続に使います。
+                            </p>
+
+                            <figure class="image">
+                                <img src="~/img/Usage/newThread.png" alt="新しくスレッドを作った直後の画像">
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="columns">
+                    <div class="column is-8 is-offset-2">
+                        <div class="content is-medium">
+                            <h1 class="title is-2">クライアントアプリ設定</h1>
+                            <p>
+                                起動したら以下のようなUIが現れます。
+                                初期状態では透過などされていません。UI中の<span class="has-text-danger">Transparent ボタン</span>を押すと透過 & 最前面固定されます。
+                                表示したいディスプレイを変えたい時は(windows + shift + 矢印)で切り替えられます。
+                                先ほど作成したクライアント接続用URLを上部テキストエリアにコピペし、<span class="has-text-danger">Connect to Server ボタン</span>を押すとコメントが流れます。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="columns">
+                    <div class="column is-4 is-offset-4">
+                        <figure class="image is-4by3 ">
+                            <img src="~/img/Usage/clientUi.png" alt="">
+                        </figure>
+                    </div>
+                </div>
+            </section>
+
         </div>
     </div>
 </section>
