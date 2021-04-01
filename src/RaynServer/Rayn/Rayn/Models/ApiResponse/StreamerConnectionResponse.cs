@@ -1,4 +1,4 @@
-﻿namespace Rayn.Models
+﻿namespace Rayn.Models.ApiResponse
 {
     public enum StreamerConnectionRequestStatus
     {

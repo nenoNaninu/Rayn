@@ -3,7 +3,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
 using Rayn.Models;
-using Rayn.Models.Requests;
+using Rayn.Models.FormRequests;
 using Rayn.Services.Database.Interfaces;
 
 namespace Rayn.Controllers

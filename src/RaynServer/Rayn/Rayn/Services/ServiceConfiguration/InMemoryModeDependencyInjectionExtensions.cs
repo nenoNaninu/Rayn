@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Rayn.Services.Database;
 using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Realtime;
 
-namespace Rayn.Services.DependencyInjection
+namespace Rayn.Services.ServiceConfiguration
 {
     public static class InMemoryModeDependencyInjectionExtensions
     {
@@ -13,12 +12,6 @@ namespace Rayn.Services.DependencyInjection
             services.AddSingleton<ICommentAccessor, MemoryCommentAccessor>();
             services.AddSingleton<IThreadCreator, MemoryThreadCreator>();
             services.AddSingleton<IThreadDbReader, MemoryThreadReader>();
-        }
-
-        public static void AddRealtimeThreadRoomServices(this IServiceCollection services)
-        {
-            services.AddSingleton<IThreadRoomStore, ThreadRoomStore>();
-            services.AddSingleton<IThreadRoomCreator, DefaultThreadRoomCreator>();
         }
     }
 }

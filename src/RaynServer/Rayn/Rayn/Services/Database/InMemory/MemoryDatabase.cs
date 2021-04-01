@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Text;
 using Rayn.Services.Database.Models;
 
 namespace Rayn.Services.Database
@@ -13,7 +14,7 @@ namespace Rayn.Services.Database
 
         public ThreadModel CreateThread(DateTime beginningTime, string title)
         {
-            var thread = new ThreadModel(Guid.NewGuid(), beginningTime, title, Guid.NewGuid());
+            var thread = new ThreadModel(Guid.NewGuid(), Guid.NewGuid(), title, beginningTime);
 
             _threadDataStore.Add(thread);
             return thread;
@@ -37,7 +38,7 @@ namespace Rayn.Services.Database
 
         public void InsertComment(byte[] message, DateTime writtenTime, Guid threadId)
         {
-            var commentModel = new CommentModel(_commentId, threadId, writtenTime, message);
+            var commentModel = new CommentModel(_commentId, threadId, writtenTime, Encoding.UTF8.GetString(message));
             _commentDataStore.Add(commentModel);
             _commentId++;
         }

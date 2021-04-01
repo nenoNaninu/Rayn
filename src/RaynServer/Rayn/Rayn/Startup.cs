@@ -8,8 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Rayn.Services.Database.Configuration;
+using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Realtime;
-using Rayn.Services.DependencyInjection;
+using Rayn.Services.ServiceConfiguration;
 
 namespace Rayn
 {
@@ -25,6 +27,11 @@ namespace Rayn
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            DapperConfiguration.Configure();
+
+            IDatabaseConfig dbConfig = this.Configuration.GetSection("DatabaseConfig").Get<DatabaseConfiguration>();
+            services.AddSingleton(dbConfig);
+
 #if DEBUG
             services.AddControllersWithViews().AddRazorRuntimeCompilation()
                 .AddJsonOptions(options =>
@@ -40,7 +47,16 @@ namespace Rayn
                     options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
                 });
 #endif
-            services.AddMemoryDatabaseModeServices();
+
+            if (dbConfig.InMemoryMode)
+            {
+                services.AddMemoryDatabaseModeServices();
+            }
+            else
+            {
+                services.AddMySqlDatabaseModeServices();
+            }
+
             services.AddRealtimeThreadRoomServices();
         }
 

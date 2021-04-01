@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Rayn.Models;
+using Rayn.Models.ApiResponse;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Url;
 

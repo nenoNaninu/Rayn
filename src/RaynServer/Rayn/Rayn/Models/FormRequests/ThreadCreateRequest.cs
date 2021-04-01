@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rayn.Models.Requests
+namespace Rayn.Models.FormRequests
 {
     public class ThreadCreateRequest
     {

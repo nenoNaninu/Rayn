@@ -1,4 +1,4 @@
-﻿using Rayn.Models.Requests;
+﻿using Rayn.Models.FormRequests;
 
 namespace Rayn.Models
 {
