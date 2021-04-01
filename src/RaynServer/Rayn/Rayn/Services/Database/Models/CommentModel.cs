@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Rayn.Services.Database.Models
 {
@@ -8,6 +9,8 @@ namespace Rayn.Services.Database.Models
         public Guid ThreadId { get; set; }
         public DateTime WrittenTime { get; set; }
         public string Message { get; set; }
+
+        public byte[] MessageBytes() => Encoding.UTF8.GetBytes(this.Message);
 
         public CommentModel(int id, Guid threadId, DateTime writtenTime, string message)
         {

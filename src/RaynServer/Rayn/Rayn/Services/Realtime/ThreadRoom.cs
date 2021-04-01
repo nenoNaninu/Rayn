@@ -107,7 +107,7 @@ namespace Rayn.Services.Realtime
 
             foreach (var comment in pastComments)
             {
-                newcomer.Send(comment.Message);
+                newcomer.Send(comment.MessageBytes());
             }
 
             _webSocketClients = _webSocketClients.Add(newcomer);
