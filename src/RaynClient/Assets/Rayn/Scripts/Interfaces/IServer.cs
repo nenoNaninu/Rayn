@@ -5,7 +5,7 @@ namespace Rayn
 {
     public interface IServer<T>
     {
-        UniTask<IMessageReceiver<string>> ConnectAsync(string url, CancellationToken cancellationToken = default);
+        UniTask<IMessageReceiver<string>> ConnectAsync(string url, string proxy ,CancellationToken cancellationToken = default);
 
         UniTask CloseAsync(CancellationToken cajCancellationToken);
 

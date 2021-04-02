@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
 using System.Net.WebSockets;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -15,15 +16,17 @@ namespace Rayn
     {
         private readonly UniTaskCompletionSource _getReceiverCompletionSource = new UniTaskCompletionSource();
         private readonly UniTaskCompletionSource<bool> _waitConnectionCompletionSource = new UniTaskCompletionSource<bool>();
-        private  WebSocketClient _socket;
+        private WebSocketClient _socket;
 
         private IMessageReceiver<string> _messageReceiver;
 
-        public async UniTask<IMessageReceiver<string>> ConnectAsync(string url, CancellationToken cancellationToken = default)
+        public async UniTask<IMessageReceiver<string>> ConnectAsync(string url, string proxy, CancellationToken cancellationToken = default)
         {
             try
             {
-                _socket = new WebSocketClient(new Uri(url), new BinaryOnlySender(), logger: new UnityConsoleLogger());
+                var clientFactory = this.CreateClientFactory(proxy);
+
+                _socket = new WebSocketClient(new Uri(url), new BinaryOnlySender(), logger: new UnityConsoleLogger(), clientFactory: clientFactory);
                 await _socket.ConnectAsync();
                 _waitConnectionCompletionSource.TrySetResult(true);
                 _messageReceiver = new MessageReceiver(_socket);
@@ -102,6 +105,23 @@ namespace Rayn
                     //.Do(x => Debug.WriteLine($"Receive :{x.Message}"))
                     .Select(x => x.Message);
             }
+        }
+
+        private Func<ClientWebSocket> CreateClientFactory(string proxy)
+        {
+            if (string.IsNullOrEmpty(proxy))
+            {
+                return null;
+            }
+
+            return () => new ClientWebSocket
+            {
+                Options =
+                {
+                    KeepAliveInterval = TimeSpan.FromSeconds(5),
+                    Proxy = new WebProxy(new Uri(proxy))
+                }
+            };
         }
     }
 }

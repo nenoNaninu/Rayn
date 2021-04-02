@@ -61,14 +61,14 @@ namespace Rayn
             return _waitConnectionCompletionSource.Task;
         }
 
-        public async UniTask<IMessageReceiver<string>> ConnectAsync(string url, CancellationToken cancellationToken = default)
+        public async UniTask<IMessageReceiver<string>> ConnectAsync(string url, string proxy, CancellationToken cancellationToken = default)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(2f), cancellationToken: cancellationToken);
 
             var receiver = new DummyReceiver();
             receiver.Start().Forget();
             _messageReceiver = receiver;
-            
+
             _getSocketCompletionSource.TrySetResult();
             _waitConnectionCompletionSource.TrySetResult(true);
 

@@ -9,14 +9,14 @@ namespace Rayn
 {
     public class ConnectionSettingUiViewModel
     {
-        private IServer<string> _server;
+        private readonly IServer<string> _server;
 
         public ConnectionSettingUiViewModel(IServer<string> server)
         {
             _server = server;
         }
 
-        public async UniTask ConnectToServerAsync(string url, CancellationToken cancellationToken)
+        public async UniTask ConnectToServerAsync(string url, string proxy, CancellationToken cancellationToken)
         {
             var httpClient = new HttpClient();
             var response = await httpClient.GetAsync(url, cancellationToken);
@@ -31,7 +31,7 @@ namespace Rayn
                 Debug.WriteLine(content.RequestStatus);
             }
 
-            await _server.ConnectAsync(content.RealtimeThreadRoomUrl, cancellationToken);
+            await _server.ConnectAsync(content.RealtimeThreadRoomUrl, proxy, cancellationToken);
         }
 
         public async UniTask CloseAsync(CancellationToken cancellationToken)

@@ -1,12 +1,9 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Kirurobo;
 using TMPro;
 using UniRx;
-using UniRx.Triggers;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +19,7 @@ namespace Rayn
         [SerializeField] private Button _closeButton;
         [SerializeField] private Slider _fontSizeSlider;
         [SerializeField] private TMP_InputField _urlInputField;
+        [SerializeField] private TMP_InputField _proxyInputField;
 
         [SerializeField] private TextMeshProUGUI _connectionStatusText;
 
@@ -80,7 +78,7 @@ namespace Rayn
         {
             try
             {
-                await _viewModel.ConnectToServerAsync(_urlInputField.text, this.gameObject.GetCancellationTokenOnDestroy());
+                await _viewModel.ConnectToServerAsync(_urlInputField.text, _proxyInputField.text, this.gameObject.GetCancellationTokenOnDestroy());
                 _connectionStatusText.text = "Connect";
             }
             catch (Exception e)
