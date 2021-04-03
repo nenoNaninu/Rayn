@@ -32,7 +32,7 @@ namespace Rayn.Services.Realtime
             var threadId = Guid.Parse(threadIdString);
 
             var socket = await context.WebSockets.AcceptWebSocketAsync();
-
+            
             using var rxSocket = new WebSocketClient(socket, new BinaryOnlySender(), logger: _logger.AsWebSocketLogger());
 
             await rxSocket.ConnectAsync();

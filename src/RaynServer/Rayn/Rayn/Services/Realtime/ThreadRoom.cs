@@ -35,6 +35,7 @@ namespace Rayn.Services.Realtime
         private readonly ICommentAccessor _commentAccessor;
         private readonly ILogger<IThreadRoom> _logger;
         private readonly Task _broadcastTask;
+        private readonly object _lock = new();
 
         private ImmutableList<IWebSocketClient> _webSocketClients = ImmutableList<IWebSocketClient>.Empty;
         private int _isStopRequested = 0;
@@ -120,10 +121,10 @@ namespace Rayn.Services.Realtime
                     _commentAccessor.InsertCommentAsync(x, this.ThreadModel.ThreadId, timeStamp).Forget(_logger);
                 });
 
-            newcomer.CloseMessageReceived
+            newcomer.OnDispose
                 .Subscribe(x =>
                 {
-                    this.OnClose(newcomer);
+                    this.OnDisposeWebSocketClient(newcomer);
                 });
         }
 
@@ -132,13 +133,16 @@ namespace Rayn.Services.Realtime
             return _onDisposeSubject.AsObservable();
         }
 
-        private void OnClose(IWebSocketClient client)
+        private void OnDisposeWebSocketClient(IWebSocketClient client)
         {
-            _webSocketClients = _webSocketClients.Remove(client);
-
-            if (_webSocketClients == ImmutableList<IWebSocketClient>.Empty)
+            lock (_lock)
             {
-                this.Dispose();
+                _webSocketClients = _webSocketClients.Remove(client);
+
+                if (_webSocketClients == ImmutableList<IWebSocketClient>.Empty)
+                {
+                    this.Dispose();
+                }
             }
         }
 
@@ -149,15 +153,13 @@ namespace Rayn.Services.Realtime
 
         public void Dispose()
         {
-            if (_cancellationTokenSource.IsCancellationRequested)
+            if (Interlocked.Increment(ref _isStopRequested) == 1)
             {
-                return;
+                _cancellationTokenSource.Cancel();
+                _onDisposeSubject.OnNext(Unit.Default);
+                _onDisposeSubject.OnCompleted();
+                _onDisposeSubject.Dispose();
             }
-
-            Interlocked.Increment(ref _isStopRequested);
-            _cancellationTokenSource.Cancel();
-            _onDisposeSubject.OnNext(Unit.Default);
-            _onDisposeSubject.Dispose();
         }
     }
 }
