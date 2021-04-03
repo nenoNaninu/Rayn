@@ -15,7 +15,7 @@
                 <div class="column is-8 is-offset-1">
                     <div class="field">
                         <div class="control">
-                            <input type="text" class="input" v-model="message" placeholder="message" v-on:keydown.enter ="OnEnterInTextArea" />
+                            <input type="text" class="input" v-model="message" placeholder="message" v-on:keydown.enter="OnEnterInTextArea" />
                         </div>
                     </div>
                 </div>
@@ -56,8 +56,8 @@
             data: {
                 message: '',
                 uri: '@Model.RealTimeUrl()',
-                name: '',
-
+                isClose: false,
+                pingPongTimerObj: null,
                 isSendButtonDisable: false,
 
                 chatMessages: [
@@ -65,7 +65,7 @@
             },
             methods: {
                 OnConnect: function() {
-                    if (!this.uri && !this.name) {
+                    if (!this.uri) {
                         return;
                     }
                     console.log(this.uri);
@@ -76,25 +76,35 @@
                     socket.onopen = function(event) {
                         console.log("opened connection to ");
                         console.log(app.uri);
+
+                        app.pingPongTimerObj = setInterval(function() {
+                            let jsonBytes = JSON.stringify({ "Message": null, "PingPong": true });
+                            socket.send(encoder.encode(jsonBytes));
+                        } ,10000);
                     };
 
                     socket.onclose = function(event) {
                         console.log("closed websocket connection");
+                        clearInterval(app.pingPongTimerObj);
                     };
 
                     socket.onmessage = function(event) {
                         console.log("on message!!!!!!!!!!!!!!!!!");
                         console.log(event.data);
 
-                        let jsonContent = JSON.parse(decoder.decode(event.data));
+                        const jsonContent = JSON.parse(decoder.decode(event.data));
                         console.log(jsonContent);
-                        jsonContent["id"] = messageCount;
-                        messageCount++;
-                        app.chatMessages.unshift(jsonContent);
+
+                        if (jsonContent["PingPong"] === false) {
+                            jsonContent["id"] = messageCount;
+                            messageCount++;
+                            app.chatMessages.unshift(jsonContent);
+                        }
                     };
 
                     socket.onerror = function(event) {
                         console.log("error: " + event.data);
+                        clearInterval(app.pingPongTimerObj);
                     };
 
                     this.isSendButtonDisable = false;
@@ -109,7 +119,7 @@
                 OnSend: function () {
                     if (this.message) {
                         console.log("Sending: " + this.message);
-                        let jsonBytes = JSON.stringify({ "Message": this.message });
+                        const jsonBytes = JSON.stringify({ "Message": this.message, "PingPong": false });
                         console.log(jsonBytes);
                         socket.send(encoder.encode(jsonBytes));
                         this.message = "";

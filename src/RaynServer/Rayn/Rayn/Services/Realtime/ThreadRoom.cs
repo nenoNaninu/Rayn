@@ -2,12 +2,14 @@
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Database.Models;
+using Rayn.Services.Realtime.Models;
 using Rayn.Services.Threading;
 using RxWebSocket;
 
@@ -30,7 +32,7 @@ namespace Rayn.Services.Realtime
         private readonly ChannelReader<byte[]> _channelReader;
         private readonly ChannelWriter<byte[]> _channelWriter;
 
-        private readonly CancellationTokenSource _cancellationTokenSource = new ();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         private readonly ICommentAccessor _commentAccessor;
         private readonly ILogger<IThreadRoom> _logger;
@@ -98,6 +100,7 @@ namespace Rayn.Services.Realtime
             }
         }
 
+        public static byte[] PingPongBytes = JsonSerializer.SerializeToUtf8Bytes(new MessageModel() { Message = null, PingPong = true });
 
         public async ValueTask<bool> AddAsync(IWebSocketClient newcomer)
         {
@@ -124,11 +127,19 @@ namespace Rayn.Services.Realtime
             }
 
             newcomer.BinaryMessageReceived
-                .Subscribe(x =>
-                {
-                    var timeStamp = DateTime.UtcNow;
-                    this.BroadCast(x);
-                    _commentAccessor.InsertCommentAsync(x, this.ThreadModel.ThreadId, timeStamp).Forget(_logger);
+                //.Select(x => (bytes: x, model: JsonSerializer.Deserialize<MessageModel>(x)))
+                .Subscribe(x => { 
+                    var model = JsonSerializer.Deserialize<MessageModel>(x);
+                    if (model != null && model.PingPong)
+                    {
+                        newcomer.Send(PingPongBytes);
+                    }
+                    else
+                    {
+                        var timeStamp = DateTime.UtcNow;
+                        this.BroadCast(x);
+                        _commentAccessor.InsertCommentAsync(x, this.ThreadModel.ThreadId, timeStamp).Forget(_logger);
+                    }
                 });
 
             newcomer.OnDispose
