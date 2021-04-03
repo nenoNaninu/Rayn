@@ -30,15 +30,16 @@ namespace Rayn.Services.Realtime
         private readonly ChannelReader<byte[]> _channelReader;
         private readonly ChannelWriter<byte[]> _channelWriter;
 
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new ();
 
         private readonly ICommentAccessor _commentAccessor;
         private readonly ILogger<IThreadRoom> _logger;
         private readonly Task _broadcastTask;
-        private readonly object _lock = new();
+        private readonly object _entryAndExitLock = new();
+        private readonly AsyncLock _asyncLock = new();
 
         private ImmutableList<IWebSocketClient> _webSocketClients = ImmutableList<IWebSocketClient>.Empty;
-        private int _isStopRequested = 0;
+        private int _isDisposed = 0;
 
 
         public ThreadRoom(ThreadModel threadModel, ICommentAccessor commentAccessor, ILogger<IThreadRoom> logger)
@@ -56,14 +57,15 @@ namespace Rayn.Services.Realtime
         {
             try
             {
-                while (_isStopRequested == 0 && await _channelReader.WaitToReadAsync(_cancellationTokenSource.Token).ConfigureAwait(false))
+                while (_isDisposed == 0 && await _channelReader.WaitToReadAsync(_cancellationTokenSource.Token).ConfigureAwait(false))
                 {
-                    while (_isStopRequested == 0 && _channelReader.TryRead(out byte[] message))
+                    while (_isDisposed == 0 && _channelReader.TryRead(out byte[] message))
                     {
                         try
                         {
                             var clients = _webSocketClients.Data;
 
+                            // ここがあるからImmutableList使ってる。
                             foreach (var client in clients)
                             {
                                 client.Send(message);
@@ -97,7 +99,7 @@ namespace Rayn.Services.Realtime
         }
 
 
-        public async ValueTask AddAsync(IWebSocketClient newcomer)
+        public async ValueTask<bool> AddAsync(IWebSocketClient newcomer)
         {
             // 新しい人が来たら、ソケットに対していくつかの設定を行う。
             // 1.新しい人に今までのスレッドを一機に放出。
@@ -111,7 +113,15 @@ namespace Rayn.Services.Realtime
                 newcomer.Send(comment.MessageBytes());
             }
 
-            _webSocketClients = _webSocketClients.Add(newcomer);
+            lock (_entryAndExitLock)
+            {
+                if (_isDisposed != 0)
+                {
+                    return false;
+                }
+
+                _webSocketClients = _webSocketClients.Add(newcomer);
+            }
 
             newcomer.BinaryMessageReceived
                 .Subscribe(x =>
@@ -126,6 +136,8 @@ namespace Rayn.Services.Realtime
                 {
                     this.OnDisposeWebSocketClient(newcomer);
                 });
+
+            return true;
         }
 
         public IObservable<Unit> OnDispose()
@@ -135,30 +147,52 @@ namespace Rayn.Services.Realtime
 
         private void OnDisposeWebSocketClient(IWebSocketClient client)
         {
-            lock (_lock)
+            lock (_entryAndExitLock)
             {
                 _webSocketClients = _webSocketClients.Remove(client);
 
                 if (_webSocketClients == ImmutableList<IWebSocketClient>.Empty)
                 {
-                    this.Dispose();
+                    this.DisposeCore();
                 }
             }
         }
 
-        public void BroadCast(byte[] data)
+        private void BroadCast(byte[] data)
         {
             _channelWriter.TryWrite(data);
         }
 
-        public void Dispose()
+        private void DisposeCore()
         {
-            if (Interlocked.Increment(ref _isStopRequested) == 1)
+            if (Interlocked.Increment(ref _isDisposed) == 1)
             {
                 _cancellationTokenSource.Cancel();
                 _onDisposeSubject.OnNext(Unit.Default);
                 _onDisposeSubject.OnCompleted();
                 _onDisposeSubject.Dispose();
+
+                var sockets = _webSocketClients.Data;
+
+                foreach (var socket in sockets)
+                {
+                    socket.Dispose();
+                }
+
+                _webSocketClients = ImmutableList<IWebSocketClient>.Empty;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_isDisposed != 0)
+            {
+                return;
+            }
+
+            lock (_entryAndExitLock)
+            {
+                this.DisposeCore();
             }
         }
     }

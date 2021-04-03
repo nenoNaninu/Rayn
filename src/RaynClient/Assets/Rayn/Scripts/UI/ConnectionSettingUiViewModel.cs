@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using UniRx;
 using Utf8Json;
 using Utf8Json.Resolvers;
 

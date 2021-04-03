@@ -43,9 +43,12 @@ namespace Rayn.Services.Realtime
 
                 newRoom
                     .OnDispose()
-                    .Subscribe(_ =>
+                    .Subscribe(async _ =>
                     {
-                        _threadRoomList.Remove(newRoom);
+                        using (await _asyncLock.LockAsync())
+                        {
+                            _threadRoomList.Remove(newRoom);
+                        }
                     });
 
                 return newRoom;

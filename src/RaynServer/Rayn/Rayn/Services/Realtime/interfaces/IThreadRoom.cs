@@ -9,7 +9,7 @@ namespace Rayn.Services.Realtime
     public interface IThreadRoom : IDisposable
     {
         ThreadModel ThreadModel { get; }
-        ValueTask AddAsync(IWebSocketClient newcomer);
+        ValueTask<bool> AddAsync(IWebSocketClient newcomer);
 
         IObservable<Unit> OnDispose();
     }
