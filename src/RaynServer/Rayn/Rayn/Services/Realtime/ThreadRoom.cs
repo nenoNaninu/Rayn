@@ -128,9 +128,16 @@ namespace Rayn.Services.Realtime
 
             newcomer.BinaryMessageReceived
                 //.Select(x => (bytes: x, model: JsonSerializer.Deserialize<MessageModel>(x)))
-                .Subscribe(x => { 
+                .Subscribe(x =>
+                {
                     var model = JsonSerializer.Deserialize<MessageModel>(x);
-                    if (model != null && model.PingPong)
+
+                    if (model == null)
+                    {
+                        return;
+                    }
+
+                    if (model.PingPong)
                     {
                         newcomer.Send(PingPongBytes);
                     }
