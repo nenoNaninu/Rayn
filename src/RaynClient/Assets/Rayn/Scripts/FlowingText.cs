@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 namespace Rayn
 {
-    // �A���J�[��canvas�̒��S�ɂ��邱�Ƒz�肵�ď����Ă�B
     public class FlowingText : MonoBehaviour
     {
         private string _text;

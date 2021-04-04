@@ -19,8 +19,6 @@ namespace Rayn
         {
             _rectTransform.position += new Vector3(eventData.delta.x, eventData.delta.y, 0);
         }
-
-
     }
 }
 

@@ -14,7 +14,6 @@ namespace Rayn
             _parent = parent;
         }
 
-
         protected override FlowingText CreateInstance()
         {
             var flowingText = Object.Instantiate(_flowingTextPrefab);
