@@ -24,7 +24,7 @@ namespace Rayn.Services.Database
             }
         }
 
-        public async ValueTask InsertCommentAsync(byte[] message, Guid threadId, DateTime writtenTime)
+        public async ValueTask InsertCommentAsync(string message, Guid threadId, DateTime writtenTime)
         {
             using (await _asyncLock.LockAsync())
             {

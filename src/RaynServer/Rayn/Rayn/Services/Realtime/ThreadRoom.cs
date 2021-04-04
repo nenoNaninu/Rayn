@@ -2,6 +2,7 @@
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Channels;
@@ -38,7 +39,6 @@ namespace Rayn.Services.Realtime
         private readonly ILogger<IThreadRoom> _logger;
         private readonly Task _broadcastTask;
         private readonly object _entryAndExitLock = new();
-        private readonly AsyncLock _asyncLock = new();
 
         private ImmutableList<IWebSocketClient> _webSocketClients = ImmutableList<IWebSocketClient>.Empty;
         private int _isDisposed = 0;
@@ -113,7 +113,8 @@ namespace Rayn.Services.Realtime
 
             foreach (var comment in pastComments)
             {
-                newcomer.Send(comment.MessageBytes());
+                var model = new MessageModel(comment.Message, false);
+                newcomer.Send(JsonSerializer.SerializeToUtf8Bytes(model));
             }
 
             lock (_entryAndExitLock)
@@ -127,7 +128,6 @@ namespace Rayn.Services.Realtime
             }
 
             newcomer.BinaryMessageReceived
-                //.Select(x => (bytes: x, model: JsonSerializer.Deserialize<MessageModel>(x)))
                 .Subscribe(x =>
                 {
                     var model = JsonSerializer.Deserialize<MessageModel>(x);
@@ -145,7 +145,7 @@ namespace Rayn.Services.Realtime
                     {
                         var timeStamp = DateTime.UtcNow;
                         this.BroadCast(x);
-                        _commentAccessor.InsertCommentAsync(x, this.ThreadModel.ThreadId, timeStamp).Forget(_logger);
+                        _commentAccessor.InsertCommentAsync(model.Message, this.ThreadModel.ThreadId, timeStamp).Forget(_logger);
                     }
                 });
 

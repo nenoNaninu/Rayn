@@ -34,11 +34,11 @@ namespace Rayn.Services.Database.MySql
             return searchResult.ToArray();
         }
 
-        public async ValueTask InsertCommentAsync(byte[] message, Guid threadId, DateTime writtenTime)
+        public async ValueTask InsertCommentAsync(string message, Guid threadId, DateTime writtenTime)
         {
             using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
 
-            await conn.ExecuteAsync(InsertQuery, new { ThreadId = threadId, WrittenTime = writtenTime, Message = Encoding.UTF8.GetString(message) });
+            await conn.ExecuteAsync(InsertQuery, new { ThreadId = threadId, WrittenTime = writtenTime, Message = message });
         }
     }
 }

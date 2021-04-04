@@ -36,9 +36,9 @@ namespace Rayn.Services.Database
             return comments;
         }
 
-        public void InsertComment(byte[] message, DateTime writtenTime, Guid threadId)
+        public void InsertComment(string message, DateTime writtenTime, Guid threadId)
         {
-            var commentModel = new CommentModel(_commentId, threadId, writtenTime, Encoding.UTF8.GetString(message));
+            var commentModel = new CommentModel(_commentId, threadId, writtenTime, message);
             _commentDataStore.Add(commentModel);
             _commentId++;
         }
