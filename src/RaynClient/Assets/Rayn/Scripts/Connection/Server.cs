@@ -24,7 +24,7 @@ namespace Rayn
         {
             try
             {
-                var clientFactory = this.CreateClientFactory(proxy);
+                var clientFactory = CreateClientFactory(proxy);
 
                 _socket = new WebSocketClient(new Uri(url), new BinaryOnlySender(), logger: new UnityConsoleLogger(), clientFactory: clientFactory);
                 await _socket.ConnectAsync();
@@ -107,7 +107,7 @@ namespace Rayn
             }
         }
 
-        private Func<ClientWebSocket> CreateClientFactory(string proxy)
+        private static Func<ClientWebSocket> CreateClientFactory(string proxy)
         {
             if (string.IsNullOrEmpty(proxy))
             {
