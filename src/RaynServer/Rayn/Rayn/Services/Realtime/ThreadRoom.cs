@@ -130,22 +130,29 @@ namespace Rayn.Services.Realtime
             newcomer.BinaryMessageReceived
                 .Subscribe(x =>
                 {
-                    var model = JsonSerializer.Deserialize<MessageModel>(x);
+                    try
+                    {
+                        var model = JsonSerializer.Deserialize<MessageModel>(x);
 
-                    if (model == null)
-                    {
-                        return;
-                    }
+                        if (model == null)
+                        {
+                            return;
+                        }
 
-                    if (model.PingPong)
-                    {
-                        newcomer.Send(PingPongBytes);
+                        if (model.PingPong)
+                        {
+                            newcomer.Send(PingPongBytes);
+                        }
+                        else
+                        {
+                            var timeStamp = DateTime.UtcNow;
+                            this.BroadCast(x);
+                            _commentAccessor.InsertCommentAsync(model.Message, this.ThreadModel.ThreadId, timeStamp).Forget(_logger);
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
-                        var timeStamp = DateTime.UtcNow;
-                        this.BroadCast(x);
-                        _commentAccessor.InsertCommentAsync(model.Message, this.ThreadModel.ThreadId, timeStamp).Forget(_logger);
+                        _logger.LogError(e, $"[BinaryMessageReceived.Subscribe] {e.Message}");
                     }
                 });
 
