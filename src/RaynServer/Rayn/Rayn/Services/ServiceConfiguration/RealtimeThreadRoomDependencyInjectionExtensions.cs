@@ -11,6 +11,7 @@ namespace Rayn.Services.ServiceConfiguration
             services.AddSingleton<IThreadRoomStore, ThreadRoomStore>();
             services.AddSingleton<IThreadRoomCreator, DefaultThreadRoomCreator>();
             services.AddSingleton<IPollingUserConnectionStore, HttpPollingUserConnectionStore>();
+            services.AddSingleton<IPollingUserConnectionCreator, HttpPollingUserConnectionCreator>();
         }
     }
 }

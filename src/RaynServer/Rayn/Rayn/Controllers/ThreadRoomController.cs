@@ -16,12 +16,14 @@ namespace Rayn.Controllers
         private readonly IThreadDbReader _threadDbReader;
         private readonly IPollingUserConnectionStore _pollingUserConnectionStore;
         private readonly IThreadRoomStore _threadRoomStore;
+        private readonly IPollingUserConnectionCreator _pollingUserConnectionCreator;
 
-        public ThreadRoomController(IThreadDbReader threadDbReader, IPollingUserConnectionStore pollingUserConnectionStore, IThreadRoomStore threadRoomStore)
+        public ThreadRoomController(IThreadDbReader threadDbReader, IPollingUserConnectionStore pollingUserConnectionStore, IThreadRoomStore threadRoomStore, IPollingUserConnectionCreator pollingUserConnectionCreator)
         {
             _threadDbReader = threadDbReader;
             _pollingUserConnectionStore = pollingUserConnectionStore;
             _threadRoomStore = threadRoomStore;
+            _pollingUserConnectionCreator = pollingUserConnectionCreator;
         }
 
         [HttpGet]
@@ -73,13 +75,13 @@ namespace Rayn.Controllers
 
             if (method == null || method != "polling")
             {
+                // websocket
                 return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, UrlUtility.WebsSocketRealtimeThreadRoomUrl(host, threadGuid, ownerGuid));
             }
 
+            // ポーリングの時は接続先を要求された時点でroomに仲間入りさせておく。
+            var connection = _pollingUserConnectionCreator.Create(threadGuid, ownerGuid);
 
-            IPollingUserConnection connection = new HttpPollingUserConnection();
-
-            _pollingUserConnectionStore.Add(ownerGuid, connection);
             var threadRoom = await _threadRoomStore.FetchThreadRoomAsync(threadGuid);
             await threadRoom.AddAsync(connection);
 
