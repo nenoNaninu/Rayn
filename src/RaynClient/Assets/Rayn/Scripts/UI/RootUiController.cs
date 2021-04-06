@@ -78,8 +78,8 @@ namespace Rayn
         {
             try
             {
-                await _viewModel.ConnectToServerAsync(_urlInputField.text, "http://proxy.uec.ac.jp:8080", this.gameObject.GetCancellationTokenOnDestroy());
-                //await _viewModel.ConnectToServerAsync(_urlInputField.text, _proxyInputField.text , this.gameObject.GetCancellationTokenOnDestroy());
+                //await _viewModel.ConnectToServerAsync(_urlInputField.text, "http://proxy.uec.ac.jp:8080", this.gameObject.GetCancellationTokenOnDestroy());
+                await _viewModel.ConnectToServerAsync(_urlInputField.text, _proxyInputField.text, this.gameObject.GetCancellationTokenOnDestroy());
                 _connectionStatusText.text = "Connect";
             }
             catch (Exception e)

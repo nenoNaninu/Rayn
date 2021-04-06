@@ -30,8 +30,6 @@ namespace Rayn
 
             var server = await ServiceLocator.GetServiceAsync<IServer<string>>(_cancellationToken);
 
-            await server.WaitUntilConnectAsync(_cancellationToken);
-
             _messageReceiver = await server.GetMessageReceiverAsync(_cancellationToken);
 
             _messageReceiver

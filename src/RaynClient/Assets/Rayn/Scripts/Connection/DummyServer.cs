@@ -51,7 +51,7 @@ namespace Rayn
         {
         }
 
-        public UniTask CloseAsync(CancellationToken cajCancellationToken)
+        public UniTask CloseAsync(CancellationToken cancellationToken)
         {
             return UniTask.CompletedTask;
         }
@@ -61,7 +61,7 @@ namespace Rayn
             return _waitConnectionCompletionSource.Task;
         }
 
-        public async UniTask<IMessageReceiver<string>> ConnectAsync(string url, string proxy, CancellationToken cancellationToken = default)
+        public async UniTask<IMessageReceiver<string>> GenerateMessageReceiverAsync(string url, string proxy, CancellationToken cancellationToken)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(2f), cancellationToken: cancellationToken);
 
@@ -79,6 +79,10 @@ namespace Rayn
         {
             await _getSocketCompletionSource.Task.AttachExternalCancellation(cancellationToken);
             return _messageReceiver;
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

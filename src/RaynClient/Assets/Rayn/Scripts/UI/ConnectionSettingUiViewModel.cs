@@ -21,23 +21,23 @@ namespace Rayn
 
         public async UniTask ConnectToServerAsync(string url, string proxy, CancellationToken cancellationToken)
         {
-            var httpClient = string.IsNullOrEmpty(proxy)
-                ? new HttpClient()
-                : new HttpClient(new HttpClientHandler() { UseProxy = true, Proxy = new WebProxy(proxy) });
+            //var httpClient = string.IsNullOrEmpty(proxy)
+            //    ? new HttpClient()
+            //    : new HttpClient(new HttpClientHandler() { UseProxy = true, Proxy = new WebProxy(proxy) });
 
-            var response = await httpClient.GetAsync(url, cancellationToken);
+            //var response = await httpClient.GetAsync(url, cancellationToken);
 
-            var contentBytes = await response.Content.ReadAsByteArrayAsync();
+            //var contentBytes = await response.Content.ReadAsByteArrayAsync();
 
-            var content = JsonSerializer.Deserialize<StreamerConnectionResponse>(contentBytes, StandardResolver.CamelCase);
+            //var content = JsonSerializer.Deserialize<StreamerConnectionResponse>(contentBytes, StandardResolver.CamelCase);
 
-            if (content.RequestStatus != StreamerConnectionRequestStatus.Ok)
-            {
-                Debug.WriteLine(content.RealtimeThreadRoomUrl);
-                Debug.WriteLine(content.RequestStatus);
-            }
+            //if (content.RequestStatus != StreamerConnectionRequestStatus.Ok)
+            //{
+            //    Debug.WriteLine(content.RealtimeThreadRoomUrl);
+            //    Debug.WriteLine(content.RequestStatus);
+            //} 
 
-            await _server.ConnectAsync(content.RealtimeThreadRoomUrl, proxy, cancellationToken);
+            await _server.GenerateMessageReceiverAsync(url, proxy, cancellationToken);
         }
 
         public async UniTask CloseAsync(CancellationToken cancellationToken)
