@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Rayn.Services.Realtime
+namespace Rayn.Services.Realtime.Interfaces
 {
     public interface IThreadRoomStore
     {

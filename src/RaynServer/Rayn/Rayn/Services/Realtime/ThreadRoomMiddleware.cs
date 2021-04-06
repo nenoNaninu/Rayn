@@ -4,13 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Rayn.Services.Realtime.Interfaces;
 using RxWebSocket;
 using RxWebSocket.Extensions;
 using RxWebSocket.Senders;
 
 namespace Rayn.Services.Realtime
 {
-    public class ThreadRoomMiddleware
+    public sealed class ThreadRoomMiddleware
     {
         // 短絡させるのでいらない。
         //private readonly RequestDelegate _next;

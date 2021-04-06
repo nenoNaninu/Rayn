@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Rayn.Services.Database.Interfaces;
+using Rayn.Services.Realtime.Interfaces;
 using RxWebSocket.Threading;
 
 namespace Rayn.Services.Realtime
 {
     // シングルトン想定
-    public class ThreadRoomStore : IThreadRoomStore
-    {
+    public sealed class ThreadRoomStore : IThreadRoomStore
+    { 
         private readonly AsyncLock _asyncLock = new();
         // AsyncLockかけるから普通のListでいいや、という。
         private readonly List<IThreadRoom> _threadRoomList = new();

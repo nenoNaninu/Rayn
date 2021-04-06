@@ -2,10 +2,11 @@
 using Microsoft.Extensions.Logging;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Database.Models;
+using Rayn.Services.Realtime.Interfaces;
 
 namespace Rayn.Services.Realtime
 {
-    public class DefaultThreadRoomCreator : IThreadRoomCreator
+    public sealed class DefaultThreadRoomCreator : IThreadRoomCreator
     {
         private readonly ICommentAccessor _commentAccessor;
         private readonly ILogger<IThreadRoom> _logger;

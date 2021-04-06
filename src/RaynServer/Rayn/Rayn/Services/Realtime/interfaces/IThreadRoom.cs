@@ -4,13 +4,15 @@ using System.Threading.Tasks;
 using Rayn.Services.Database.Models;
 using RxWebSocket;
 
-namespace Rayn.Services.Realtime
+namespace Rayn.Services.Realtime.Interfaces
 {
     public interface IThreadRoom : IDisposable
     {
         ThreadModel ThreadModel { get; }
-        ValueTask<bool> AddAsync(IWebSocketClient newcomer);
 
+        // AddAsync(IUserConnection newcomer)みたいな感じで統一したほうがキレイには感じるが...。ルームの中で設定いろいろしたいので悩ましい。
+        ValueTask<bool> AddAsync(IWebSocketClient newcomer);
+        ValueTask<bool> AddAsync(IPollingUserConnection newcomer);
         IObservable<Unit> OnDispose();
     }
 }
