@@ -167,6 +167,21 @@ namespace Rayn.Services.Realtime
             return true;
         }
 
+        public  ValueTask<bool> AddAsync(IPollingUserConnection newcomer)
+        {
+            lock (_entryAndExitLock)
+            {
+                if (_isDisposed != 0)
+                {
+                    return ValueTask.FromResult(false);
+                }
+
+                _userConnections = _userConnections.Add(newcomer);
+
+                return ValueTask.FromResult(true);
+            }
+        }
+
         public IObservable<Unit> OnDispose()
         {
             return _onDisposeSubject.AsObservable();

@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Rayn.Models;
 using Rayn.Models.ApiResponse;
 using Rayn.Services.Database.Interfaces;
+using Rayn.Services.Realtime;
+using Rayn.Services.Realtime.Interfaces;
 using Rayn.Services.Url;
 
 namespace Rayn.Controllers
@@ -11,10 +14,14 @@ namespace Rayn.Controllers
     public class ThreadRoomController : Controller
     {
         private readonly IThreadDbReader _threadDbReader;
+        private readonly IPollingUserConnectionStore _pollingUserConnectionStore;
+        private readonly IThreadRoomStore _threadRoomStore;
 
-        public ThreadRoomController(IThreadDbReader threadDbReader)
+        public ThreadRoomController(IThreadDbReader threadDbReader, IPollingUserConnectionStore pollingUserConnectionStore, IThreadRoomStore threadRoomStore)
         {
             _threadDbReader = threadDbReader;
+            _pollingUserConnectionStore = pollingUserConnectionStore;
+            _threadRoomStore = threadRoomStore;
         }
 
         [HttpGet]
@@ -43,9 +50,9 @@ namespace Rayn.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<StreamerConnectionResponse>> Streamer(string threadId, string ownerId)
+        public async Task<ActionResult<StreamerConnectionResponse>> Streamer(string threadId, string ownerId, string method)
         {
-            if (threadId == null || !Guid.TryParse(threadId, out var threadGuid) || !Guid.TryParse(ownerId, out var ownerGuid))
+            if (threadId == null || ownerId == null || !Guid.TryParse(threadId, out var threadGuid) || !Guid.TryParse(ownerId, out var ownerGuid))
             {
                 return new StreamerConnectionResponse(StreamerConnectionRequestStatus.BadRequest, "");
             }
@@ -62,7 +69,36 @@ namespace Rayn.Controllers
                 return new StreamerConnectionResponse(StreamerConnectionRequestStatus.BadRequest, "");
             }
 
-            return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, UrlUtility.RealtimeThreadRoomUrl(HttpContext.Request.Host.Value, thread.ThreadId, ownerGuid));
+            var host = HttpContext.Request.Host.Value;
+
+            if (method == null || method != "polling")
+            {
+                return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, UrlUtility.WebsSocketRealtimeThreadRoomUrl(host, threadGuid, ownerGuid));
+            }
+
+
+            IPollingUserConnection connection = new HttpPollingUserConnection();
+
+            _pollingUserConnectionStore.Add(ownerGuid, connection);
+            var threadRoom = await _threadRoomStore.FetchThreadRoomAsync(threadGuid);
+            await threadRoom.AddAsync(connection);
+
+            return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, UrlUtility.PollingMessageUrl(host, threadGuid, ownerGuid));
+        }
+
+
+        [HttpGet]
+        public IReadOnlyList<string> FetchMessages(string threadId, string ownerId)
+        {
+            // とりあえずownerIdだけで引っ張ってくる。
+            if (threadId == null || ownerId == null || !Guid.TryParse(threadId, out var threadGuid) || !Guid.TryParse(ownerId, out var ownerGuid))
+            {
+                return Array.Empty<string>();
+            }
+
+            var connection = _pollingUserConnectionStore.FetchPollingUserConnection(ownerGuid);
+
+            return connection?.ReadSentMessages() ?? Array.Empty<string>();
         }
 
         [HttpGet]
