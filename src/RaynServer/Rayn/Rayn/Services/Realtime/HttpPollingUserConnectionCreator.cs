@@ -14,9 +14,15 @@ namespace Rayn.Services.Realtime
 
         public IPollingUserConnection Create(Guid threadId, Guid ownerId)
         {
-            var pollingConnection = new HttpPollingUserConnection();
-            _pollingUserConnectionStore.Add(ownerId, pollingConnection);
-            return pollingConnection;
+            var connection = _pollingUserConnectionStore.FetchPollingUserConnection(ownerId);
+            if (connection != null)
+            {
+                return connection;
+            }
+
+            var newConnection = new HttpPollingUserConnection();
+            _pollingUserConnectionStore.Add(ownerId, newConnection);
+            return newConnection;
         }
     }
 }
