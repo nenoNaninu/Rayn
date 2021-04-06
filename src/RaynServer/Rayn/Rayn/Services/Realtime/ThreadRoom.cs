@@ -2,7 +2,6 @@
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Channels;
@@ -10,13 +9,14 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Database.Models;
+using Rayn.Services.Realtime.Interfaces;
 using Rayn.Services.Realtime.Models;
 using Rayn.Services.Threading;
 using RxWebSocket;
 
 namespace Rayn.Services.Realtime
 {
-    public class ThreadRoom : IThreadRoom
+    public sealed class ThreadRoom : IThreadRoom
     {
         public ThreadModel ThreadModel { get; }
 
@@ -40,7 +40,7 @@ namespace Rayn.Services.Realtime
         private readonly Task _broadcastTask;
         private readonly object _entryAndExitLock = new();
 
-        private ImmutableList<IWebSocketClient> _webSocketClients = ImmutableList<IWebSocketClient>.Empty;
+        private ImmutableList<IUserConnection> _userConnections = ImmutableList<IUserConnection>.Empty;
         private int _isDisposed = 0;
 
 
@@ -65,7 +65,7 @@ namespace Rayn.Services.Realtime
                     {
                         try
                         {
-                            var clients = _webSocketClients.Data;
+                            var clients = _userConnections.Data;
 
                             // ここがあるからImmutableList使ってる。
                             foreach (var client in clients)
@@ -100,7 +100,7 @@ namespace Rayn.Services.Realtime
             }
         }
 
-        public static byte[] PingPongBytes = JsonSerializer.SerializeToUtf8Bytes(new MessageModel() { Message = null, PingPong = true });
+        public static byte[] PingPongBytes { get; } = JsonSerializer.SerializeToUtf8Bytes(new MessageModel(null, true));
 
         public async ValueTask<bool> AddAsync(IWebSocketClient newcomer)
         {
@@ -110,6 +110,8 @@ namespace Rayn.Services.Realtime
             // 3.ソケットが切断した時の設定
 
             var pastComments = await _commentAccessor.ReadCommentAsync(this.ThreadModel.ThreadId);
+
+            IUserConnection newComerConnection = new WebSocketUserConnection(newcomer);
 
             foreach (var comment in pastComments)
             {
@@ -124,7 +126,7 @@ namespace Rayn.Services.Realtime
                     return false;
                 }
 
-                _webSocketClients = _webSocketClients.Add(newcomer);
+                _userConnections = _userConnections.Add(newComerConnection);
             }
 
             newcomer.BinaryMessageReceived
@@ -159,7 +161,7 @@ namespace Rayn.Services.Realtime
             newcomer.OnDispose
                 .Subscribe(x =>
                 {
-                    this.OnDisposeWebSocketClient(newcomer);
+                    this.OnDisposeWebSocketClient(newComerConnection);
                 });
 
             return true;
@@ -170,13 +172,13 @@ namespace Rayn.Services.Realtime
             return _onDisposeSubject.AsObservable();
         }
 
-        private void OnDisposeWebSocketClient(IWebSocketClient client)
+        private void OnDisposeWebSocketClient(IUserConnection client)
         {
             lock (_entryAndExitLock)
             {
-                _webSocketClients = _webSocketClients.Remove(client);
+                _userConnections = _userConnections.Remove(client);
 
-                if (_webSocketClients == ImmutableList<IWebSocketClient>.Empty)
+                if (_userConnections == ImmutableList<IUserConnection>.Empty)
                 {
                     this.DisposeCore();
                 }
@@ -197,14 +199,14 @@ namespace Rayn.Services.Realtime
                 _onDisposeSubject.OnCompleted();
                 _onDisposeSubject.Dispose();
 
-                var sockets = _webSocketClients.Data;
+                var sockets = _userConnections.Data;
 
                 foreach (var socket in sockets)
                 {
                     socket.Dispose();
                 }
 
-                _webSocketClients = ImmutableList<IWebSocketClient>.Empty;
+                _userConnections = ImmutableList<IUserConnection>.Empty;
             }
         }
 

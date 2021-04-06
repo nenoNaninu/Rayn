@@ -2,7 +2,7 @@
 
 namespace Rayn.Services.Threading
 {
-    public class ImmutableList<T>
+    public sealed class ImmutableList<T>
     {
         public static readonly ImmutableList<T> Empty = new ();
         private readonly T[] _data;

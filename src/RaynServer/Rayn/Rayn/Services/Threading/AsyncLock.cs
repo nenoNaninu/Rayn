@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Rayn.Services.Threading
 {
-    public class AsyncLock
+    public sealed class AsyncLock
     {
 
         private readonly SemaphoreSlim _semaphore;

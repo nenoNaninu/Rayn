@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Rayn.Services.Database.Configuration;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Realtime;
+using Rayn.Services.Realtime.Interfaces;
 using Rayn.Services.ServiceConfiguration;
 
 namespace Rayn

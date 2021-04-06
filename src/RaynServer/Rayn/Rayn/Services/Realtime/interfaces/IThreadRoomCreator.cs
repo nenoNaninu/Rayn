@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Rayn.Services.Database.Models;
 
-namespace Rayn.Services.Realtime
+namespace Rayn.Services.Realtime.Interfaces
 {
     public interface IThreadRoomCreator
     {

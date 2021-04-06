@@ -109,7 +109,6 @@ namespace Rayn
 
         private static Func<ClientWebSocket> CreateClientFactory(string proxy)
         {
-            return null;
             if (string.IsNullOrEmpty(proxy))
             {
                 return null;
@@ -120,7 +119,7 @@ namespace Rayn
                 Options =
                 {
                     KeepAliveInterval = TimeSpan.FromSeconds(5),
-                    Proxy = new WebProxy(new Uri(proxy),true)
+                    Proxy = new WebProxy(proxy)
                 }
             };
         }

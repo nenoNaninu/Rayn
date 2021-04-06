@@ -4,7 +4,6 @@ namespace Rayn.Services.Realtime.Models
 {
     public class MessageModel
     {
-
         public string Message { get; set; }
 
         /// <summary>

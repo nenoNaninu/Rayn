@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Rayn.Services.Realtime.Interfaces;
 
 namespace Rayn.Services.Realtime
 {
