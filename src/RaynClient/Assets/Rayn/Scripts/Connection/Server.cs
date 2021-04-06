@@ -139,9 +139,9 @@ namespace Rayn
 
             private readonly Subject<string> _onMessageSubject = new Subject<string>();
 
-            private readonly Channel<string> _channel = Channel.CreateSingleConsumerUnbounded<string>();
-            private readonly ChannelWriter<string> _channelWriter;
-            private readonly ChannelReader<string> _channelReader;
+            private readonly Channel<MessageWithInterval> _channel = Channel.CreateSingleConsumerUnbounded<MessageWithInterval>();
+            private readonly ChannelWriter<MessageWithInterval> _channelWriter;
+            private readonly ChannelReader<MessageWithInterval> _channelReader;
 
             public PollingMessageReceiver(Server parent, string url, CancellationToken cancellationToken)
             {
@@ -152,12 +152,37 @@ namespace Rayn
                 _channelWriter = _channel.Writer;
 
                 this.Polling(url, cancellationToken).Forget();
+                this.OnNextMessageLoop(cancellationToken).Forget();
+            }
+
+            private readonly struct MessageWithInterval
+            {
+                public readonly string Message;
+                public readonly int Interval;
+
+                public MessageWithInterval(string message, int interval)
+                {
+                    Message = message;
+                    Interval = interval;
+                }
+            }
+
+            private async UniTask OnNextMessageLoop(CancellationToken cancellationToken)
+            {
+                while (!cancellationToken.IsCancellationRequested && await _channelReader.WaitToReadAsync(cancellationToken))
+                {
+                    while (!cancellationToken.IsCancellationRequested && _channelReader.TryRead(out var item))
+                    {
+                        _onMessageSubject.OnNext(item.Message);
+                        await UniTask.Delay(item.Interval, cancellationToken: cancellationToken);
+                    }
+                }
             }
 
             /// <summary>
             /// 5秒間毎にリクエスト飛ばす。
             /// </summary>
-            private async UniTaskVoid Polling(string url, CancellationToken cancellationToken)
+            private async UniTask Polling(string url, CancellationToken cancellationToken)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(10), cancellationToken: cancellationToken);
 
@@ -171,9 +196,16 @@ namespace Rayn
 
                         string[] messages = JsonSerializer.Deserialize<string[]>(contentBytes, StandardResolver.CamelCase);
 
-                        foreach (string message in messages)
+                        if (messages.Length != 0)
                         {
-                            _channelWriter.TryWrite(message);
+                            int length = messages.Length;
+
+                            int interval = 5000 / length; // ミリ秒
+
+                            foreach (string message in messages)
+                            {
+                                _channelWriter.TryWrite(new MessageWithInterval(message, interval));
+                            }
                         }
 
                         await UniTask.Delay(TimeSpan.FromSeconds(5), cancellationToken: cancellationToken);
@@ -191,9 +223,7 @@ namespace Rayn
 
             public IObservable<string> OnMessage()
             {
-                return Observable.Interval(TimeSpan.FromMilliseconds(300))
-                    .Select(_ => _channelReader.TryRead(out string item) ? item : null)
-                    .Where(x => x != null);
+                return _onMessageSubject.AsObservable();
             }
         }
 
