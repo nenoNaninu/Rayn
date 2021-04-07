@@ -1053,6 +1053,14 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 36568217323905117, guid: d6000fcb384e379469c9c06a8ddf47bb, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 36568217323905117, guid: d6000fcb384e379469c9c06a8ddf47bb, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1360570861528348868, guid: d6000fcb384e379469c9c06a8ddf47bb, type: 3}
       propertyPath: m_Name
       value: RootCanvas

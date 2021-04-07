@@ -101,8 +101,8 @@ namespace Rayn
 
             var startTime = Time.time; // •b
 
-            var min = new Vector3(1, 0, 1);
-            var normal = new Vector3(1, 1, 1);
+            var min = new Vector3(1f, 0, 1);
+            var normal = new Vector3(1f, 1f, 1);
 
             current.localScale = normal;
             next.localScale = min;

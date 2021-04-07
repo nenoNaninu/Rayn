@@ -25,15 +25,25 @@ dotnet tool install -g Microsoft.Web.LibraryManager.Cli
 }
 ```
 
-InMemoryModeをtrueにしておけばインメモリで動くためデータベース用意してなくてもOK。その他環境では環境変数などGenericHostが拾ってくれるところに`DatabaseConfig`は設定。
+InMemoryModeをtrueにしておけばインメモリで動くためデータベース用意してなくてもOK。その他環境では環境変数などGenericHostが拾ってくれるところに`DatabaseConfig`を設定。ユーザーシークレットではなく環境変数に設定する場合は以下みたいな感じ。
+
+```
+export DatabaseConfig__ConnectionString="Server=...; Port=..."
+export DatabaseConfig__InMemoryMode="false"
+```
 
 # Client(Unity 2020.3.1)
 Windows/Mac両対応
 
 ## Require
 このリポジトリには含まれていないので、それぞれ.unitypackage落としてきてください。
--  [neuecc/UniRx 7.1.0](https://github.com/neuecc/UniRx/releases/tag/7.1.0)
--  [neuecc/Utf8Json](https://github.com/neuecc/Utf8Json/releases/tag/v1.3.7)
--  [Cysharp/UniTask 2.2.4](https://github.com/Cysharp/UniTask/releases/tag/2.2.4)
--  [kirurobo/UniWindowController 0.8.0](https://github.com/kirurobo/UniWindowController/releases/tag/v0.8.0)
--  [nenoNaninu/RxWebSocket 2.1.6](https://github.com/nenoNaninu/RxWebSocket/releases/tag/2.1.6)
+- OSS
+  -  [neuecc/UniRx 7.1.0](https://github.com/neuecc/UniRx/releases/tag/7.1.0)
+  -  [neuecc/Utf8Json](https://github.com/neuecc/Utf8Json/releases/tag/v1.3.7)
+  -  [Cysharp/UniTask 2.2.4](https://github.com/Cysharp/UniTask/releases/tag/2.2.4)
+  -  [kirurobo/UniWindowController 0.8.0](https://github.com/kirurobo/UniWindowController/releases/tag/v0.8.0)
+  -  [nenoNaninu/RxWebSocket 2.1.6](https://github.com/nenoNaninu/RxWebSocket/releases/tag/2.1.6)
+-  Asset store
+   - [Modern UI Pack](https://assetstore.unity.com/packages/tools/gui/modern-ui-pack-150824?locale=ja-JP)
+
+## ビルド上の注意
