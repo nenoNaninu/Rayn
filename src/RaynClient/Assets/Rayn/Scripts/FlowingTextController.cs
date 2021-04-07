@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -30,13 +31,20 @@ namespace Rayn
 
             var server = await ServiceLocator.GetServiceAsync<IServer<string>>(_cancellationToken);
 
-            _messageReceiver = await server.GetMessageReceiverAsync(_cancellationToken);
+            try
+            {
+                _messageReceiver = await server.GetMessageReceiverAsync(_cancellationToken);
 
-            _messageReceiver
-                .OnMessage()
-                .ObserveOnMainThread()
-                .Subscribe(x => { this.FlowMessage(x).Forget(); })
-                .AddTo(this);
+                _messageReceiver
+                    .OnMessage()
+                    .ObserveOnMainThread()
+                    .Subscribe(x => { this.FlowMessage(x).Forget(); })
+                    .AddTo(this);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         private async UniTask FlowMessage(string message)

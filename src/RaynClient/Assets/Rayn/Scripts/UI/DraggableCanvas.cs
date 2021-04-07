@@ -15,7 +15,7 @@ namespace Rayn
 
         public void OnDrag(PointerEventData eventData)
         {
-            _rectTransform.position += new Vector3(eventData.delta.x, eventData.delta.y, 0);
+            _rectTransform.anchoredPosition += new Vector2(eventData.position.x, eventData.position.y);
         }
     }
 }

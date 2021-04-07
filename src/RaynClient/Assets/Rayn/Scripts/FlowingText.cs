@@ -36,12 +36,12 @@ namespace Rayn
             _textMesh.fontSize = fontSize;
             _textSize = new Vector2(_textMesh.preferredWidth, _textMesh.preferredHeight) * 1.1f;
 
-            _rectTransform.anchoredPosition = new Vector3(_canvasResolution.x / 2 + _textSize.x / 2, Random.Range(-_canvasResolution.y / 2f, _canvasResolution.y / 2f) * 0.8f, 0);
+            _rectTransform.anchoredPosition = new Vector3((_canvasResolution.x / 2 + _textSize.x / 2) * 1.5f, Random.Range(-_canvasResolution.y / 2f, _canvasResolution.y / 2f) * 0.8f, 0);
         }
 
         public async UniTask PlayAnimation(CancellationToken cancellationToken)
         {
-            var bound = (-_canvasResolution.x / 2 - _textSize.x / 2) * 1.1;
+            var bound = (-_canvasResolution.x / 2 - _textSize.x / 2) * 1.5f;
             while (!cancellationToken.IsCancellationRequested)
             {
                 if (_rectTransform.anchoredPosition.x < bound)
