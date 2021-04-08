@@ -162,7 +162,7 @@ namespace Rayn
             {
                 Debug.Log("Catch Exception!!!!!!");
                 Debug.LogError(e.Message);
-                _connectionStatusText.text = "Exception occur!";
+                _connectionStatusText.text = $"[Exception] {e.Message}";
             }
         }
 
