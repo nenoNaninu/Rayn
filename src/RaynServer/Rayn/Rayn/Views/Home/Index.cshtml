@@ -24,11 +24,17 @@
                         </div>
                     </div>
 
+
                     <p class="has-text-centered">
                         <a class="button is-medium is-info is-outlined" asp-controller="Home" asp-action="Usage">
                             詳しい使い方
                         </a>
                     </p>
+
+                    <div class="has-text-centered">
+                        <span class="has-text-danger">2021/4/8 Ver.0.0.4 リリース</span> ダウンロードは<a href="https://github.com/nenoNaninu/Rayn/releases" class="has-text-info">こちら</a>
+                    </div>
+
                 </div>
                 <div class="column is-4 is-offset-1">
                     <div class="card ">
@@ -72,7 +78,7 @@
     <script>
         let date = new Date();
         let dateStr = date.getFullYear() + "-" + String((date.getMonth() + 1)).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
-        console.log(dateStr);
+        //console.log(dateStr);
         document.getElementById('BeginningDate').value = dateStr;
     </script>
 }

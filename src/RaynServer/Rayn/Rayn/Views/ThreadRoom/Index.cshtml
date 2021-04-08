@@ -89,11 +89,11 @@
                     };
 
                     socket.onmessage = function(event) {
-                        console.log("on message!!!!!!!!!!!!!!!!!");
-                        console.log(event.data);
+                        console.log("on message!");
+                        //console.log(event.data);
 
                         const jsonContent = JSON.parse(decoder.decode(event.data));
-                        console.log(jsonContent);
+                        //console.log(jsonContent);
 
                         if (jsonContent["PingPong"] === false) {
                             jsonContent["id"] = messageCount;
@@ -118,9 +118,9 @@
 
                 OnSend: function () {
                     if (this.message) {
-                        console.log("Sending: " + this.message);
+                        //console.log("Sending: " + this.message);
                         const jsonBytes = JSON.stringify({ "Message": this.message, "PingPong": false });
-                        console.log(jsonBytes);
+                        //console.log(jsonBytes);
                         socket.send(encoder.encode(jsonBytes));
                         this.message = "";
                     }
