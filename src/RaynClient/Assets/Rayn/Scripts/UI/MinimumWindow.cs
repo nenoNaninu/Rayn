@@ -7,12 +7,9 @@ public class MinimumWindow : MonoBehaviour
     private DoubleClickObservable _doubleClickObservable;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         _doubleClickObservable = this.GetComponentInChildren<DoubleClickObservable>();
-
-        OnDoubleClick()
-            .Subscribe(_ => Debug.Log("double click!"));
     }
 
     public IObservable<Unit> OnDoubleClick() => _doubleClickObservable.OnDoubleClick();
