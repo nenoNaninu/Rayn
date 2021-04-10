@@ -51,6 +51,11 @@ namespace Rayn
 
             var content = JsonSerializer.Deserialize<StreamerConnectionResponse>(contentBytes, StandardResolver.CamelCase);
 
+            if(content.RequestStatus != StreamerConnectionRequestStatus.Ok)
+            {
+                throw new Exception(content.RequestStatus.ToString());
+            }
+
             if (string.IsNullOrEmpty(proxy))
             {
                 // websocket
