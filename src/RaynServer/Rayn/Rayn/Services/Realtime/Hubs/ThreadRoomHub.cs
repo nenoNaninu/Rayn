@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Rayn.Services.Database.Interfaces;
@@ -27,7 +28,7 @@ namespace Rayn.Services.Realtime.Hubs
 
             if (thread == null)
             {
-                await Clients.Caller.EnterRoomResultAsync(false);
+                await Clients.Caller.EnterRoomResultAsync(false, Array.Empty<ThreadMessage>());
             }
 
             string groupName = threadId.ToString();
@@ -37,7 +38,11 @@ namespace Rayn.Services.Realtime.Hubs
             var group = new Group(groupName, threadId);
             _connectionGroupCache.Add(Context.ConnectionId, group);
 
-            await Clients.Caller.EnterRoomResultAsync(true);
+            var comments = await _commentAccessor.ReadCommentAsync(group.ThreadId);
+
+            var messages = comments.Select(x => new ThreadMessage(x.Message)).ToArray();
+
+            await Clients.Caller.EnterRoomResultAsync(true, messages);
         }
 
         public async Task PostMessageToServer(ThreadMessage message)

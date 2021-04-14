@@ -5,7 +5,7 @@ namespace Rayn.Services.Realtime.Hubs.Interfaces
 {
     public interface IThreadRoomClient
     {
-        Task EnterRoomResultAsync(bool result);
+        Task EnterRoomResultAsync(bool result, ThreadMessage[] message);
         Task ReceiveMessageFromServer(ThreadMessage message);
     }
 }
