@@ -14,16 +14,17 @@ namespace Rayn.Controllers
     public class ThreadRoomController : Controller
     {
         private readonly IThreadDbReader _threadDbReader;
-        private readonly IPollingUserConnectionStore _pollingUserConnectionStore;
-        private readonly IThreadRoomStore _threadRoomStore;
-        private readonly IPollingUserConnectionCreator _pollingUserConnectionCreator;
+        //private readonly IPollingUserConnectionStore _pollingUserConnectionStore;
+        //private readonly IThreadRoomStore _threadRoomStore;
+        //private readonly IPollingUserConnectionCreator _pollingUserConnectionCreator;
 
-        public ThreadRoomController(IThreadDbReader threadDbReader, IPollingUserConnectionStore pollingUserConnectionStore, IThreadRoomStore threadRoomStore, IPollingUserConnectionCreator pollingUserConnectionCreator)
+        public ThreadRoomController(IThreadDbReader threadDbReader)
+            //, IPollingUserConnectionStore pollingUserConnectionStore, IThreadRoomStore threadRoomStore, IPollingUserConnectionCreator pollingUserConnectionCreator)
         {
             _threadDbReader = threadDbReader;
-            _pollingUserConnectionStore = pollingUserConnectionStore;
-            _threadRoomStore = threadRoomStore;
-            _pollingUserConnectionCreator = pollingUserConnectionCreator;
+            //_pollingUserConnectionStore = pollingUserConnectionStore;
+            //_threadRoomStore = threadRoomStore;
+            //_pollingUserConnectionCreator = pollingUserConnectionCreator;
         }
 
         [HttpGet]
@@ -72,6 +73,8 @@ namespace Rayn.Controllers
             }
 
             var host = HttpContext.Request.Host.Value;
+
+
 
             if (method == null || method != "polling")
             {

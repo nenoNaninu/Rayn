@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Rayn.Services.Database.Configuration;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Realtime;
-using Rayn.Services.Realtime.Interfaces;
+using Rayn.Services.Realtime.Hubs;
 using Rayn.Services.ServiceConfiguration;
 
 namespace Rayn
@@ -59,6 +59,7 @@ namespace Rayn
             }
 
             services.AddRealtimeThreadRoomServices();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,21 +83,13 @@ namespace Rayn
 
             app.UseAuthorization();
 
-            app.UseWebSockets(new WebSocketOptions()
-            {
-                KeepAliveInterval = TimeSpan.FromSeconds(10)
-            });
-
-            app.MapThreadRoomMiddleware(
-                "/Realtime",
-                serviceProvider.GetService<IThreadRoomStore>(),
-                serviceProvider.GetService<ILogger<ThreadRoomMiddleware>>());
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}");
+
+                endpoints.MapHub<ThreadRoomHub>("/Realtime/ThreadRoom");
             });
         }
     }
