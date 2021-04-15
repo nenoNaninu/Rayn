@@ -52,36 +52,32 @@ namespace Rayn.Controllers
             return this.View(threadRoomViewModel);
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<StreamerConnectionResponse>> Streamer(string threadId, string ownerId, string method)
-        //{
-        //    if (threadId == null || ownerId == null || !Guid.TryParse(threadId, out var threadGuid) || !Guid.TryParse(ownerId, out var ownerGuid))
-        //    {
-        //        return new StreamerConnectionResponse(StreamerConnectionRequestStatus.BadRequest, "");
-        //    }
+        [HttpGet]
+        public async Task<ActionResult<StreamerConnectionResponse>> Streamer(string threadId, string ownerId)
+        {
+            if (threadId == null || ownerId == null || !Guid.TryParse(threadId, out var threadGuid) || !Guid.TryParse(ownerId, out var ownerGuid))
+            {
+                return new StreamerConnectionResponse(StreamerConnectionRequestStatus.BadRequest, string.Empty, Guid.Empty);
+            }
 
-        //    var thread = await _threadDbReader.SearchThreadModelAsync(threadGuid);
+            var thread = await _threadDbReader.SearchThreadModelAsync(threadGuid);
 
-        //    if (thread == null)
-        //    {
-        //        return new StreamerConnectionResponse(StreamerConnectionRequestStatus.ThreadRoomNotExist, "");
-        //    }
+            if (thread == null)
+            {
+                return new StreamerConnectionResponse(StreamerConnectionRequestStatus.ThreadRoomNotExist, string.Empty, Guid.Empty);
+            }
 
-        //    if (ownerGuid != thread.OwnerId)
-        //    {
-        //        return new StreamerConnectionResponse(StreamerConnectionRequestStatus.BadRequest, "");
-        //    }
+            if (ownerGuid != thread.OwnerId)
+            {
+                return new StreamerConnectionResponse(StreamerConnectionRequestStatus.BadRequest, string.Empty, Guid.Empty);
+            }
 
-        //    var host = HttpContext.Request.Host.Value;
+            var host = HttpContext.Request.Host.Value;
 
-        //    var threadRoomHubUrl = UrlUtility.ThreadRoomHubUrl(host);
+            var threadRoomHubUrl = UrlUtility.ThreadRoomHubUrl(host);
 
-
-        //    var threadRoom = await _threadRoomStore.FetchThreadRoomAsync(threadGuid);
-        //    await threadRoom.AddAsync(connection);
-
-        //    return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, UrlUtility.PollingMessageUrl(host, threadGuid, ownerGuid));
-        //}
+            return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, threadRoomHubUrl, threadGuid);
+        }
 
         [HttpGet]
         public IActionResult Error()

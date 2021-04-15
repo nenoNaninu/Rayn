@@ -1,30 +1,24 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
-using System.Net.WebSockets;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using RxWebSocket;
-using RxWebSocket.Logging;
-using RxWebSocket.Senders;
+using Microsoft.AspNetCore.Http.Connections;
 using UniRx;
 using Utf8Json;
 using Utf8Json.Resolvers;
+using Microsoft.AspNetCore.SignalR.Client;
+using UnityEngine;
 
 namespace Rayn
 {
     public sealed class Server : IServer<string>
     {
-        private readonly UniTaskCompletionSource<bool> _waitConnectionCompletionSource = new UniTaskCompletionSource<bool>();
-
-        private WebSocketClient _socket;
         private HttpClient _httpClient;
 
         private IMessageReceiver<string> _messageReceiver;
 
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-
 
         private void Init(string proxy)
         {
@@ -51,7 +45,7 @@ namespace Rayn
 
             var content = JsonSerializer.Deserialize<StreamerConnectionResponse>(contentBytes, StandardResolver.CamelCase);
 
-            if(content.RequestStatus != StreamerConnectionRequestStatus.Ok)
+            if (content.RequestStatus != StreamerConnectionRequestStatus.Ok)
             {
                 throw new Exception(content.RequestStatus.ToString());
             }
@@ -59,14 +53,12 @@ namespace Rayn
             if (string.IsNullOrEmpty(proxy))
             {
                 // websocket
-                _messageReceiver = await this.ConnectWebSocketMessageReceiver(content.RealtimeThreadRoomUrl, cancellationToken);
+                _messageReceiver = await this.ConnectSignalRConnection(content.RealtimeThreadRoomUrl, content.ThreadId, cancellationToken);
                 await UniTask.SwitchToMainThread(PlayerLoopTiming.Update);
             }
             else
             {
-                // http polling
-                // Monoのバグで、websocketのproxyがまともに動作しないので仕方なくpollingで誤魔化す。
-                _messageReceiver = new PollingMessageReceiver(this, content.RealtimeThreadRoomUrl, _cancellationTokenSource.Token);
+                _messageReceiver = await this.ConnectSignalRConnectionWithProxy(content.RealtimeThreadRoomUrl, proxy, content.ThreadId, _cancellationTokenSource.Token);
                 await UniTask.SwitchToMainThread(PlayerLoopTiming.Update);
             }
 
@@ -79,19 +71,36 @@ namespace Rayn
             return _messageReceiver;
         }
 
-        private async UniTask<IMessageReceiver<string>> ConnectWebSocketMessageReceiver(string url, CancellationToken cancellationToken)
+        private async UniTask<IMessageReceiver<string>> ConnectSignalRConnection(string url, Guid threadId, CancellationToken cancellationToken)
         {
             try
             {
-                _socket = new WebSocketClient(new Uri(url), new BinaryOnlySender(), logger: new UnityConsoleLogger());
-                // ConnectAsyncにcancellationToken投げられるように更新しないとアカン...(内部のcancellationToken使うようにして、Dispose叩かれた時に全部死ぬようにしてる)
-                await _socket.ConnectAsync();
-                _waitConnectionCompletionSource.TrySetResult(true);
-                _messageReceiver = new WebSocketMessageReceiver(_socket);
+                var messageReceiver = new SignalRMessageReceiver(url, threadId);
+                await messageReceiver.StartAsync(cancellationToken);
+                await messageReceiver.WaitEnterRoomAsync();
+                _messageReceiver = messageReceiver;
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                Debug.LogError(e);
+                throw;
+            }
+
+            return _messageReceiver;
+        }
+
+        private async UniTask<IMessageReceiver<string>> ConnectSignalRConnectionWithProxy(string url, string proxy, Guid threadId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var messageReceiver = new SignalRMessageReceiver(url, proxy, threadId);
+                await messageReceiver.StartAsync(cancellationToken);
+                await messageReceiver.WaitEnterRoomAsync();
+                _messageReceiver = messageReceiver;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
                 throw;
             }
 
@@ -100,144 +109,100 @@ namespace Rayn
 
         public async UniTask CloseAsync(CancellationToken cancellationToken)
         {
-            if (_socket != null && _socket.IsClosed)
+            if (_messageReceiver is SignalRMessageReceiver messageReceiver)
             {
-                return;
-            }
-
-            try
-            {
-                if (_socket != null)
-                {
-                    await _socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Click close button");
-                }
-
-                _cancellationTokenSource.Cancel();
-            }
-            catch
-            {
-                return;
-            }
-        }
-
-        private class WebSocketMessageReceiver : IMessageReceiver<string>
-        {
-            private readonly WebSocketClient _client;
-
-            public WebSocketMessageReceiver(WebSocketClient socket)
-            {
-                _client = socket;
-            }
-
-            public IObservable<string> OnMessage()
-            {
-                return _client.BinaryMessageReceived
-                    .Select(x => JsonSerializer.Deserialize<ReceiveData>(x))
-                    .Select(x => x.Message);
-            }
-        }
-
-        private class PollingMessageReceiver : IMessageReceiver<string>
-        {
-            private readonly Server _parent;
-            private readonly HttpClient _httpClient;
-
-            private readonly Subject<string> _onMessageSubject = new Subject<string>();
-
-            private readonly Channel<MessageWithInterval> _channel = Channel.CreateSingleConsumerUnbounded<MessageWithInterval>();
-            private readonly ChannelWriter<MessageWithInterval> _channelWriter;
-            private readonly ChannelReader<MessageWithInterval> _channelReader;
-
-            public PollingMessageReceiver(Server parent, string url, CancellationToken cancellationToken)
-            {
-                _parent = parent;
-                _httpClient = parent._httpClient;
-
-                _channelReader = _channel.Reader;
-                _channelWriter = _channel.Writer;
-
-                this.Polling(url, cancellationToken).Forget();
-                this.OnNextMessageLoop(cancellationToken).Forget();
-            }
-
-            private readonly struct MessageWithInterval
-            {
-                public readonly string Message;
-                public readonly int Interval;
-
-                public MessageWithInterval(string message, int interval)
-                {
-                    Message = message;
-                    Interval = interval;
-                }
-            }
-
-            private async UniTask OnNextMessageLoop(CancellationToken cancellationToken)
-            {
-                while (!cancellationToken.IsCancellationRequested && await _channelReader.WaitToReadAsync(cancellationToken))
-                {
-                    while (!cancellationToken.IsCancellationRequested && _channelReader.TryRead(out var item))
-                    {
-                        _onMessageSubject.OnNext(item.Message);
-                        await UniTask.Delay(item.Interval, cancellationToken: cancellationToken);
-                    }
-                }
-            }
-
-            /// <summary>
-            /// 5秒間毎にリクエスト飛ばす。
-            /// </summary>
-            private async UniTask Polling(string url, CancellationToken cancellationToken)
-            {
-                await UniTask.Delay(TimeSpan.FromSeconds(10), cancellationToken: cancellationToken);
-
-                try
-                {
-                    while (!cancellationToken.IsCancellationRequested)
-                    {
-                        var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
-
-                        byte[] contentBytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-
-                        string[] messages = JsonSerializer.Deserialize<string[]>(contentBytes, StandardResolver.CamelCase);
-
-                        if (messages.Length != 0)
-                        {
-                            int length = messages.Length;
-
-                            int interval = 5000 / length; // ミリ秒
-
-                            foreach (string message in messages)
-                            {
-                                _channelWriter.TryWrite(new MessageWithInterval(message, interval));
-                            }
-                        }
-
-                        await UniTask.Delay(TimeSpan.FromSeconds(5), cancellationToken: cancellationToken);
-                    }
-                }
-                catch
-                {
-                    // ignore
-                }
-                finally
-                {
-                    _onMessageSubject.Dispose();
-                }
-            }
-
-            public IObservable<string> OnMessage()
-            {
-                return _onMessageSubject.AsObservable();
+                await messageReceiver.StopAsync(cancellationToken);
             }
         }
 
         public void Dispose()
         {
-            _socket?.Dispose();
-            _httpClient?.Dispose();
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
+            this.CloseAsync(CancellationToken.None).Forget();
+        }
+
+        private class SignalRMessageReceiver : IMessageReceiver<string>
+        {
+            private readonly HubConnection _connection;
+            private readonly Subject<string> _messageSubject = new Subject<string>();
+
+            private readonly UniTaskCompletionSource _wait = new UniTaskCompletionSource();
+
+            public UniTask WaitEnterRoomAsync() => _wait.Task;
+
+            private readonly Guid _threadId;
+
+            public SignalRMessageReceiver(string url, Guid threadId)
+            {
+                HubConnection connection = new HubConnectionBuilder()
+                    .WithUrl(url)
+                    .WithAutomaticReconnect()
+                    .Build();
+                
+
+                _connection = connection;
+                _threadId = threadId;
+
+                this.InitReceiveSettings();
+            }
+
+            public SignalRMessageReceiver(string url, string proxy, Guid threadId)
+            {
+                HubConnection connection = new HubConnectionBuilder()
+                    .WithUrl(url, option =>
+                    {
+                        option.Proxy = new WebProxy(proxy);
+                        // Monoのwebsocket実装はproxyがバグっているので除外する。
+                        option.Transports = HttpTransportType.ServerSentEvents | HttpTransportType.LongPolling;
+                    })
+                    .WithAutomaticReconnect()
+                    .Build();
+
+
+                _connection = connection;
+                _threadId = threadId;
+
+                this.InitReceiveSettings();
+            }
+
+            private void InitReceiveSettings()
+            {
+                _connection.On<bool, ThreadMessage[]>("EnterRoomResultAsync", (result, messages) =>
+                {
+                    if (result)
+                    {
+                        _wait.TrySetResult();
+                    }
+                    else
+                    {
+                        _wait.TrySetException(new Exception("Cannot enter thread room!"));
+                    }
+                });
+
+                _connection.On<ThreadMessage>("ReceiveMessageFromServer", message =>
+                {
+                    if (!string.IsNullOrEmpty(message?.Message))
+                    {
+                        _messageSubject.OnNext(message.Message);
+                    }
+                });
+            }
+
+            public async UniTask StartAsync(CancellationToken cancellationToken)
+            {
+                await _connection.StartAsync(cancellationToken).ConfigureAwait(false);
+
+                await _connection.InvokeAsync("EnterThreadRoom", _threadId, cancellationToken).ConfigureAwait(false);
+            }
+
+            public async UniTask StopAsync(CancellationToken cancellationToken)
+            {
+                await _connection.StopAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            public IObservable<string> OnMessage()
+            {
+                return _messageSubject.AsObservable();
+            }
         }
     }
 }

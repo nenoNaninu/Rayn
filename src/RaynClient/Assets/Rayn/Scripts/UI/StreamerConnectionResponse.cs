@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace Rayn
 {
@@ -11,14 +12,15 @@ namespace Rayn
 
     public class StreamerConnectionResponse
     {
-        public StreamerConnectionRequestStatus RequestStatus { get; set; }
+        public StreamerConnectionRequestStatus RequestStatus { get; }
+        public string RealtimeThreadRoomUrl { get; }
+        public Guid ThreadId { get; }
 
-        public string RealtimeThreadRoomUrl { get; set; }
-
-        public StreamerConnectionResponse(StreamerConnectionRequestStatus requestStatus, string realtimeThreadRoomUrl)
+        public StreamerConnectionResponse(StreamerConnectionRequestStatus requestStatus, string realtimeThreadRoomUrl, Guid threadId)
         {
             RequestStatus = requestStatus;
             RealtimeThreadRoomUrl = realtimeThreadRoomUrl;
+            ThreadId = threadId;
         }
     }
 }
