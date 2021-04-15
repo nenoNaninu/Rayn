@@ -1,4 +1,6 @@
-﻿namespace Rayn.Models.ApiResponse
+﻿using System;
+
+namespace Rayn.Models.ApiResponse
 {
     public enum StreamerConnectionRequestStatus
     {
@@ -9,13 +11,15 @@
 
     public class StreamerConnectionResponse
     {
-        public StreamerConnectionRequestStatus RequestStatus { get; set; }
-        public string RealtimeThreadRoomUrl { get; set; }
+        public StreamerConnectionRequestStatus RequestStatus { get; }
+        public string RealtimeThreadRoomUrl { get; }
+        public Guid ThreadId { get; }
 
-        public StreamerConnectionResponse(StreamerConnectionRequestStatus requestStatus, string realtimeThreadRoomUrl)
+        public StreamerConnectionResponse(StreamerConnectionRequestStatus requestStatus, string realtimeThreadRoomUrl, Guid threadId)
         {
             RequestStatus = requestStatus;
             RealtimeThreadRoomUrl = realtimeThreadRoomUrl;
+            ThreadId = threadId;
         }
     }
 }

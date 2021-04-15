@@ -13,5 +13,7 @@ namespace Rayn.Services.Url
             => $"wss://{hostDomain}/Realtime/?threadId={threadId.ToString()}&ownerId={ownerId.ToString()}";
         public static string PollingMessageUrl(string hostDomain, Guid threadId, Guid ownerId)
             => $"https://{hostDomain}/ThreadRoom/FetchMessages/?threadId={threadId.ToString()}&ownerId={ownerId.ToString()}";
+        public static string ThreadRoomHubUrl(string hostDomain) 
+            => $"https://{hostDomain}/Realtime/ThreadRoom";
     }
 }

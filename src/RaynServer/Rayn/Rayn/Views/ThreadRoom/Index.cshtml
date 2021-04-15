@@ -1,8 +1,4 @@
 ﻿@model ThreadRoomViewModel
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-
 @{
     Layout = "_ThreadRoomLayout";
     ViewData["ThreadTitle"] = Model.ThreadTitle;
@@ -36,18 +32,22 @@
 
 
 @section Scripts {
+    <environment include="Development">
+        <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    </environment>
+
     <script>
 
-        var socket = null;
         var messageCount = 1;
-        const encoder = new TextEncoder("utf-8");
-        const decoder = new TextDecoder("utf-8");
 
         Vue.component('message-item',
             {
                 props: ['chatdata'],
                 template: `<div class="box">
-                            <p> {{chatdata.Message}}</p>
+                            <p> {{chatdata.message}}</p>
                         </div > `
             });
 
@@ -55,73 +55,74 @@
             el: '#app',
             data: {
                 message: '',
-                uri: '@Model.RealTimeUrl()',
-                isClose: false,
-                pingPongTimerObj: null,
-                isSendButtonDisable: false,
+                uri: '@Model.ThreadRoomHubUrl()',
+                isSendButtonDisable: true,
+                connection : null,
 
                 chatMessages: [
                 ]
             },
             methods: {
-                OnConnect: function() {
-                    if (!this.uri) {
-                        return;
-                    }
-                    console.log(this.uri);
+                Init: function() {
+                    const connection = new signalR.HubConnectionBuilder()
+                        .withUrl(this.uri)
+                        .withAutomaticReconnect()
+                        .build();
 
-                    socket = new WebSocket(this.uri);
-                    socket.binaryType = "arraybuffer";
+                    this.connection = connection;
 
-                    socket.onopen = function(event) {
-                        console.log("opened connection to ");
-                        console.log(app.uri);
+                    connection.on("EnterRoomResultAsync", function (result, messages) {
+                        console.log(result);
+                        if (result) {
+                            console.log("success enter room");
 
-                        app.pingPongTimerObj = setInterval(function() {
-                            let jsonBytes = JSON.stringify({ "Message": null, "PingPong": true });
-                            socket.send(encoder.encode(jsonBytes));
-                        } ,10000);
-                    };
+                            if (messages) {
+                                messages.forEach(message => {
+                                    message["id"] = messageCount;
+                                    messageCount++;
+                                    app.chatMessages.unshift(message);
+                                });
+                            }
 
-                    socket.onclose = function(event) {
-                        console.log("closed websocket connection");
-                        clearInterval(app.pingPongTimerObj);
-                    };
-
-                    socket.onmessage = function(event) {
-                        console.log("on message!");
-                        //console.log(event.data);
-
-                        const jsonContent = JSON.parse(decoder.decode(event.data));
-                        //console.log(jsonContent);
-
-                        if (jsonContent["PingPong"] === false) {
-                            jsonContent["id"] = messageCount;
-                            messageCount++;
-                            app.chatMessages.unshift(jsonContent);
+                        } else {
+                            // まぁ実際にはモーダルとか出すべきなんでしょう。
+                            console.log("cannot enter room");
                         }
-                    };
+                    });
 
-                    socket.onerror = function(event) {
-                        console.log("error: " + event.data);
-                        clearInterval(app.pingPongTimerObj);
-                    };
+                    connection.on("ReceiveMessageFromServer", function (message) {
+                        console.log(message);
 
-                    this.isSendButtonDisable = false;
+                        console.log("on message!");
 
-                },
+                        message["id"] = messageCount;
+                        messageCount++;
+                        app.chatMessages.unshift(message);
 
-                OnClose: function() {
-                    socket.close();
-                    this.isSendButtonDisable = true;
+                    });
+
+                    connection.start().then(function () {
+                        connection
+                            .invoke("EnterThreadRoom", "@Model.ThreadId.ToString()")
+                            .catch(function (err) {
+                                return console.error(err.toString());
+                            });
+                        app.isSendButtonDisable = false;
+
+                    }).catch(function (err) {
+                        return console.error(err.toString());
+                    });
                 },
 
                 OnSend: function () {
                     if (this.message) {
-                        //console.log("Sending: " + this.message);
-                        const jsonBytes = JSON.stringify({ "Message": this.message, "PingPong": false });
-                        //console.log(jsonBytes);
-                        socket.send(encoder.encode(jsonBytes));
+
+                        this.connection
+                            .invoke("PostMessageToServer", { "message": this.message })
+                            .catch(function (e) {
+                                return console.error(e.toString());
+                            });
+
                         this.message = "";
                     }
                 },
@@ -132,11 +133,11 @@
                         return;
                     }
 
-                    app.OnSend();
+                    this.OnSend();
                 }
             }
         });
 
-        app.OnConnect();
+        app.Init();
     </script>
 }

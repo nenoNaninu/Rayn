@@ -1,14 +1,25 @@
 {
-  "version": "1.0",
-  "defaultProvider": "cdnjs",
-    "libraries": [
-        {
-            "library": "bulma@0.9.2",
-            "destination": "wwwroot/bulma/"
-        },
-        {
-            "library": "vue@2.6.12",
-            "destination": "wwwroot/lib/vue/"
-        }
-    ]
+ "version": "1.0",
+ "defaultProvider": "cdnjs",
+ "libraries": [
+  {
+   "library": "bulma@0.9.2",
+   "destination": "wwwroot/bulma/"
+  },
+  {
+   "library": "vue@2.6.12",
+   "destination": "wwwroot/lib/vue/"
+  },
+  {
+   "provider": "unpkg",
+   "library": "@microsoft/signalr@5.0.5",
+   "destination": "wwwroot/lib/signalr/",
+   "files": [
+    "dist/browser/signalr.js",
+    "dist/browser/signalr.js.map",
+    "dist/browser/signalr.min.js",
+    "dist/browser/signalr.min.js.map"
+   ]
+  }
+ ]
 }

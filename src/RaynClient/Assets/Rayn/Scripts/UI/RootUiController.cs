@@ -155,8 +155,15 @@ namespace Rayn
             try
             {
                 //await _viewModel.ConnectToServerAsync(_urlInputField.text, "http://proxy.uec.ac.jp:8080", this.gameObject.GetCancellationTokenOnDestroy());
+
+                _connectionStatusText.text = "Connecting...";
+                var disposable = Observable.Interval(TimeSpan.FromSeconds(2)).Subscribe(x => _connectionStatusText.text += ".");
+
                 await _viewModel.ConnectToServerAsync(_urlInputField.text, _proxyInputField.text, this.gameObject.GetCancellationTokenOnDestroy());
-                _connectionStatusText.text = "Connect";
+                
+                disposable.Dispose();
+
+                _connectionStatusText.text = "Connected!";
             }
             catch (Exception e)
             {

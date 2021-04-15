@@ -1,4 +1,5 @@
 ﻿using System;
+using Rayn.Services.Url;
 
 namespace Rayn.Models
 {
@@ -9,7 +10,7 @@ namespace Rayn.Models
 
         private readonly string _hostDomain;
 
-        public string RealTimeUrl() => $"wss://{_hostDomain}/Realtime/?threadId={ThreadId.ToString()}";
+        public string ThreadRoomHubUrl() => UrlUtility.ThreadRoomHubUrl(_hostDomain);
 
         public ThreadRoomViewModel(string threadTitle, Guid threadId, string hostDomain)
         {
