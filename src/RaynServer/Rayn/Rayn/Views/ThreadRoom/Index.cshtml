@@ -1,8 +1,4 @@
 ﻿@model ThreadRoomViewModel
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-
 @{
     Layout = "_ThreadRoomLayout";
     ViewData["ThreadTitle"] = Model.ThreadTitle;
@@ -45,10 +41,7 @@
 
     <script>
 
-        //var socket = null;
         var messageCount = 1;
-        //const encoder = new TextEncoder("utf-8");
-        //const decoder = new TextDecoder("utf-8");
 
         Vue.component('message-item',
             {
@@ -114,7 +107,7 @@
                             .catch(function (err) {
                                 return console.error(err.toString());
                             });
-                        this.isSendButtonDisable = false;
+                        app.isSendButtonDisable = false;
 
                     }).catch(function (err) {
                         return console.error(err.toString());
