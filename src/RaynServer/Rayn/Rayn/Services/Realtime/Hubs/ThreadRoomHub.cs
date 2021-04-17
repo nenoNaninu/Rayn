@@ -14,12 +14,17 @@ namespace Rayn.Services.Realtime.Hubs
         private readonly IThreadDbReader _threadDbReader;
         private readonly ICommentAccessor _commentAccessor;
         private readonly IConnectionGroupCache _connectionGroupCache;
-
-        public ThreadRoomHub(IConnectionGroupCache connectionGroupCache, IThreadDbReader threadDbReader, ICommentAccessor commentAccessor)
+        private readonly IMessageChannelStoreReader<ThreadMessage> _messageChannelStoreReaderForPolling;
+        public ThreadRoomHub(
+            IConnectionGroupCache connectionGroupCache, 
+            IThreadDbReader threadDbReader, 
+            ICommentAccessor commentAccessor,
+            IMessageChannelStoreReader<ThreadMessage> messageChannelStoreReaderForPolling)
         {
             _threadDbReader = threadDbReader;
             _commentAccessor = commentAccessor;
             _connectionGroupCache = connectionGroupCache;
+            _messageChannelStoreReaderForPolling = messageChannelStoreReaderForPolling;
         }
 
         public async Task EnterThreadRoom(Guid threadId)
@@ -50,6 +55,13 @@ namespace Rayn.Services.Realtime.Hubs
             var group = _connectionGroupCache.FindGroup(Context.ConnectionId);
 
             await Clients.Group(group.GroupName).ReceiveMessageFromServer(message);
+
+            var (isExist, messageChannel) = _messageChannelStoreReaderForPolling.GetMessageChannel(group.ThreadId);
+
+            if (isExist)
+            {
+                messageChannel.AddMessage(message);
+            }
 
             await _commentAccessor.InsertCommentAsync(message.Message, group.ThreadId, DateTime.UtcNow);
         }
