@@ -49,9 +49,8 @@ namespace Rayn.Services.Realtime
                     _buffer.Add(message);
                 }
 
-                return _buffer.ToArray();
+                return _buffer.Count == 0 ? Array.Empty<T>() : _buffer.ToArray();
             }
         }
-
     }
 }

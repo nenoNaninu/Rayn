@@ -24,16 +24,16 @@ namespace Rayn.Services.Realtime
             }, null, TimeSpan.FromMinutes(10), TimeSpan.FromMinutes(10));
         }
 
-        public (bool isExist, IMessageChannel<T> messageChannel) GetMessageChannel(Guid ownerId)
+        public (bool isExist, IMessageChannel<T> messageChannel) GetMessageChannel(Guid threadId)
         {
-            var isExist = _messageChannelDictionary.TryGetValue(ownerId, out var messageChannel);
+            var isExist = _messageChannelDictionary.TryGetValue(threadId, out var messageChannel);
             return (isExist, messageChannel);
         }
 
-        public void Add(Guid ownerId)
+        public void Add(Guid threadId)
         {
             var thread = new MessageChannel<T>();
-            _messageChannelDictionary.TryAdd(ownerId, thread);
+            _messageChannelDictionary.TryAdd(threadId, thread);
         }
     }
 }

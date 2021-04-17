@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Rayn.Models;
 using Rayn.Models.ApiResponse;
 using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Realtime;
 using Rayn.Services.Realtime.Interfaces;
 using Rayn.Services.Realtime.Models;
 using Rayn.Services.Url;
@@ -79,10 +77,10 @@ namespace Rayn.Controllers
 
             // SignalR全体なのに、なんでpollingなんて自前実装しているかというと、Mac版のMonoでSignalR clientが動かないから。
             // Windowsだと動くけどMacOSだと動かないという...。
-            if (method != null && method == "polling")
+            if (!string.IsNullOrEmpty(method) && method == "polling")
             {
                 var pollingUrl = UrlUtility.PollingMessageUrl(host, threadGuid, ownerGuid);
-                _messageChannelStoreCreator.Add(ownerGuid);
+                _messageChannelStoreCreator.Add(threadGuid);
                 return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, pollingUrl, threadGuid);
             }
 
@@ -94,7 +92,7 @@ namespace Rayn.Controllers
         [HttpGet]
         public IReadOnlyList<ThreadMessage> FetchMessages(Guid threadId, Guid ownerId)
         {
-            var (isExist, messageChannel) = _messageChannelStoreReader.GetMessageChannel(ownerId);
+            var (isExist, messageChannel) = _messageChannelStoreReader.GetMessageChannel(threadId);
 
             if (!isExist)
             {
