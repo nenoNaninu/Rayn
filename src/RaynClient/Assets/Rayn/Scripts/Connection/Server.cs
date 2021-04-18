@@ -50,6 +50,8 @@ namespace Rayn
                 throw new Exception(content.RequestStatus.ToString());
             }
 
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+
             if (string.IsNullOrEmpty(proxy))
             {
                 // websocket
@@ -63,6 +65,11 @@ namespace Rayn
             }
 
             return _messageReceiver;
+
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+            // MacOSのMonoのランタイム上ではSignalRが真っ当に動かないため、仕方なくポーリングでごまかす。
+
+#endif
         }
 
         public async UniTask<IMessageReceiver<string>> GetMessageReceiverAsync(CancellationToken cancellationToken = default)
@@ -202,6 +209,102 @@ namespace Rayn
             public IObservable<string> OnMessage()
             {
                 return _messageSubject.AsObservable();
+            }
+        }
+
+        private class PollingMessageReceiver : IMessageReceiver<string>
+        {
+            private readonly Server _parent;
+            private readonly HttpClient _httpClient;
+
+            private readonly Subject<string> _onMessageSubject = new Subject<string>();
+
+            private readonly Channel<MessageWithInterval> _channel = Channel.CreateSingleConsumerUnbounded<MessageWithInterval>();
+            private readonly ChannelWriter<MessageWithInterval> _channelWriter;
+            private readonly ChannelReader<MessageWithInterval> _channelReader;
+
+            public PollingMessageReceiver(Server parent, string url, CancellationToken cancellationToken)
+            {
+                _parent = parent;
+                _httpClient = parent._httpClient;
+
+                _channelReader = _channel.Reader;
+                _channelWriter = _channel.Writer;
+
+                this.Polling(url, cancellationToken).Forget();
+                this.OnNextMessageLoop(cancellationToken).Forget();
+            }
+
+            private readonly struct MessageWithInterval
+            {
+                public readonly string Message;
+                public readonly int Interval;
+
+                public MessageWithInterval(string message, int interval)
+                {
+                    Message = message;
+                    Interval = interval;
+                }
+            }
+
+            private async UniTask OnNextMessageLoop(CancellationToken cancellationToken)
+            {
+                while (!cancellationToken.IsCancellationRequested && await _channelReader.WaitToReadAsync(cancellationToken))
+                {
+                    while (!cancellationToken.IsCancellationRequested && _channelReader.TryRead(out var item))
+                    {
+                        _onMessageSubject.OnNext(item.Message);
+                        await UniTask.Delay(item.Interval, cancellationToken: cancellationToken);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// 5秒間毎にリクエスト飛ばす。
+            /// </summary>
+            // TODO 再接続とか。
+            private async UniTask Polling(string url, CancellationToken cancellationToken)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(10), cancellationToken: cancellationToken);
+
+                try
+                {
+                    while (!cancellationToken.IsCancellationRequested)
+                    {
+                        var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+
+                        byte[] contentBytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+
+                        var messages = JsonSerializer.Deserialize<ThreadMessage[]>(contentBytes, StandardResolver.CamelCase);
+
+                        if (messages.Length != 0)
+                        {
+                            int length = messages.Length;
+
+                            int interval = 5000 / length; // ミリ秒
+
+                            foreach (var message in messages)
+                            {
+                                _channelWriter.TryWrite(new MessageWithInterval(message.Message, interval));
+                            }
+                        }
+
+                        await UniTask.Delay(TimeSpan.FromSeconds(5), cancellationToken: cancellationToken);
+                    }
+                }
+                catch
+                {
+                    // ignore
+                }
+                finally
+                {
+                    _onMessageSubject.Dispose();
+                }
+            }
+
+            public IObservable<string> OnMessage()
+            {
+                return _onMessageSubject.AsObservable();
             }
         }
     }
