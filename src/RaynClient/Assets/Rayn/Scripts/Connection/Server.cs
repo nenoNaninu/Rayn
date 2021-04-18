@@ -33,12 +33,10 @@ namespace Rayn
             {
                 this.Init(proxy);
             }
-
-            if (!string.IsNullOrEmpty(proxy))
-            {
-                url += "&method=polling";
-            }
-
+            
+#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+            url += "&method=polling";
+#endif
             var response = await _httpClient.GetAsync(url, cancellationToken);
 
             var contentBytes = await response.Content.ReadAsByteArrayAsync();
@@ -60,7 +58,7 @@ namespace Rayn
             }
             else
             {
-                _messageReceiver = await this.ConnectSignalRConnectionWithProxy(content.RealtimeThreadRoomUrl, proxy, content.ThreadId, _cancellationTokenSource.Token);
+                _messageReceiver = await this.ConnectSignalRConnectionWithProxy(content.RealtimeThreadRoomUrl, proxy, content.ThreadId, cancellationToken);
                 await UniTask.SwitchToMainThread(PlayerLoopTiming.Update);
             }
 
@@ -69,6 +67,8 @@ namespace Rayn
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
             // MacOSのMonoのランタイム上ではSignalRが真っ当に動かないため、仕方なくポーリングでごまかす。
 
+            _messageReceiver = new PollingMessageReceiver(this, content.RealtimeThreadRoomUrl, cancellationToken);
+            return _messageReceiver;
 #endif
         }
 
