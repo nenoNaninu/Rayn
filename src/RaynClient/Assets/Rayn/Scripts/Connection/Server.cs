@@ -289,7 +289,7 @@ namespace Rayn
                             }
                         }
 
-                        await UniTask.Delay(TimeSpan.FromSeconds(5), cancellationToken: cancellationToken);
+                        await UniTask.Delay(TimeSpan.FromSeconds(3), cancellationToken: cancellationToken);
                     }
                 }
                 catch
