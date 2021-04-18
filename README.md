@@ -55,7 +55,3 @@ cd src/Prepare
 ./download_signalr_dlls.sh
 ```
 必要なdllが`dlls`というディレクトリに出力されるので、出力されているdllを全て`src/RaynClient/Assets/Plugins/SignalR`に投げ入れてください。
-
-## ビルド上の注意
-
-
