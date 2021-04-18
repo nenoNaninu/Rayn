@@ -58,7 +58,7 @@ namespace Rayn
                 services.AddMySqlDatabaseModeServices();
             }
 
-            services.AddRealtimeThreadRoomServices();
+            services.AddRealtimeServices();
             services.AddSignalR();
         }
 

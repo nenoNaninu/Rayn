@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Rayn.Models;
 using Rayn.Models.ApiResponse;
 using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Realtime;
 using Rayn.Services.Realtime.Interfaces;
+using Rayn.Services.Realtime.Models;
 using Rayn.Services.Url;
 
 namespace Rayn.Controllers
@@ -14,17 +14,18 @@ namespace Rayn.Controllers
     public class ThreadRoomController : Controller
     {
         private readonly IThreadDbReader _threadDbReader;
-        //private readonly IPollingUserConnectionStore _pollingUserConnectionStore;
-        //private readonly IThreadRoomStore _threadRoomStore;
-        //private readonly IPollingUserConnectionCreator _pollingUserConnectionCreator;
 
-        public ThreadRoomController(IThreadDbReader threadDbReader)
-            //, IPollingUserConnectionStore pollingUserConnectionStore, IThreadRoomStore threadRoomStore, IPollingUserConnectionCreator pollingUserConnectionCreator)
+        private readonly IMessageChannelStoreReader<ThreadMessage> _messageChannelStoreReader;
+
+        private readonly IMessageChannelStoreCreator<ThreadMessage> _messageChannelStoreCreator;
+
+        public ThreadRoomController(IThreadDbReader threadDbReader,
+                IMessageChannelStoreReader<ThreadMessage> messageChannelStoreReader,
+                IMessageChannelStoreCreator<ThreadMessage> messageChannelStoreCreator)
         {
             _threadDbReader = threadDbReader;
-            //_pollingUserConnectionStore = pollingUserConnectionStore;
-            //_threadRoomStore = threadRoomStore;
-            //_pollingUserConnectionCreator = pollingUserConnectionCreator;
+            _messageChannelStoreReader = messageChannelStoreReader;
+            _messageChannelStoreCreator = messageChannelStoreCreator;
         }
 
         [HttpGet]
@@ -53,7 +54,7 @@ namespace Rayn.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<StreamerConnectionResponse>> Streamer(string threadId, string ownerId)
+        public async Task<ActionResult<StreamerConnectionResponse>> Streamer(string threadId, string ownerId, string method)
         {
             if (threadId == null || ownerId == null || !Guid.TryParse(threadId, out var threadGuid) || !Guid.TryParse(ownerId, out var ownerGuid))
             {
@@ -74,9 +75,33 @@ namespace Rayn.Controllers
 
             var host = HttpContext.Request.Host.Value;
 
+            // SignalR全体なのに、なんでpollingなんて自前実装しているかというと、Mac版のMonoでSignalR clientが動かないから。
+            // Windowsだと動くけどMacOSだと動かないという...。
+            if (!string.IsNullOrEmpty(method) && method == "polling")
+            {
+                var pollingUrl = UrlUtility.PollingMessageUrl(host, threadGuid, ownerGuid);
+                _messageChannelStoreCreator.Add(threadGuid);
+                return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, pollingUrl, threadGuid);
+            }
+
             var threadRoomHubUrl = UrlUtility.ThreadRoomHubUrl(host);
 
             return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, threadRoomHubUrl, threadGuid);
+        }
+
+        [HttpGet]
+        public IReadOnlyList<ThreadMessage> FetchMessages(Guid threadId, Guid ownerId)
+        {
+            var (isExist, messageChannel) = _messageChannelStoreReader.GetMessageChannel(threadId);
+
+            if (!isExist)
+            {
+                return Array.Empty<ThreadMessage>();
+            }
+
+            var messages = messageChannel.ReadMessages();
+
+            return messages;
         }
 
         [HttpGet]
