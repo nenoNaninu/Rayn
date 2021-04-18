@@ -1,5 +1,7 @@
-# Reaction is All You Need. (Rayn🌧)
+# [Reaction is All You Need. (Rayn🌧)](https://raynw.azurewebsites.net/)
 画面共有でニコ〇コとかビ〇ビリみたいにコメントを流すためのソフトウェア。ほぼほぼC#製。
+
+
 
 # Server(ASP.NET Core)
 ## Require
@@ -42,8 +44,18 @@ Windows/Mac両対応
   -  [neuecc/Utf8Json](https://github.com/neuecc/Utf8Json/releases/tag/v1.3.7)
   -  [Cysharp/UniTask 2.2.4](https://github.com/Cysharp/UniTask/releases/tag/2.2.4)
   -  [kirurobo/UniWindowController 0.8.0](https://github.com/kirurobo/UniWindowController/releases/tag/v0.8.0)
-  -  [nenoNaninu/RxWebSocket 2.1.6](https://github.com/nenoNaninu/RxWebSocket/releases/tag/2.1.6)
 -  Asset store
    - [Modern UI Pack](https://assetstore.unity.com/packages/tools/gui/modern-ui-pack-150824?locale=ja-JP)
 
+
+またSignalRのDLLを
+git bash等で以下の様な操作を行いダウンロードします。
+```
+cd src/Prepare
+./download_signalr_dlls.sh
+```
+必要なdllが`dlls`というディレクトリに出力されるので、出力されているdllを全て`src/RaynClient/Assets/Plugins/SignalR`に投げ入れてください。
+
 ## ビルド上の注意
+
+
