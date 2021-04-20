@@ -65,4 +65,4 @@ cd src/Prepare
 ```
 必要なdllが`dlls`というディレクトリに出力されるので、出力されているdllを全て`src/RaynClient/Assets/Plugins/SignalR`に投げ入れてください。
 
-Unityなんでコメントに合わせて3Dモノ
+Unityなんでコメントに合わせて3Dがポップするとかの改造も容易です。
