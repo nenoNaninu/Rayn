@@ -15,9 +15,10 @@ namespace Rayn.Services.Realtime.Hubs
         private readonly ICommentAccessor _commentAccessor;
         private readonly IConnectionGroupCache _connectionGroupCache;
         private readonly IMessageChannelStoreReader<ThreadMessage> _messageChannelStoreReaderForPolling;
+
         public ThreadRoomHub(
-            IConnectionGroupCache connectionGroupCache, 
-            IThreadDbReader threadDbReader, 
+            IConnectionGroupCache connectionGroupCache,
+            IThreadDbReader threadDbReader,
             ICommentAccessor commentAccessor,
             IMessageChannelStoreReader<ThreadMessage> messageChannelStoreReaderForPolling)
         {
