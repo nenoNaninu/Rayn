@@ -33,21 +33,16 @@ namespace Rayn
             IDatabaseConfig dbConfig = this.Configuration.GetSection("DatabaseConfig").Get<DatabaseConfiguration>();
             services.AddSingleton(dbConfig);
 
-#if DEBUG
-            services.AddControllersWithViews().AddRazorRuntimeCompilation()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                    options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
-                });
-#else
+
             services.AddControllersWithViews()
+#if DEBUG
+                .AddRazorRuntimeCompilation()
+#endif
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
                 });
-#endif
 
             if (dbConfig.InMemoryMode)
             {
