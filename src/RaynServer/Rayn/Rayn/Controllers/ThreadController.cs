@@ -39,7 +39,7 @@ namespace Rayn.Controllers
             {
                 return this.RedirectToAction(nameof(this.Error));
             }
-            
+
             var thread = await _threadDbReader.SearchThreadModelAsync(threadGuid);
 
             if (thread == null)
@@ -47,10 +47,36 @@ namespace Rayn.Controllers
                 return this.RedirectToAction(nameof(this.Error));
             }
 
-            var threadViewModel = new ThreadViewModel(thread.ThreadId, thread.ThreadTitle, thread.BeginningDate, HttpContext.Request.Host.Value, thread.OwnerId);
+            var threadUrl = this.ThreadUrl(thread.ThreadId);
+            var streamerUrl = this.StreamerUrl(thread.ThreadId, thread.OwnerId);
+
+            var threadViewModel = new ThreadViewModel(
+                thread.ThreadTitle,
+                thread.BeginningDate,
+                threadUrl,
+                streamerUrl);
 
             return this.View(threadViewModel);
         }
+
+        private string ThreadUrl(Guid threadId)
+        {
+            var protocol = this.HttpContext.Request.Scheme;
+
+            return this.Url.Action(null, "ThreadRoom",
+                new { threadId = threadId.ToString() },
+                protocol);
+        }
+
+        private string StreamerUrl(Guid threadId, Guid ownerId)
+        {
+            var protocol = this.HttpContext.Request.Scheme;
+
+            return this.Url.Action(nameof(ThreadRoomController.Streamer), "ThreadRoom",
+                new { threadId = threadId.ToString(), ownerId = ownerId.ToString() },
+                protocol);
+        }
+
 
         public IActionResult Error()
         {

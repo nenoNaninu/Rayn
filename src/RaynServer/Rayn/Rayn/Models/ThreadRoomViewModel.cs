@@ -1,5 +1,5 @@
 ﻿using System;
-using Rayn.Services.Url;
+using Rayn.Services.Realtime.Hubs;
 
 namespace Rayn.Models
 {
@@ -8,15 +8,12 @@ namespace Rayn.Models
         public string ThreadTitle { get; }
         public Guid ThreadId { get; }
 
-        private readonly string _hostDomain;
+        public string ThreadRoomHubUrl() => ThreadRoomHub.Path;
 
-        public string ThreadRoomHubUrl() => UrlUtility.ThreadRoomHubUrl(_hostDomain);
-
-        public ThreadRoomViewModel(string threadTitle, Guid threadId, string hostDomain)
+        public ThreadRoomViewModel(string threadTitle, Guid threadId)
         {
             ThreadTitle = threadTitle;
             ThreadId = threadId;
-            _hostDomain = hostDomain;
         }
     }
 }

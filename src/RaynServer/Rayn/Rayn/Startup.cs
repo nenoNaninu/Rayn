@@ -7,10 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Rayn.Services.Database.Configuration;
 using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Realtime;
 using Rayn.Services.Realtime.Hubs;
 using Rayn.Services.ServiceConfiguration;
 
@@ -58,7 +56,7 @@ namespace Rayn
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -77,14 +75,14 @@ namespace Rayn
             app.UseRouting();
 
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}");
 
-                endpoints.MapHub<ThreadRoomHub>("/Realtime/ThreadRoom");
+                endpoints.MapHub<ThreadRoomHub>(ThreadRoomHub.Path);
             });
         }
     }

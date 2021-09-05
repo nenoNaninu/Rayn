@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using Rayn.Models;
 using Rayn.Models.ApiResponse;
 using Rayn.Services.Database.Interfaces;
+using Rayn.Services.Realtime.Hubs;
 using Rayn.Services.Realtime.Interfaces;
 using Rayn.Services.Realtime.Models;
-using Rayn.Services.Url;
 
 namespace Rayn.Controllers
 {
@@ -48,7 +49,7 @@ namespace Rayn.Controllers
                 return this.RedirectToAction(nameof(this.Error));
             }
 
-            var threadRoomViewModel = new ThreadRoomViewModel(thread.ThreadTitle, thread.ThreadId, HttpContext.Request.Host.Value);
+            var threadRoomViewModel = new ThreadRoomViewModel(thread.ThreadTitle, thread.ThreadId);
 
             return this.View(threadRoomViewModel);
         }
@@ -73,20 +74,34 @@ namespace Rayn.Controllers
                 return new StreamerConnectionResponse(StreamerConnectionRequestStatus.BadRequest, string.Empty, Guid.Empty);
             }
 
-            var host = HttpContext.Request.Host.Value;
-
             // SignalR全体なのに、なんでpollingなんて自前実装しているかというと、Mac版のMonoでSignalR clientが動かないから。
             // Windowsだと動くけどMacOSだと動かないという...。
             if (!string.IsNullOrEmpty(method) && method == "polling")
             {
-                var pollingUrl = UrlUtility.PollingMessageUrl(host, threadGuid, ownerGuid);
+                var pollingUrl = this.PollingMessageUrl(threadGuid, ownerGuid);
                 _messageChannelStoreCreator.Add(threadGuid);
                 return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, pollingUrl, threadGuid);
             }
 
-            var threadRoomHubUrl = UrlUtility.ThreadRoomHubUrl(host);
+            var threadRoomHubUrl = this.ThreadRoomHubUrl();
 
             return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, threadRoomHubUrl, threadGuid);
+        }
+
+        private string ThreadRoomHubUrl()
+        {
+            var protocol = this.HttpContext.Request.Scheme;
+            var host = this.HttpContext.Request.Host.Value;
+            return ThreadRoomHub.Url(protocol, host);
+        }
+
+        private string PollingMessageUrl(Guid threadId, Guid ownerId)
+        {
+            var protocol = this.HttpContext.Request.Scheme;
+
+            return this.Url.Action(nameof(this.FetchMessages), "ThreadRoom",
+                new { threadId = threadId.ToString(), ownerId = ownerId.ToString() },
+                protocol);
         }
 
         [HttpGet]

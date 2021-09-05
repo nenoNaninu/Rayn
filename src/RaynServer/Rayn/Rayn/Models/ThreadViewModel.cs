@@ -1,27 +1,24 @@
 ﻿using System;
-using Rayn.Services.Url;
 
 namespace Rayn.Models
 {
     public class ThreadViewModel
     {
-        public Guid ThreadId { get; }
-        public Guid OwnerId { get; }
         public string ThreadTitle { get; }
         public DateTime BeginningDate { get; }
-        public string HostDomain { get; }
+        public string ThreadUrl { get; }
+        public string StreamerUrl { get; }
 
-        public string ThreadUrl() => UrlUtility.ThreadUrl(HostDomain, ThreadId);
-
-        public string StreamerUrl() => UrlUtility.StreamerUrl(HostDomain, ThreadId, OwnerId);
-
-        public ThreadViewModel(Guid threadId, string threadTitle, DateTime beginningDate, string hostDomain, Guid ownerId)
+        public ThreadViewModel(
+            string threadTitle,
+            DateTime beginningDate,
+            string threadUrl,
+            string streamerUrl)
         {
-            ThreadId = threadId;
             ThreadTitle = threadTitle;
             BeginningDate = beginningDate;
-            HostDomain = hostDomain;
-            OwnerId = ownerId;
+            ThreadUrl = threadUrl;
+            StreamerUrl = streamerUrl;
         }
     }
 }

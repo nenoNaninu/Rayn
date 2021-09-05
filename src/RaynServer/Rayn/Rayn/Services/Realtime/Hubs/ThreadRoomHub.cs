@@ -11,6 +11,8 @@ namespace Rayn.Services.Realtime.Hubs
 {
     public class ThreadRoomHub : Hub<IThreadRoomClient>, IThreadRoomHub
     {
+        public const string Path = "/Realtime/ThreadRoom";
+
         private readonly IThreadDbReader _threadDbReader;
         private readonly ICommentAccessor _commentAccessor;
         private readonly IConnectionGroupCache _connectionGroupCache;
@@ -72,5 +74,7 @@ namespace Rayn.Services.Realtime.Hubs
             _connectionGroupCache.Remove(Context.ConnectionId);
             return base.OnDisconnectedAsync(exception);
         }
+
+        public static string Url(string protocol, string host) => $"{protocol}://{host}{Path}";
     }
 }
