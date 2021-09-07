@@ -2,6 +2,8 @@ using System;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -31,7 +33,6 @@ namespace Rayn
             IDatabaseConfig dbConfig = this.Configuration.GetSection("DatabaseConfig").Get<DatabaseConfiguration>();
             services.AddSingleton(dbConfig);
 
-
             services.AddControllersWithViews()
 #if DEBUG
                 .AddRazorRuntimeCompilation()
@@ -40,6 +41,16 @@ namespace Rayn
                 {
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                });
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie()
+                .AddGoogle(options =>
+                {
+                    var googleAuthSection = this.Configuration.GetSection("Authentication:Google");
+
+                    options.ClientId = googleAuthSection["ClientId"];
+                    options.ClientSecret = googleAuthSection["ClientSecret"];
                 });
 
             if (dbConfig.InMemoryMode)
@@ -74,8 +85,9 @@ namespace Rayn
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

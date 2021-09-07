@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -23,6 +24,23 @@
                     <a class="navbar-item" asp-controller="Home" asp-action="Index">Home</a>
                     <a class="navbar-item" asp-controller="Home" asp-action="Usage">Usage</a>
                     <a class="navbar-item" href="https://github.com/nenoNaninu/Rayn">GitHub</a>
+
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">@User.FindFirst(ClaimTypes.Email)?.Value</a>
+                            <div class="navbar-dropdown">
+                                <a class="navbar-item" asp-action="Index" asp-controller="History">History</a>
+                                <hr class="navbar-divider">
+                                <a class="navbar-item" asp-controller="Account" asp-action="Logout">Logout</a>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <a class="navbar-item" asp-controller="Account" asp-action="Login">Login</a>
+                    }
+
                 </div>
             </div>
         </nav>

@@ -6,7 +6,7 @@
 <section class="hero is-fullheight is-light">
     <div class="hero-body">
         <div class="container has-text-centered">
-            <div class="columns is-vcentered is-offset-1">
+            <div class="columns is-vcentered">
                 <div class="column is-7">
                     <h1 class="title is-2">
                         Reaction is All You Need.
@@ -42,9 +42,6 @@
                             <p class="title">
                                 新規スレッドの作成
                             </p>
-                            @*<p class="subtitle">
-                                    ん～。
-                                </p>*@
                             <form asp-controller="Thread" asp-action="CreateNewThread">
                                 <div class="field">
                                     <label asp-for="ThreadCreateRequest.Title" class="label">タイトル</label>
