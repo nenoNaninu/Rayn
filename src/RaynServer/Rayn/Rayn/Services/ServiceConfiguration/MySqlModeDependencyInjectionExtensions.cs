@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Rayn.Services.Database;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Database.MySql;
 
