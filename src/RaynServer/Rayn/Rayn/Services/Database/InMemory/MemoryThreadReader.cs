@@ -13,7 +13,7 @@ namespace Rayn.Services.Database
             _memoryDatabase = memoryDatabase;
         }
 
-        public ValueTask<ThreadModel> SearchThreadModelAsync(Guid threadId)
+        public ValueTask<ThreadModel?> SearchThreadModelAsync(Guid threadId)
         {
             var threadModel = _memoryDatabase.SearchThread(threadId);
             return ValueTask.FromResult(threadModel);

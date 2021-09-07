@@ -24,7 +24,7 @@ namespace Rayn.Services.Realtime
             }, null, TimeSpan.FromMinutes(10), TimeSpan.FromMinutes(10));
         }
 
-        public (bool isExist, IMessageChannel<T> messageChannel) GetMessageChannel(Guid threadId)
+        public (bool isExist, IMessageChannel<T>? messageChannel) GetMessageChannel(Guid threadId)
         {
             var isExist = _messageChannelDictionary.TryGetValue(threadId, out var messageChannel);
             return (isExist, messageChannel);

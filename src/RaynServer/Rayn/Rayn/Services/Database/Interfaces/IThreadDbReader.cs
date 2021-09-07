@@ -6,6 +6,6 @@ namespace Rayn.Services.Database.Interfaces
 {
     public interface IThreadDbReader
     {
-        ValueTask<ThreadModel> SearchThreadModelAsync(Guid threadId);
+        ValueTask<ThreadModel?> SearchThreadModelAsync(Guid threadId);
     }
 }

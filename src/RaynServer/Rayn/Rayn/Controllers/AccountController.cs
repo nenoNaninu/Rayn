@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Rayn.Services.Database.Interfaces;
+using Rayn.Services.Database.Models;
 
 namespace Rayn.Controllers
 {
@@ -17,12 +18,14 @@ namespace Rayn.Controllers
         private readonly IAccountReader _accountReader;
         private readonly IAccountRegister _accountRegister;
         private readonly IGoogleAccountReader _googleAccountReader;
+        private readonly IGoogleAccountRegister _googleAccountRegister;
 
-        public AccountController(IAccountReader accountReader, IGoogleAccountReader googleAccountReader ,IAccountRegister accountRegister)
+        public AccountController(IAccountReader accountReader, IGoogleAccountReader googleAccountReader, IAccountRegister accountRegister, IGoogleAccountRegister googleAccountRegister)
         {
             _accountReader = accountReader;
             _accountRegister = accountRegister;
             _googleAccountReader = googleAccountReader;
+            _googleAccountRegister = googleAccountRegister;
         }
 
         public IActionResult Login()
@@ -41,7 +44,7 @@ namespace Rayn.Controllers
         }
 
         [Authorize]
-        public IActionResult GoogleAuthCallback()
+        public async Task<IActionResult> GoogleAuthCallback()
         {
             var identifier = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -50,12 +53,32 @@ namespace Rayn.Controllers
                 return this.RedirectToAction("Error", "Home");
             }
 
-            var account = _googleAccountReader.Search(identifier);
+            var registeredAccount = await _googleAccountReader.SearchAsync(identifier);
 
-            if (account is null)
+            if (registeredAccount is null)
             {
-                var email = this.User.FindFirst(ClaimTypes.Email)?.Value;
-                 
+                var email = this.User.FindFirst(ClaimTypes.Email)?.Value!;
+
+                var userId = Guid.NewGuid();
+
+                var googleAccount = new GoogleAccount()
+                {
+                    Identifier = identifier,
+                    Email = email,
+                    UserId = userId
+                };
+
+                var account = new Account()
+                {
+                    UserId = userId,
+                    Email = email,
+                    LinkToGoogle = true
+                };
+
+                await _googleAccountRegister.RegisterAsync(googleAccount);
+                await _accountRegister.RegisterAsync(account);
+
+                this.HttpContext.Response.Cookies.Append("UserId", userId.ToString());
             }
 
             return this.RedirectToAction("Index", "Home");

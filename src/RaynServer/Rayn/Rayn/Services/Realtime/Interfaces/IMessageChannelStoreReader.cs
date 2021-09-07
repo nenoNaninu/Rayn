@@ -8,6 +8,6 @@ namespace Rayn.Services.Realtime.Interfaces
     /// <typeparam name="T"></typeparam>
     public interface IMessageChannelStoreReader<T>
     {
-        (bool isExist, IMessageChannel<T> messageChannel) GetMessageChannel(Guid threadId);
+        (bool isExist, IMessageChannel<T>? messageChannel) GetMessageChannel(Guid threadId);
     }
 }

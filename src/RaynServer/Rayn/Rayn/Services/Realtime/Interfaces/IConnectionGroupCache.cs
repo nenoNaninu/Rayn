@@ -6,6 +6,6 @@ namespace Rayn.Services.Realtime.Interfaces
     {
         void Add(string connectionId, Group groupName);
         void Remove(string connectionId);
-        Group FindGroup(string connectionId);
+        Group? FindGroup(string connectionId);
     }
 }

@@ -4,6 +4,6 @@ namespace Rayn.Models
 {
     public class HomeViewModel
     {
-        public ThreadCreateRequest ThreadCreateRequest { get; set; }
+        public ThreadCreateRequest? ThreadCreateRequest { get; set; }
     }
 }

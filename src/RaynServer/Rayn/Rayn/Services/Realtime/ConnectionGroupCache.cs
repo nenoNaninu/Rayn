@@ -19,7 +19,7 @@ namespace Rayn.Services.Realtime
             _connectionIdToGroupIdDictionary.Remove(connectionId, out var _);
         }
 
-        public Group FindGroup(string connectionId)
+        public Group? FindGroup(string connectionId)
         {
             return _connectionIdToGroupIdDictionary.GetValueOrDefault(connectionId);
         }

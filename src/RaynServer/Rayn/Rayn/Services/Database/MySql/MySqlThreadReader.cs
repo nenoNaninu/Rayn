@@ -18,7 +18,7 @@ namespace Rayn.Services.Database.MySql
             _databaseConfig = databaseConfig;
         }
 
-        public async ValueTask<ThreadModel> SearchThreadModelAsync(Guid threadId)
+        public async ValueTask<ThreadModel?> SearchThreadModelAsync(Guid threadId)
         {
             using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
 

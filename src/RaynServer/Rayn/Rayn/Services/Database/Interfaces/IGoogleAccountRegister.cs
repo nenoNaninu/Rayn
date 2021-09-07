@@ -6,6 +6,6 @@ namespace Rayn.Services.Database.Interfaces
 {
     public interface IGoogleAccountRegister
     {
-        ValueTask<GoogleAccount> RegisterAsync();
+        ValueTask RegisterAsync(GoogleAccount account);
     }
 }

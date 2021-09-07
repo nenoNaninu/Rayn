@@ -1,9 +1,10 @@
-﻿using Rayn.Services.Database.Models;
+﻿using System.Threading.Tasks;
+using Rayn.Services.Database.Models;
 
 namespace Rayn.Services.Database.Interfaces
 {
     public interface IGoogleAccountReader
     {
-        GoogleAccount? Search(string identifier);
+        ValueTask<GoogleAccount?> SearchAsync(string identifier);
     }
 }

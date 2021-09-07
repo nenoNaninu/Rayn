@@ -21,12 +21,19 @@ namespace Rayn.Services.Database.MySql
 
         public async ValueTask<ThreadModel> CreateThreadAsync(string title, DateTime beginningDate)
         {
-            var newThread = new ThreadModel(Guid.NewGuid(), Guid.NewGuid(), title, beginningDate);
+            var newThread = new ThreadModel()
+            {
+                ThreadId = Guid.NewGuid(),
+                OwnerId = Guid.NewGuid(),
+                ThreadTitle = title,
+                BeginningDate = beginningDate
+            };
+
             using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
 
             // 例外処理は後で...
             await conn.ExecuteAsync(_query, newThread);
-            
+
             return newThread;
         }
     }
