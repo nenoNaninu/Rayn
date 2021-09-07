@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Database.Models;
 
-namespace Rayn.Services.Database
+namespace Rayn.Services.Database.InMemory
 {
     public class MemoryThreadCreator : IThreadCreator
     {

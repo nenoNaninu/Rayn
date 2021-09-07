@@ -4,7 +4,7 @@ using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Database.Models;
 using Rayn.Services.Threading;
 
-namespace Rayn.Services.Database
+namespace Rayn.Services.Database.InMemory
 {
     public class MemoryCommentAccessor : ICommentAccessor
     {

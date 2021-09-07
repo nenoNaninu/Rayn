@@ -8,5 +8,7 @@ namespace Rayn.Services.Database.Models
         public Guid OwnerId { get; init; }
         public string ThreadTitle { get; init; } = default!;
         public DateTime BeginningDate { get; init; }
+        public DateTime CreatedDate { get; init; }
+        public Guid? AuthorId { get; init; } 
     }
 }

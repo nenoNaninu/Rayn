@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Text;
 using Rayn.Services.Database.Models;
 
-namespace Rayn.Services.Database
+namespace Rayn.Services.Database.InMemory
 {
     public class MemoryDatabase
     {
@@ -57,6 +56,16 @@ namespace Rayn.Services.Database
 
             _commentDataStore.Add(commentModel);
             _commentId++;
+        }
+
+        public void AddAccount(Account account)
+        {
+            _accountStore.Add(account);
+        }
+
+        public void AddGoogleAccount(GoogleAccount account)
+        {
+            _googleAccountStore.Add(account);
         }
     }
 }
