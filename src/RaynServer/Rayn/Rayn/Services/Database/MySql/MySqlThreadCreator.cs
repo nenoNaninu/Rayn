@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
 using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Database.Models;
+using Rayn.Services.Models;
 
 namespace Rayn.Services.Database.MySql
 {
@@ -19,22 +19,12 @@ namespace Rayn.Services.Database.MySql
             _databaseConfig = databaseConfig;
         }
 
-        public async ValueTask<ThreadModel> CreateThreadAsync(string title, DateTime beginningDate)
+        public async ValueTask CreateThreadAsync(ThreadModel thread)
         {
-            var newThread = new ThreadModel()
-            {
-                ThreadId = Guid.NewGuid(),
-                OwnerId = Guid.NewGuid(),
-                ThreadTitle = title,
-                BeginningDate = beginningDate
-            };
-
             using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
 
             // 例外処理は後で...
-            await conn.ExecuteAsync(_query, newThread);
-
-            return newThread;
+            await conn.ExecuteAsync(_query, thread);
         }
     }
 }

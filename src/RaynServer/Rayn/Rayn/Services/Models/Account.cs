@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rayn.Services.Database.Models
+namespace Rayn.Services.Models
 {
     public class Account
     {

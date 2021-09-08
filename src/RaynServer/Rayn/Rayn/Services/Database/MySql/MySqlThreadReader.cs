@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
 using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Database.Models;
+using Rayn.Services.Models;
 
 namespace Rayn.Services.Database.MySql
 {
@@ -25,6 +26,11 @@ namespace Rayn.Services.Database.MySql
             var searchResult = await conn.QueryAsync<ThreadModel>("select * from rayn_db.threads where ThreadId = @ThreadId;", new { ThreadId = threadId });
 
             return searchResult.FirstOrDefault();
+        }
+
+        public ValueTask<IEnumerable<ThreadModel>> SearchThreadByUserId(Guid userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

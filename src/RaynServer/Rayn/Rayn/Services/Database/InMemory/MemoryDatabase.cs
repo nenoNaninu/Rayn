@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
-using Rayn.Services.Database.Models;
+using Rayn.Services.Models;
 
 namespace Rayn.Services.Database.InMemory
 {
@@ -14,18 +15,9 @@ namespace Rayn.Services.Database.InMemory
 
         private int _commentId = 0;
 
-        public ThreadModel CreateThread(DateTime beginningTime, string title)
+        public void CreateThread(ThreadModel thread)
         {
-            var thread = new ThreadModel()
-            {
-                ThreadId = Guid.NewGuid(),
-                OwnerId = Guid.NewGuid(),
-                ThreadTitle = title,
-                BeginningDate = beginningTime
-            };
-
             _threadDataStore.Add(thread);
-            return thread;
         }
 
         public ThreadModel? SearchThread(Guid guid)
@@ -66,6 +58,16 @@ namespace Rayn.Services.Database.InMemory
         public void AddGoogleAccount(GoogleAccount account)
         {
             _googleAccountStore.Add(account);
+        }
+
+        public GoogleAccount? SearchGoogleAccount(string id)
+        {
+            return _googleAccountStore.FirstOrDefault(x => x.Identifier == id);
+        }
+
+        public IEnumerable<ThreadModel> SearchThreadByUserId(Guid userId)
+        {
+            return _threadDataStore.Where(x => x.AuthorId == userId);
         }
     }
 }

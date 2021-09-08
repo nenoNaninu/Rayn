@@ -1,5 +1,39 @@
-﻿@*
+﻿@model HistoryViewModel
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    ViewData["Title"] = "History";
 }
+
+<section class="hero is-fullheight is-light">
+    <div class="hero-body">
+        <div class="container is-max-desktop">
+            @foreach (var history in Model.Histories)
+            {
+                <div class="box">
+                    <h4 class="title is-3">スレッド名 @history.Title</h4>
+                    <h4 class="subtitle is-5">開催予定日 @history.DateTime</h4>
+
+                    <article class="message is-primary">
+                        <div class="message-header">
+                            参加者用URL
+                        </div>
+                        <div class="message-body m-2">
+                            @history.ShareUrl
+                        </div>
+                    </article>
+
+                    <article class="message is-info">
+                        <div class="message-header">
+                            配信クライアントアプリ用URL
+                        </div>
+                        <div class="message-body m-2">
+                            @history.OwnerUrl
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    </div>
+</section>

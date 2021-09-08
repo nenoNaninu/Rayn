@@ -14,6 +14,7 @@
                     <h2 class="subtitle is-4">
                         画面共有でもニコ〇コとかビ〇ビリみたいにコメントを流そう！
                     </h2>
+                  
                     <div class="columns">
                         <div class="column is-8 is-offset-2">
                             <p>
@@ -23,7 +24,6 @@
                             </p>
                         </div>
                     </div>
-
 
                     <p class="has-text-centered">
                         <a class="button is-medium is-info is-outlined" asp-controller="Home" asp-action="Usage">
@@ -44,13 +44,13 @@
                             </p>
                             <form asp-controller="Thread" asp-action="CreateNewThread">
                                 <div class="field">
-                                    <label asp-for="ThreadCreateRequest!.Title" class="label">タイトル</label>
+                                    <label class="label">タイトル</label>
                                     <div class="control">
-                                        <input class="input" type="text" placeholder="〇〇〇を語る会" asp-for="ThreadCreateRequest!.Title">
+                                        <input class="input" type="text" required="required" placeholder="〇〇〇を語る会" asp-for="ThreadCreateRequest!.Title">
                                     </div>
                                 </div>
                                 <div class="field">
-                                    <label for="BeginningDate" asp-for="ThreadCreateRequest!.BeginningDate" class="label">配信予定日</label>
+                                    <label for="BeginningDate" class="label">配信予定日</label>
                                     <div class="control">
                                         <input class="input" type="date" asp-for="ThreadCreateRequest!.BeginningDate" id="BeginningDate">
                                     </div>
@@ -60,6 +60,7 @@
                                         <input class="button is-link" type="submit" value="作成">
                                     </div>
                                 </div>
+                                <input type="hidden"  id="DateOffset" asp-for="ThreadCreateRequest!.DateOffset"/>
                             </form>
                         </div>
                     </div>
@@ -75,8 +76,9 @@
     <script>
         let date = new Date();
         let dateStr = date.getFullYear() + "-" + String((date.getMonth() + 1)).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
-        //console.log(dateStr);
+
         document.getElementById('BeginningDate').value = dateStr;
+        document.getElementById('DateOffset').value = date.getTimezoneOffset();
     </script>
 }
 

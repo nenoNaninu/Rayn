@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
 using Rayn.Models;
 using Rayn.Models.FormRequests;
 using Rayn.Services.Database.Interfaces;
+using Rayn.Services.Models;
 
 namespace Rayn.Controllers
 {
@@ -22,13 +25,28 @@ namespace Rayn.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNewThread([FromForm] ThreadCreateRequest threadCreateRequest)
         {
-            var thread = await _threadCreator.CreateThreadAsync(threadCreateRequest.Title, threadCreateRequest.BeginningDate);
+            var claim = this.User.FindAll(ClaimTypes.NameIdentifier)?.Where(x => x.Issuer == "Rayn").FirstOrDefault();
+            Guid? userId = claim is not null ? Guid.Parse(claim.Value) : null;
+
+            var dateOffset = TimeSpan.FromMinutes(threadCreateRequest.DateOffset);
+            var thread = new ThreadModel()
+            {
+                ThreadTitle = threadCreateRequest.Title,
+                BeginningDate = threadCreateRequest.BeginningDate + dateOffset,
+                DateOffset = dateOffset,
+                AuthorId = userId,
+                CreatedDate = DateTime.UtcNow,
+                OwnerId = Guid.NewGuid(),
+                ThreadId = Guid.NewGuid()
+            };
+
+            await _threadCreator.CreateThreadAsync(thread);
 
             return this.RedirectToAction(nameof(this.Index), new RouteValueDictionary { { "threadId", thread.ThreadId.ToString() } });
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string threadId)
+        public async Task<IActionResult> Index(string? threadId)
         {
             if (threadId == null)
             {
@@ -52,7 +70,7 @@ namespace Rayn.Controllers
 
             var threadViewModel = new ThreadViewModel(
                 thread.ThreadTitle,
-                thread.BeginningDate,
+                thread.BeginningDate - thread.DateOffset,
                 threadUrl,
                 streamerUrl);
 

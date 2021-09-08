@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Database.Models;
+using Rayn.Services.Models;
 
 namespace Rayn.Services.Database.InMemory
 {
@@ -11,6 +12,12 @@ namespace Rayn.Services.Database.InMemory
         public MemoryThreadReader(MemoryDatabase memoryDatabase)
         {
             _memoryDatabase = memoryDatabase;
+        }
+
+        public ValueTask<IEnumerable<ThreadModel>> SearchThreadByUserId(Guid userId)
+        {
+            var threads = _memoryDatabase.SearchThreadByUserId(userId);
+            return ValueTask.FromResult(threads);
         }
 
         public ValueTask<ThreadModel?> SearchThreadModelAsync(Guid threadId)
