@@ -39,7 +39,7 @@ namespace Rayn.Controllers
                 var ownerUrl = this.StreamerUrl(x.ThreadId, x.OwnerId);
                 var shareUrl = this.ThreadUrl(x.ThreadId);
                 var title = x.ThreadTitle;
-                var date = x.BeginningDate - x.DateOffset;
+                var date = x.BeginningDate + x.DateOffset;
                 return new History(ownerUrl, shareUrl, title, date);
             });
 

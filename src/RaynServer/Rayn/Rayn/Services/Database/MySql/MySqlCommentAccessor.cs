@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Text.Unicode;
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
@@ -22,7 +20,6 @@ namespace Rayn.Services.Database.MySql
         {
             _databaseConfig = databaseConfig;
         }
-
 
         public async ValueTask<CommentModel[]> ReadCommentAsync(Guid threadId)
         {

@@ -78,7 +78,7 @@
         let dateStr = date.getFullYear() + "-" + String((date.getMonth() + 1)).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
 
         document.getElementById('BeginningDate').value = dateStr;
-        document.getElementById('DateOffset').value = date.getTimezoneOffset();
+        document.getElementById('DateOffset').value = -date.getTimezoneOffset();
     </script>
 }
 

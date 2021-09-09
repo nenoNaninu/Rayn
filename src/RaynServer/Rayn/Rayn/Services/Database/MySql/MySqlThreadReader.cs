@@ -12,6 +12,9 @@ namespace Rayn.Services.Database.MySql
 {
     public class MySqlThreadReader : IThreadDbReader
     {
+        private const string SearchThreadByThreadIdQuery = "select * from rayn_db.threads where ThreadId = @ThreadId;";
+        private const string SearchThreadByUserIdQuery = "select * from rayn_db.threads where AuthorID = @AuthorID;";
+
         private readonly IDatabaseConfig _databaseConfig;
 
         public MySqlThreadReader(IDatabaseConfig databaseConfig)
@@ -23,14 +26,22 @@ namespace Rayn.Services.Database.MySql
         {
             using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
 
-            var searchResult = await conn.QueryAsync<ThreadModel>("select * from rayn_db.threads where ThreadId = @ThreadId;", new { ThreadId = threadId });
+            var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByThreadIdQuery, new { ThreadId = threadId });
 
             return searchResult.FirstOrDefault();
         }
 
-        public ValueTask<IEnumerable<ThreadModel>> SearchThreadByUserId(Guid userId)
+        public async ValueTask<IEnumerable<ThreadModel>> SearchThreadByUserId(Guid userId)
         {
-            throw new NotImplementedException();
+            using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
+            var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByThreadIdQuery, new { AuthorID = userId });
+
+            if (searchResult is null)
+            {
+                return Array.Empty<ThreadModel>();
+            }
+
+            return searchResult;
         }
     }
 }

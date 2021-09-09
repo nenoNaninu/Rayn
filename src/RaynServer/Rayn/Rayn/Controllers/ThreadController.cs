@@ -32,7 +32,7 @@ namespace Rayn.Controllers
             var thread = new ThreadModel()
             {
                 ThreadTitle = threadCreateRequest.Title,
-                BeginningDate = threadCreateRequest.BeginningDate + dateOffset,
+                BeginningDate = threadCreateRequest.BeginningDate - dateOffset,
                 DateOffset = dateOffset,
                 AuthorId = userId,
                 CreatedDate = DateTime.UtcNow,
@@ -70,7 +70,7 @@ namespace Rayn.Controllers
 
             var threadViewModel = new ThreadViewModel(
                 thread.ThreadTitle,
-                thread.BeginningDate - thread.DateOffset,
+                thread.BeginningDate + thread.DateOffset,
                 threadUrl,
                 streamerUrl);
 

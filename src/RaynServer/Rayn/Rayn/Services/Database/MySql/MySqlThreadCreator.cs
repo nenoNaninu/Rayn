@@ -10,9 +10,9 @@ namespace Rayn.Services.Database.MySql
 {
     public class MySqlThreadCreator : IThreadCreator
     {
-        private readonly IDatabaseConfig _databaseConfig;
+        private const string CreateThreadQuery = "insert into threads(ThreadId, OwnerId, ThreadTitle, BeginningDate) values (@ThreadId, @OwnerId, @ThreadTitle, @BeginningDate)";
 
-        private const string _query = "insert into threads(ThreadId, OwnerId, ThreadTitle, BeginningDate) values (@ThreadId, @OwnerId, @ThreadTitle, @BeginningDate)";
+        private readonly IDatabaseConfig _databaseConfig;
 
         public MySqlThreadCreator(IDatabaseConfig databaseConfig)
         {
@@ -24,7 +24,7 @@ namespace Rayn.Services.Database.MySql
             using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
 
             // 例外処理は後で...
-            await conn.ExecuteAsync(_query, thread);
+            await conn.ExecuteAsync(CreateThreadQuery, thread);
         }
     }
 }
