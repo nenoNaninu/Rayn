@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Models;
 
@@ -17,9 +16,7 @@ namespace Rayn.Controllers
         private readonly IAccountRegister _accountRegister;
         private readonly IGoogleAccountReader _googleAccountReader;
         private readonly IGoogleAccountRegister _googleAccountRegister;
-        private readonly ILogger<AccountController> _logger;
         public AccountController(
-            ILogger<AccountController> logger,
             IGoogleAccountReader googleAccountReader,
             IAccountRegister accountRegister,
             IGoogleAccountRegister googleAccountRegister)
@@ -27,7 +24,6 @@ namespace Rayn.Controllers
             _accountRegister = accountRegister;
             _googleAccountReader = googleAccountReader;
             _googleAccountRegister = googleAccountRegister;
-            _logger = logger;
         }
 
         public IActionResult Login()

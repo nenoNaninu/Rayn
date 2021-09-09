@@ -9,11 +9,14 @@
 <section class="hero is-fullheight is-light">
     <div class="hero-body">
         <div class="container is-max-desktop">
+            <p class="title">
+                履歴
+            </p>
             @foreach (var history in Model.Histories)
             {
                 <div class="box">
-                    <h4 class="title is-3">スレッド名 @history.Title</h4>
-                    <h4 class="subtitle is-5">開催予定日 @history.DateTime</h4>
+                    <h4 class="title is-3">@history.Title</h4>
+                    <h4 class="subtitle is-5">@history.DateTime.ToString("yyyy/MM/dd")</h4>
 
                     <article class="message is-primary">
                         <div class="message-header">

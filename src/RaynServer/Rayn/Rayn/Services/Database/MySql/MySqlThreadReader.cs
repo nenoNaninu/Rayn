@@ -34,7 +34,7 @@ namespace Rayn.Services.Database.MySql
         public async ValueTask<IEnumerable<ThreadModel>> SearchThreadByUserId(Guid userId)
         {
             using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
-            var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByThreadIdQuery, new { AuthorID = userId });
+            var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByUserIdQuery, new { AuthorID = userId });
 
             if (searchResult is null)
             {

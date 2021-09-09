@@ -11,10 +11,10 @@ namespace Rayn.Services.Database.MySql
 {
     public class MySqlCommentAccessor : ICommentAccessor
     {
-
-        private readonly IDatabaseConfig _databaseConfig;
         private const string ReadQuery = "select * from rayn_db.comments where ThreadId = @ThreadId;";
         private const string InsertQuery = "insert into rayn_db.comments (ThreadId, WrittenTime, Message) values (@ThreadId, @WrittenTime, @Message);";
+        
+        private readonly IDatabaseConfig _databaseConfig;
 
         public MySqlCommentAccessor(IDatabaseConfig databaseConfig)
         {

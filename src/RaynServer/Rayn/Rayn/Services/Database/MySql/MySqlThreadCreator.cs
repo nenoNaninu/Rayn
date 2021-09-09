@@ -10,7 +10,9 @@ namespace Rayn.Services.Database.MySql
 {
     public class MySqlThreadCreator : IThreadCreator
     {
-        private const string CreateThreadQuery = "insert into threads(ThreadId, OwnerId, ThreadTitle, BeginningDate) values (@ThreadId, @OwnerId, @ThreadTitle, @BeginningDate)";
+        private const string CreateThreadQuery =
+@"insert into threads(ThreadId, OwnerId, ThreadTitle, BeginningDate, DateOffset, CreatedDate, AuthorId) 
+values (@ThreadId, @OwnerId, @ThreadTitle, @BeginningDate, @DateOffset, @CreatedDate, @AuthorId)";
 
         private readonly IDatabaseConfig _databaseConfig;
 
