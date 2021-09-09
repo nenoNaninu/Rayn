@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rayn.Models.ApiResponse
+namespace Rayn.Services.Responses
 {
     public enum StreamerConnectionRequestStatus
     {

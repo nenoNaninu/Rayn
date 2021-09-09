@@ -2,15 +2,17 @@ using System;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Rayn.Services.Database.Configuration;
 using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Realtime;
 using Rayn.Services.Realtime.Hubs;
 using Rayn.Services.ServiceConfiguration;
 
@@ -33,7 +35,6 @@ namespace Rayn
             IDatabaseConfig dbConfig = this.Configuration.GetSection("DatabaseConfig").Get<DatabaseConfiguration>();
             services.AddSingleton(dbConfig);
 
-
             services.AddControllersWithViews()
 #if DEBUG
                 .AddRazorRuntimeCompilation()
@@ -42,6 +43,16 @@ namespace Rayn
                 {
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                });
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie()
+                .AddGoogle(options =>
+                {
+                    var googleAuthSection = this.Configuration.GetSection("Authentication:Google");
+
+                    options.ClientId = googleAuthSection["ClientId"];
+                    options.ClientSecret = googleAuthSection["ClientSecret"];
                 });
 
             if (dbConfig.InMemoryMode)
@@ -58,7 +69,7 @@ namespace Rayn
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -76,6 +87,7 @@ namespace Rayn
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -84,7 +96,7 @@ namespace Rayn
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}");
 
-                endpoints.MapHub<ThreadRoomHub>("/Realtime/ThreadRoom");
+                endpoints.MapHub<ThreadRoomHub>(ThreadRoomHub.Path);
             });
         }
     }

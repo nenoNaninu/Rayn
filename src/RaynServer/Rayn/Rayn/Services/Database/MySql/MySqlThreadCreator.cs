@@ -4,30 +4,29 @@ using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
 using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Database.Models;
+using Rayn.Services.Models;
 
 namespace Rayn.Services.Database.MySql
 {
     public class MySqlThreadCreator : IThreadCreator
     {
-        private readonly IDatabaseConfig _databaseConfig;
+        private const string CreateThreadQuery =
+@"insert into threads(ThreadId, OwnerId, ThreadTitle, BeginningDate, DateOffset, CreatedDate, AuthorId) 
+values (@ThreadId, @OwnerId, @ThreadTitle, @BeginningDate, @DateOffset, @CreatedDate, @AuthorId)";
 
-        private const string _query = "insert into threads(ThreadId, OwnerId, ThreadTitle, BeginningDate) values (@ThreadId, @OwnerId, @ThreadTitle, @BeginningDate)";
+        private readonly IDatabaseConfig _databaseConfig;
 
         public MySqlThreadCreator(IDatabaseConfig databaseConfig)
         {
             _databaseConfig = databaseConfig;
         }
 
-        public async ValueTask<ThreadModel> CreateThreadAsync(string title, DateTime beginningDate)
+        public async ValueTask CreateThreadAsync(ThreadModel thread)
         {
-            var newThread = new ThreadModel(Guid.NewGuid(), Guid.NewGuid(), title, beginningDate);
             using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
 
             // 例外処理は後で...
-            await conn.ExecuteAsync(_query, newThread);
-            
-            return newThread;
+            await conn.ExecuteAsync(CreateThreadQuery, thread);
         }
     }
 }

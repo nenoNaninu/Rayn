@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Database.Models;
+using Rayn.Services.Models;
 
-namespace Rayn.Services.Database
+namespace Rayn.Services.Database.InMemory
 {
     public class MemoryThreadCreator : IThreadCreator
     {
@@ -14,10 +14,10 @@ namespace Rayn.Services.Database
             _memoryDatabase = memoryDatabase;
         }
 
-        public ValueTask<ThreadModel> CreateThreadAsync(string title, DateTime beginningDate)
+        public ValueTask CreateThreadAsync(ThreadModel thread)
         {
-            var thread = _memoryDatabase.CreateThread(beginningDate, title);
-            return ValueTask.FromResult(thread);
+            _memoryDatabase.CreateThread(thread);
+            return ValueTask.CompletedTask;
         }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
-using Rayn.Models;
-using Rayn.Models.FormRequests;
 using Rayn.Services.Database.Interfaces;
+using Rayn.Services.Models;
+using Rayn.Services.Requests;
+using Rayn.ViewModels;
 
 namespace Rayn.Controllers
 {
@@ -22,13 +25,28 @@ namespace Rayn.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNewThread([FromForm] ThreadCreateRequest threadCreateRequest)
         {
-            var thread = await _threadCreator.CreateThreadAsync(threadCreateRequest.Title, threadCreateRequest.BeginningDate);
+            var claim = this.User.FindAll(ClaimTypes.NameIdentifier)?.Where(x => x.Issuer == "Rayn").FirstOrDefault();
+            Guid? userId = claim is not null ? Guid.Parse(claim.Value) : null;
+
+            var dateOffset = TimeSpan.FromMinutes(threadCreateRequest.DateOffset);
+            var thread = new ThreadModel()
+            {
+                ThreadTitle = threadCreateRequest.Title,
+                BeginningDate = threadCreateRequest.BeginningDate - dateOffset,
+                DateOffset = dateOffset,
+                AuthorId = userId,
+                CreatedDate = DateTime.UtcNow,
+                OwnerId = Guid.NewGuid(),
+                ThreadId = Guid.NewGuid()
+            };
+
+            await _threadCreator.CreateThreadAsync(thread);
 
             return this.RedirectToAction(nameof(this.Index), new RouteValueDictionary { { "threadId", thread.ThreadId.ToString() } });
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string threadId)
+        public async Task<IActionResult> Index(string? threadId)
         {
             if (threadId == null)
             {
@@ -39,7 +57,7 @@ namespace Rayn.Controllers
             {
                 return this.RedirectToAction(nameof(this.Error));
             }
-            
+
             var thread = await _threadDbReader.SearchThreadModelAsync(threadGuid);
 
             if (thread == null)
@@ -47,10 +65,36 @@ namespace Rayn.Controllers
                 return this.RedirectToAction(nameof(this.Error));
             }
 
-            var threadViewModel = new ThreadViewModel(thread.ThreadId, thread.ThreadTitle, thread.BeginningDate, HttpContext.Request.Host.Value, thread.OwnerId);
+            var threadUrl = this.ThreadUrl(thread.ThreadId);
+            var streamerUrl = this.StreamerUrl(thread.ThreadId, thread.OwnerId);
+
+            var threadViewModel = new ThreadViewModel(
+                thread.ThreadTitle,
+                thread.BeginningDate + thread.DateOffset,
+                threadUrl,
+                streamerUrl);
 
             return this.View(threadViewModel);
         }
+
+        private string ThreadUrl(Guid threadId)
+        {
+            var protocol = this.HttpContext.Request.Scheme;
+
+            return this.Url.Action(null, "ThreadRoom",
+                new { threadId = threadId.ToString() },
+                protocol);
+        }
+
+        private string StreamerUrl(Guid threadId, Guid ownerId)
+        {
+            var protocol = this.HttpContext.Request.Scheme;
+
+            return this.Url.Action(nameof(ThreadRoomController.Streamer), "ThreadRoom",
+                new { threadId = threadId.ToString(), ownerId = ownerId.ToString() },
+                protocol);
+        }
+
 
         public IActionResult Error()
         {

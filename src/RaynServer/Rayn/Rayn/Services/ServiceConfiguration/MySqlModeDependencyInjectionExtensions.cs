@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Rayn.Services.Database;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Database.MySql;
 
@@ -12,6 +11,9 @@ namespace Rayn.Services.ServiceConfiguration
             services.AddTransient<IThreadDbReader, MySqlThreadReader>();
             services.AddTransient<IThreadCreator, MySqlThreadCreator>();
             services.AddTransient<ICommentAccessor, MySqlCommentAccessor>();
+            services.AddTransient<IAccountRegister, MySqlAccountRegister>();
+            services.AddTransient<IGoogleAccountRegister, MySqlGoogleAccountRegister>();
+            services.AddTransient<IGoogleAccountReader, MySqlGoogleAccountReader>();
         }
     }
 }

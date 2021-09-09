@@ -1,28 +1,25 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Text.Unicode;
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
 using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Database.Models;
+using Rayn.Services.Models;
 
 namespace Rayn.Services.Database.MySql
 {
     public class MySqlCommentAccessor : ICommentAccessor
     {
-
-        private readonly IDatabaseConfig _databaseConfig;
         private const string ReadQuery = "select * from rayn_db.comments where ThreadId = @ThreadId;";
         private const string InsertQuery = "insert into rayn_db.comments (ThreadId, WrittenTime, Message) values (@ThreadId, @WrittenTime, @Message);";
+        
+        private readonly IDatabaseConfig _databaseConfig;
 
         public MySqlCommentAccessor(IDatabaseConfig databaseConfig)
         {
             _databaseConfig = databaseConfig;
         }
-
 
         public async ValueTask<CommentModel[]> ReadCommentAsync(Guid threadId)
         {

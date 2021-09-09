@@ -4,7 +4,7 @@ namespace Rayn.Services.Database.Configuration
 {
     public class DatabaseConfiguration : IDatabaseConfig
     {
-        public string ConnectionString { get; set; }
-        public bool InMemoryMode { get; set; }
+        public string ConnectionString { get; init; } = default!;
+        public bool InMemoryMode { get; init; } = default!;
     }
 }
