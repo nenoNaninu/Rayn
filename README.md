@@ -19,7 +19,8 @@ dotnet tool install -g Microsoft.Web.LibraryManager.Cli
 
 ログとか残す気がないのであればDBとかを建てないで良い。Azure App Serviceなど単体で簡単に動かせる。
 
-ローカルの開発環境ではUserSecretsに以下みたいな形で設定してDBの接続文字列とかを保存。
+ローカルの開発環境ではUserSecretsに以下みたいな形で設定してDBの接続文字列やGoogle OAuthのためのClientId等を保存。GoogleのOAuthを使うためのClientId等は予め取得しておくこと。[参考](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-5.0)
+
 
 ```
 {
@@ -27,6 +28,10 @@ dotnet tool install -g Microsoft.Web.LibraryManager.Cli
         "ConnectionString": "Server=...; Port=...",
         "InMemoryMode": false
     }
+},
+"Authentication:Google": {
+    "ClientId": "xxxxx",
+    "ClientSecret": "yyyy"
 }
 ```
 
@@ -35,6 +40,8 @@ InMemoryModeをtrueにしておけばインメモリで動くためデータベ�
 ```
 export DatabaseConfig__ConnectionString="Server=...; Port=..."
 export DatabaseConfig__InMemoryMode="false"
+export Authentication__Google__ClientId="xxxxxxx"
+export Authentication__Google__ClientSecret="yyyyyyyy"
 ```
 
 上記の設定が出来たら以下の操作で試せます。
