@@ -27,11 +27,11 @@ dotnet tool install -g Microsoft.Web.LibraryManager.Cli
     "DatabaseConfig": {
         "ConnectionString": "Server=...; Port=...",
         "InMemoryMode": false
+    },
+    "Authentication:Google": {
+        "ClientId": "xxxxx",
+        "ClientSecret": "yyyy"
     }
-},
-"Authentication:Google": {
-    "ClientId": "xxxxx",
-    "ClientSecret": "yyyy"
 }
 ```
 
