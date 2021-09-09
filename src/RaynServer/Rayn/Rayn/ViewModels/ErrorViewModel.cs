@@ -1,6 +1,4 @@
-using System;
-
-namespace Rayn.Models
+namespace Rayn.ViewModels
 {
     public class ErrorViewModel
     {

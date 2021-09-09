@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using Rayn.Models;
+using Rayn.ViewModels;
 
 namespace Rayn.Controllers
 {

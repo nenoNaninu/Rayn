@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Rayn.Services.Models;
 
-namespace Rayn.Models
+namespace Rayn.ViewModels
 {
     public class HistoryViewModel
     {

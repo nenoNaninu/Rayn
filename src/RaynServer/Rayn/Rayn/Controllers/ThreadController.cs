@@ -4,10 +4,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
-using Rayn.Models;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Models;
 using Rayn.Services.Requests;
+using Rayn.ViewModels;
 
 namespace Rayn.Controllers
 {

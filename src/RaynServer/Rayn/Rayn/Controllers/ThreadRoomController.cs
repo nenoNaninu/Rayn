@@ -2,12 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Rayn.Models;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Realtime.Hubs;
 using Rayn.Services.Realtime.Interfaces;
 using Rayn.Services.Realtime.Models;
 using Rayn.Services.Responses;
+using Rayn.ViewModels;
 
 namespace Rayn.Controllers
 {

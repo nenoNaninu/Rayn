@@ -1,6 +1,6 @@
 ﻿using Rayn.Services.Requests;
 
-namespace Rayn.Models
+namespace Rayn.ViewModels
 {
     public class HomeViewModel
     {
