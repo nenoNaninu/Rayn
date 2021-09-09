@@ -14,7 +14,7 @@
                     <h2 class="subtitle is-4">
                         画面共有でもニコ〇コとかビ〇ビリみたいにコメントを流そう！
                     </h2>
-                  
+
                     <div class="columns">
                         <div class="column is-8 is-offset-2">
                             <p>
@@ -30,10 +30,16 @@
                             詳しい使い方
                         </a>
                     </p>
-
-                    <div class="has-text-centered">
-                        <span class="has-text-danger">2021/4/18 Ver.0.1.0 リリース</span> ダウンロードは<a href="https://github.com/nenoNaninu/Rayn/releases" class="has-text-info">こちら</a>
+                    
+                    <div class="m-3">
+                        <div class="has-text-centered">
+                            <span class="has-text-danger">2021/9/10 Ver.0.2.0 リリース</span> Googleアカウントで<a class="has-text-info" asp-controller="Account" asp-action="Login" >ログイン</a>が出来るようになりました。
+                        </div>
+                        <div class="has-text-centered">
+                            <span class="has-text-danger">2021/4/18 Ver.0.1.0 リリース</span> ダウンロードは<a href="https://github.com/nenoNaninu/Rayn/releases" class="has-text-info">こちらから。</a>
+                        </div>
                     </div>
+                   
 
                 </div>
                 <div class="column is-4 is-offset-1">
@@ -60,7 +66,7 @@
                                         <input class="button is-link" type="submit" value="作成">
                                     </div>
                                 </div>
-                                <input type="hidden"  id="DateOffset" asp-for="ThreadCreateRequest!.DateOffset"/>
+                                <input type="hidden" id="DateOffset" asp-for="ThreadCreateRequest!.DateOffset" />
                             </form>
                         </div>
                     </div>

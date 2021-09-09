@@ -33,14 +33,16 @@ namespace Rayn.Controllers
             var userId = Guid.Parse(claim.Value);
             var threads = await _threadDbReader.SearchThreadByUserId(userId);
 
-            var histories = threads.Select(x =>
-            {
-                var ownerUrl = this.StreamerUrl(x.ThreadId, x.OwnerId);
-                var shareUrl = this.ThreadUrl(x.ThreadId);
-                var title = x.ThreadTitle;
-                var date = x.BeginningDate + x.DateOffset;
-                return new History(ownerUrl, shareUrl, title, date);
-            });
+            var histories = threads
+                .OrderByDescending(x => x.CreatedDate + x.DateOffset)
+                .Select(x =>
+                {
+                    var ownerUrl = this.StreamerUrl(x.ThreadId, x.OwnerId);
+                    var shareUrl = this.ThreadUrl(x.ThreadId);
+                    var title = x.ThreadTitle;
+                    var date = x.BeginningDate + x.DateOffset;
+                    return new History(ownerUrl, shareUrl, title, date);
+                });
 
             return this.View(new HistoryViewModel(histories));
         }
