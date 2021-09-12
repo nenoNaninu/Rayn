@@ -7,14 +7,14 @@ namespace Rayn.Services.Models
         public string OwnerUrl { get; }
         public string ShareUrl { get; }
         public string Title { get; }
-        public DateTime DateTime { get; }
+        public DateTime ScheduledDateTime { get; }
 
-        public History(string ownerUrl, string shareUrl, string title, DateTime dateTime)
+        public History(string ownerUrl, string shareUrl, string title, DateTime scheduledDateTime)
         {
             OwnerUrl = ownerUrl;
             ShareUrl = shareUrl;
             Title = title;
-            DateTime = dateTime;
+            ScheduledDateTime = scheduledDateTime;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Rayn.Services.Models;
 
 namespace Rayn.ViewModels
@@ -9,7 +10,7 @@ namespace Rayn.ViewModels
 
        public HistoryViewModel(IEnumerable<History> histories)
        {
-           Histories = histories;
+           Histories = histories.OrderByDescending(x => x.ScheduledDateTime);
        }
     }
 }
