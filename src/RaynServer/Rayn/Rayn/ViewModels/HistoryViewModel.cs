@@ -10,7 +10,7 @@ namespace Rayn.ViewModels
 
        public HistoryViewModel(IEnumerable<History> histories)
        {
-           Histories = histories.OrderByDescending(x => x.ScheduledDateTime);
+           Histories = histories;
        }
     }
 }

@@ -12,7 +12,7 @@
             <p class="title">
                 履歴
             </p>
-            @foreach (var history in Model.Histories)
+            @foreach (var history in Model.Histories.OrderByDescending(x => x.ScheduledDateTime))
             {
                 <div class="box">
                     <h4 class="title is-3">@history.Title</h4>
