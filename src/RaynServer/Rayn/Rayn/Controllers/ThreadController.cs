@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Routing;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Models;
 using Rayn.Services.Requests;
+using Rayn.Services.Url;
 using Rayn.ViewModels;
 
 namespace Rayn.Controllers
@@ -65,8 +66,10 @@ namespace Rayn.Controllers
                 return this.RedirectToAction(nameof(this.Error));
             }
 
-            var threadUrl = this.ThreadUrl(thread.ThreadId);
-            var streamerUrl = this.StreamerUrl(thread.ThreadId, thread.OwnerId);
+            var host = this.HttpContext.Request.Host.Value;
+
+            var threadUrl = UrlUtility.ThreadUrl(host, thread.ThreadId);
+            var streamerUrl = UrlUtility.StreamerUrl(host, thread.ThreadId, thread.OwnerId);
 
             var threadViewModel = new ThreadViewModel(
                 thread.ThreadTitle,
@@ -76,25 +79,6 @@ namespace Rayn.Controllers
 
             return this.View(threadViewModel);
         }
-
-        private string ThreadUrl(Guid threadId)
-        {
-            var protocol = this.HttpContext.Request.Scheme;
-
-            return this.Url.Action(null, "ThreadRoom",
-                new { threadId = threadId.ToString() },
-                protocol);
-        }
-
-        private string StreamerUrl(Guid threadId, Guid ownerId)
-        {
-            var protocol = this.HttpContext.Request.Scheme;
-
-            return this.Url.Action(nameof(ThreadRoomController.Streamer), "ThreadRoom",
-                new { threadId = threadId.ToString(), ownerId = ownerId.ToString() },
-                protocol);
-        }
-
 
         public IActionResult Error()
         {
