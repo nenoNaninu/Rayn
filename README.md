@@ -15,6 +15,7 @@ Linux/Macだともしかしたら以下のコマンドが必要になるかも�
 
 ```
 dotnet tool install -g Microsoft.Web.LibraryManager.Cli
+libman restore
 ```
 
 ログとか残す気がないのであればDBとかを建てないで良い。Azure App Serviceなど単体で簡単に動かせる。
