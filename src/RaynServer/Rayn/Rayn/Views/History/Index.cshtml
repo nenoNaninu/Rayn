@@ -14,28 +14,28 @@
             </p>
             @foreach (var history in Model.Histories.OrderByDescending(x => x.ScheduledDateTime))
             {
-                <div class="box">
-                    <h4 class="title is-3">@history.Title</h4>
-                    <h4 class="subtitle is-5">@history.ScheduledDateTime.ToString("yyyy/MM/dd")</h4>
+            <div class="box">
+                <h4 class="title is-3">@history.Title</h4>
+                <h4 class="subtitle is-5">@history.ScheduledDateTime.ToString("yyyy/MM/dd")</h4>
 
-                    <article class="message is-primary">
-                        <div class="message-header">
-                            参加者用URL
-                        </div>
-                        <div class="message-body m-2">
-                            @history.ShareUrl
-                        </div>
-                    </article>
+                <article class="message is-primary">
+                    <div class="message-header">
+                        参加者用URL
+                    </div>
+                    <div class="message-body m-2">
+                        @history.ShareUrl
+                    </div>
+                </article>
 
-                    <article class="message is-info">
-                        <div class="message-header">
-                            配信クライアントアプリ用URL
-                        </div>
-                        <div class="message-body m-2">
-                            @history.OwnerUrl
-                        </div>
-                    </article>
-                </div>
+                <article class="message is-info">
+                    <div class="message-header">
+                        配信クライアントアプリ用URL
+                    </div>
+                    <div class="message-body m-2">
+                        @history.OwnerUrl
+                    </div>
+                </article>
+            </div>
             }
         </div>
     </div>
