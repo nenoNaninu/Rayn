@@ -27,13 +27,13 @@
                         }
                     </a>
 
-                    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" v-on:click="ToggleBurger" v-bind:class="{ 'is-active': isBurgerMenuOpen }">
+                    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" v-on:click="ToggleBurger" v-bind:class="{ 'is-active': isBurgerMenuActive }">
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
                     </a>
                 </div>
-                <div class="navbar-menu" v-bind:class="{ 'is-active': isBurgerMenuOpen }">
+                <div class="navbar-menu" v-bind:class="{ 'is-active': isBurgerMenuActive }">
                     <div class="navbar-end">
                         <a class="navbar-item" asp-controller="Home" asp-action="Index">Home</a>
                         <a class="navbar-item" asp-controller="Home" asp-action="Usage">Usage</a>
@@ -72,14 +72,14 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
-        const responsibleNavbar = new Vue({
+        const headerVueApp = new Vue({
             el: '#rayn-header',
             data: {
-                isBurgerMenuOpen: false
+                isBurgerMenuActive: false
             },
             methods: {
                 ToggleBurger: function () {
-                    this.isBurgerMenuOpen = !this.isBurgerMenuOpen;
+                    this.isBurgerMenuActive = !this.isBurgerMenuActive;
                 }
             }
         })
