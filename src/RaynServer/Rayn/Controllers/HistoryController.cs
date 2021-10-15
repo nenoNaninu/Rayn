@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Models;
 using Rayn.Services.Url;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Rayn.Controllers;
 using Rayn.Services.Extensions;
 

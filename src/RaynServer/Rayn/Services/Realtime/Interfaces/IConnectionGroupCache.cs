@@ -1,4 +1,4 @@
-﻿using Rayn.Services.Realtime.Models;
+using Rayn.Services.Realtime.Models;
 
 namespace Rayn.Services.Realtime.Interfaces
 {

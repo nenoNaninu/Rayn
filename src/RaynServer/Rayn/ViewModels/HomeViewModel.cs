@@ -1,4 +1,4 @@
-﻿using Rayn.Services.Requests;
+using Rayn.Services.Requests;
 
 namespace Rayn.ViewModels
 {

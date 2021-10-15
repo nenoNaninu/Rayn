@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +9,7 @@ namespace Rayn.Services.Extensions
         private static class Cache<T>
         {
             private const string ControllerTemplateString = "[controller]";
-            
+
             public static readonly string ControllerRouteValue;
 
             private static string RemoveControllerStringFromTypeName(Type type)

@@ -1,4 +1,3 @@
-﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -6,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Models;
 
@@ -80,15 +80,15 @@ namespace Rayn.Controllers
 
             var identifier = identifierClaim.Value;
 
-            var account = await _googleAccountReader.SearchAsync(identifier) 
+            var account = await _googleAccountReader.SearchAsync(identifier)
                                     ?? await this.RegisterGoogleAccount(identifier);
 
             var principal = this.User;
             var identity = new ClaimsIdentity();
             var claim = new Claim(
-                ClaimTypes.NameIdentifier, 
-                account.UserId.ToString(), 
-                null, 
+                ClaimTypes.NameIdentifier,
+                account.UserId.ToString(),
+                null,
                 "Rayn");
 
             identity.AddClaim(claim);

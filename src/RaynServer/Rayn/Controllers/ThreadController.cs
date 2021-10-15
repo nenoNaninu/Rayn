@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Models;

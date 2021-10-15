@@ -1,4 +1,4 @@
-﻿using Rayn.Services.Database.Interfaces;
+using Rayn.Services.Database.Interfaces;
 
 namespace Rayn.Services.Database.Configuration
 {

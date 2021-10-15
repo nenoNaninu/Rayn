@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Realtime.Hubs;
 using Rayn.Services.Realtime.Interfaces;

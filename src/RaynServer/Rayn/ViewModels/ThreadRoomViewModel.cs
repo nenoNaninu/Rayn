@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Rayn.Services.Realtime.Hubs;
 
 namespace Rayn.ViewModels

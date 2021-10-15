@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using Rayn.Services.Realtime.Interfaces;

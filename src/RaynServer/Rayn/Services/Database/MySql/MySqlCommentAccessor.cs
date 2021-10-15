@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +13,7 @@ namespace Rayn.Services.Database.MySql
     {
         private const string ReadQuery = "select * from rayn_db.comments where ThreadId = @ThreadId;";
         private const string InsertQuery = "insert into rayn_db.comments (ThreadId, WrittenTime, Message) values (@ThreadId, @WrittenTime, @Message);";
-        
+
         private readonly IDatabaseConfig _databaseConfig;
 
         public MySqlCommentAccessor(IDatabaseConfig databaseConfig)

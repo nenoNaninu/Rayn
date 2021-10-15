@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Rayn.Services.Realtime;
 using Rayn.Services.Realtime.Interfaces;
 using Rayn.Services.Realtime.Models;

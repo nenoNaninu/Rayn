@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
 using Rayn.Services.Database.Interfaces;
@@ -10,7 +10,7 @@ namespace Rayn.Services.Database.MySql
     {
         private const string GoogleAccountRegisterQuery =
             "insert into rayn_db.google_accounts (UserId, Identifier, Email) values (@UserId, @Identifier, @Email);";
-        
+
         private readonly IDatabaseConfig _databaseConfig;
 
         public MySqlGoogleAccountRegister(IDatabaseConfig databaseConfig)

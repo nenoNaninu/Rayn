@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Rayn.Services.Database.InMemory;
 using Rayn.Services.Database.Interfaces;
 

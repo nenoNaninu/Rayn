@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Dapper;
 using Rayn.Services.Database.DapperHelper;
 

@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Rayn.Services.Models;
 
 namespace Rayn.Services.Database.Interfaces

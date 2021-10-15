@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
 using Rayn.Services.Database.Interfaces;
@@ -12,12 +12,12 @@ namespace Rayn.Services.Database.MySql
             "insert into rayn_db.accounts(UserId, Email, LinkToGoogle) value (@UserId, @Email, @LinkToGoogle)";
 
         private readonly IDatabaseConfig _databaseConfig;
-        
+
         public MySqlAccountRegister(IDatabaseConfig databaseConfig)
         {
             _databaseConfig = databaseConfig;
         }
-        
+
         public async ValueTask RegisterAsync(Account account)
         {
             var connection = new MySqlConnection(_databaseConfig.ConnectionString);
