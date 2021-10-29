@@ -22,7 +22,6 @@ libman restore
 
 ローカルの開発環境ではUserSecretsに以下みたいな形で設定してDBの接続文字列やGoogle OAuthのためのClientId等を保存。GoogleのOAuthを使うためのClientId等は予め取得しておくこと。[参考](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-5.0)
 
-
 ```
 {
     "DatabaseConfig": {

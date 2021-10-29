@@ -85,21 +85,21 @@ namespace Rayn
                 ? (_minimumWindow.gameObject, _mainWindow.gameObject)
                 : (_mainWindow.gameObject, _minimumWindow.gameObject);
 
-            // À•W‡‚í‚¹‚Ä
+            // ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½í‚¹ï¿½ï¿½
             var nextRectTransform = nextWindow.GetComponent<RectTransform>();
             var currentRectTransform = currentWindow.GetComponent<RectTransform>();
 
             nextRectTransform.anchoredPosition = currentRectTransform.anchoredPosition;
 
-            // ƒAƒjƒ[ƒVƒ‡ƒ“d‚ñ‚ÅØ‚è‘Ö‚¦‚é
+            // ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½dï¿½ï¿½ï¿½ï¿½ÅØ‚ï¿½Ö‚ï¿½ï¿½ï¿½
             await this.SwitchWindowWithAnimationAsync(currentRectTransform, nextRectTransform);
         }
 
         private async UniTask SwitchWindowWithAnimationAsync(RectTransform current, RectTransform next)
         {
-            // 0.5•b‚ÅØ‚è‘Ö‚¦‚é‚Ì‚ÅA‚»‚ê‚¼‚ê0.25•b‚Å1->0, 0->1‚ÌƒXƒP[ƒ‹•ÏŠ·‚ğ‚·‚éB
+            // 0.5ï¿½bï¿½ÅØ‚ï¿½Ö‚ï¿½ï¿½ï¿½Ì‚ÅAï¿½ï¿½ï¿½ê‚¼ï¿½ï¿½0.25ï¿½bï¿½ï¿½1->0, 0->1ï¿½ÌƒXï¿½Pï¿½[ï¿½ï¿½ï¿½ÏŠï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B
 
-            var startTime = Time.time; // •b
+            var startTime = Time.time; // ï¿½b
 
             var min = new Vector3(1f, 0, 1);
             var normal = new Vector3(1f, 1f, 1);
@@ -125,7 +125,7 @@ namespace Rayn
             current.gameObject.SetActive(false);
             next.gameObject.SetActive(true);
 
-            var startTime2 = Time.time; // •b
+            var startTime2 = Time.time; // ï¿½b
 
             while (Time.time < startTime2 + timeSpan)
             {

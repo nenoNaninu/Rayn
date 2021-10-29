@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 mkdir dlls/
 wget https://www.nuget.org/api/v2/package/Microsoft.AspNetCore.SignalR.Client/5.0.5 -O Microsoft.AspNetCore.SignalR.Client.nupkg
 unzip Microsoft.AspNetCore.SignalR.Client.nupkg -d Microsoft.AspNetCore.SignalR.Client

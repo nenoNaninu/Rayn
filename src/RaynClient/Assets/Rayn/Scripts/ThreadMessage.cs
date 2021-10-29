@@ -1,4 +1,4 @@
-﻿namespace Rayn
+namespace Rayn
 {
     public class ThreadMessage
     {
