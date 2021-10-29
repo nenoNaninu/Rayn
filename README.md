@@ -47,7 +47,7 @@ export Authentication__Google__ClientSecret="yyyyyyyy"
 
 上記の設定が出来たら以下の操作で試せます。
 ```
-cd src/RaynServer/Rayn/Rayn
+cd src/RaynServer/Rayn
 dotnet run --project Rayn.csproj
 ```
 
