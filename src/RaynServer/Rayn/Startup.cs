@@ -16,26 +16,26 @@ using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Realtime.Hubs;
 using Rayn.Services.ServiceConfiguration;
 
-namespace Rayn
+namespace Rayn;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        Configuration = configuration;
+    }
 
-        public IConfiguration Configuration { get; }
+    public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            DapperConfiguration.Configure();
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        DapperConfiguration.Configure();
 
-            IDatabaseConfig dbConfig = this.Configuration.GetSection("DatabaseConfig").Get<DatabaseConfiguration>();
-            services.AddSingleton(dbConfig);
+        IDatabaseConfig dbConfig = this.Configuration.GetSection("DatabaseConfig").Get<DatabaseConfiguration>();
+        services.AddSingleton(dbConfig);
 
-            services.AddControllersWithViews()
+        services.AddControllersWithViews()
 #if DEBUG
                 .AddRazorRuntimeCompilation()
 #endif
@@ -45,59 +45,58 @@ namespace Rayn
                     options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
                 });
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie()
-                .AddGoogle(options =>
-                {
-                    var googleAuthSection = this.Configuration.GetSection("Authentication:Google");
-
-                    options.ClientId = googleAuthSection["ClientId"];
-                    options.ClientSecret = googleAuthSection["ClientSecret"];
-                });
-
-            if (dbConfig.InMemoryMode)
+        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie()
+            .AddGoogle(options =>
             {
-                services.AddMemoryDatabaseModeServices();
-            }
-            else
-            {
-                services.AddMySqlDatabaseModeServices();
-            }
+                var googleAuthSection = this.Configuration.GetSection("Authentication:Google");
 
-            services.AddRealtimeServices();
-            services.AddSignalR();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}");
-
-                endpoints.MapHub<ThreadRoomHub>(ThreadRoomHub.Path);
+                options.ClientId = googleAuthSection["ClientId"];
+                options.ClientSecret = googleAuthSection["ClientSecret"];
             });
+
+        if (dbConfig.InMemoryMode)
+        {
+            services.AddMemoryDatabaseModeServices();
         }
+        else
+        {
+            services.AddMySqlDatabaseModeServices();
+        }
+
+        services.AddRealtimeServices();
+        services.AddSignalR();
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseExceptionHandler("/Home/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}");
+
+            endpoints.MapHub<ThreadRoomHub>(ThreadRoomHub.Path);
+        });
     }
 }

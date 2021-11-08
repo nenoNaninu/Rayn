@@ -1,19 +1,18 @@
 using System;
 using Rayn.Services.Realtime.Hubs;
 
-namespace Rayn.ViewModels
+namespace Rayn.ViewModels;
+
+public class ThreadRoomViewModel
 {
-    public class ThreadRoomViewModel
+    public string ThreadTitle { get; }
+    public Guid ThreadId { get; }
+
+    public string ThreadRoomHubUrl() => ThreadRoomHub.Path;
+
+    public ThreadRoomViewModel(string threadTitle, Guid threadId)
     {
-        public string ThreadTitle { get; }
-        public Guid ThreadId { get; }
-
-        public string ThreadRoomHubUrl() => ThreadRoomHub.Path;
-
-        public ThreadRoomViewModel(string threadTitle, Guid threadId)
-        {
-            ThreadTitle = threadTitle;
-            ThreadId = threadId;
-        }
+        ThreadTitle = threadTitle;
+        ThreadId = threadId;
     }
 }

@@ -1,16 +1,14 @@
 using System.Collections.Generic;
-using System.Linq;
 using Rayn.Services.Models;
 
-namespace Rayn.ViewModels
-{
-    public class HistoryViewModel
-    {
-        public IEnumerable<History> Histories { get; }
+namespace Rayn.ViewModels;
 
-        public HistoryViewModel(IEnumerable<History> histories)
-        {
-            Histories = histories;
-        }
+public class HistoryViewModel
+{
+    public IEnumerable<History> Histories { get; }
+
+    public HistoryViewModel(IEnumerable<History> histories)
+    {
+        Histories = histories;
     }
 }

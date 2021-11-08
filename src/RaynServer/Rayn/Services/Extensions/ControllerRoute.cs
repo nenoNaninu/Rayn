@@ -2,65 +2,64 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Rayn.Services.Extensions
+namespace Rayn.Services.Extensions;
+
+public static class ControllerRoute
 {
-    public static class ControllerRoute
+    private static class Cache<T>
     {
-        private static class Cache<T>
+        private const string ControllerTemplateString = "[controller]";
+
+        public static readonly string ControllerRouteValue;
+
+        private static string RemoveControllerStringFromTypeName(Type type)
         {
-            private const string ControllerTemplateString = "[controller]";
+            var name = type.Name;
+            var index = name.IndexOf("Controller", StringComparison.Ordinal);
+            return name[..index];
+        }
 
-            public static readonly string ControllerRouteValue;
+        static Cache()
+        {
+            var type = typeof(T);
 
-            private static string RemoveControllerStringFromTypeName(Type type)
+            var routeAttribute = type
+                .GetCustomAttributes(true)
+                .Select(x => x as RouteAttribute)
+                .FirstOrDefault(x => x is not null);
+
+            if (routeAttribute is not null)
             {
-                var name = type.Name;
-                var index = name.IndexOf("Controller", StringComparison.Ordinal);
-                return name[..index];
-            }
+                var template = routeAttribute.Template;
 
-            static Cache()
-            {
-                var type = typeof(T);
-
-                var routeAttribute = type
-                    .GetCustomAttributes(true)
-                    .Select(x => x as RouteAttribute)
-                    .FirstOrDefault(x => x is not null);
-
-                if (routeAttribute is not null)
+                if (template is null)
                 {
-                    var template = routeAttribute.Template;
-
-                    if (template is null)
-                    {
-                        ControllerRouteValue = RemoveControllerStringFromTypeName(type);
-                        return;
-                    }
-
-                    var index = template.IndexOf(ControllerTemplateString, StringComparison.Ordinal);
-
-                    if (index < 0)
-                    {
-                        ControllerRouteValue = template;
-                        return;
-                    }
-
-                    var controllerName = RemoveControllerStringFromTypeName(type);
-
-                    var prefix = template[..index];
-                    var suffix = template[(index + ControllerTemplateString.Length)..];
-
-                    ControllerRouteValue = $"{prefix}{controllerName}{suffix}";
+                    ControllerRouteValue = RemoveControllerStringFromTypeName(type);
+                    return;
                 }
 
-                ControllerRouteValue = RemoveControllerStringFromTypeName(type);
-            }
-        }
+                var index = template.IndexOf(ControllerTemplateString, StringComparison.Ordinal);
 
-        public static string Value<T>() where T : ControllerBase
-        {
-            return Cache<T>.ControllerRouteValue;
+                if (index < 0)
+                {
+                    ControllerRouteValue = template;
+                    return;
+                }
+
+                var controllerName = RemoveControllerStringFromTypeName(type);
+
+                var prefix = template[..index];
+                var suffix = template[(index + ControllerTemplateString.Length)..];
+
+                ControllerRouteValue = $"{prefix}{controllerName}{suffix}";
+            }
+
+            ControllerRouteValue = RemoveControllerStringFromTypeName(type);
         }
+    }
+
+    public static string Value<T>() where T : ControllerBase
+    {
+        return Cache<T>.ControllerRouteValue;
     }
 }

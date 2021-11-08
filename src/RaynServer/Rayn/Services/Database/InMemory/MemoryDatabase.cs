@@ -4,70 +4,69 @@ using System.Collections.Generic;
 using System.Linq;
 using Rayn.Services.Models;
 
-namespace Rayn.Services.Database.InMemory
+namespace Rayn.Services.Database.InMemory;
+
+public class MemoryDatabase
 {
-    public class MemoryDatabase
+    private readonly ConcurrentBag<ThreadModel> _threadDataStore = new();
+    private readonly ConcurrentBag<CommentModel> _commentDataStore = new();
+    private readonly ConcurrentBag<GoogleAccount> _googleAccountStore = new();
+    private readonly ConcurrentBag<Account> _accountStore = new();
+
+    private int _commentId = 0;
+
+    public void CreateThread(ThreadModel thread)
     {
-        private readonly ConcurrentBag<ThreadModel> _threadDataStore = new();
-        private readonly ConcurrentBag<CommentModel> _commentDataStore = new();
-        private readonly ConcurrentBag<GoogleAccount> _googleAccountStore = new();
-        private readonly ConcurrentBag<Account> _accountStore = new();
+        _threadDataStore.Add(thread);
+    }
 
-        private int _commentId = 0;
+    public ThreadModel? SearchThread(Guid guid)
+    {
+        var model = _threadDataStore.FirstOrDefault(x => x.ThreadId == guid);
+        return model;
+    }
 
-        public void CreateThread(ThreadModel thread)
+    public CommentModel[] FetchAlreadyExistComments(Guid threadId)
+    {
+        var comments = _commentDataStore
+            .Where(x => x.ThreadId == threadId)
+            .OrderBy(x => x.WrittenTime)
+            .ToArray();
+
+        return comments;
+    }
+
+    public void InsertComment(string message, DateTime writtenTime, Guid threadId)
+    {
+        var commentModel = new CommentModel
         {
-            _threadDataStore.Add(thread);
-        }
+            Id = _commentId,
+            ThreadId = threadId,
+            WrittenTime = writtenTime,
+            Message = message
+        };
 
-        public ThreadModel? SearchThread(Guid guid)
-        {
-            var model = _threadDataStore.FirstOrDefault(x => x.ThreadId == guid);
-            return model;
-        }
+        _commentDataStore.Add(commentModel);
+        _commentId++;
+    }
 
-        public CommentModel[] FetchAlreadyExistComments(Guid threadId)
-        {
-            var comments = _commentDataStore
-                .Where(x => x.ThreadId == threadId)
-                .OrderBy(x => x.WrittenTime)
-                .ToArray();
+    public void AddAccount(Account account)
+    {
+        _accountStore.Add(account);
+    }
 
-            return comments;
-        }
+    public void AddGoogleAccount(GoogleAccount account)
+    {
+        _googleAccountStore.Add(account);
+    }
 
-        public void InsertComment(string message, DateTime writtenTime, Guid threadId)
-        {
-            var commentModel = new CommentModel
-            {
-                Id = _commentId,
-                ThreadId = threadId,
-                WrittenTime = writtenTime,
-                Message = message
-            };
+    public GoogleAccount? SearchGoogleAccount(string id)
+    {
+        return _googleAccountStore.FirstOrDefault(x => x.Identifier == id);
+    }
 
-            _commentDataStore.Add(commentModel);
-            _commentId++;
-        }
-
-        public void AddAccount(Account account)
-        {
-            _accountStore.Add(account);
-        }
-
-        public void AddGoogleAccount(GoogleAccount account)
-        {
-            _googleAccountStore.Add(account);
-        }
-
-        public GoogleAccount? SearchGoogleAccount(string id)
-        {
-            return _googleAccountStore.FirstOrDefault(x => x.Identifier == id);
-        }
-
-        public IEnumerable<ThreadModel> SearchThreadByUserId(Guid userId)
-        {
-            return _threadDataStore.Where(x => x.AuthorId == userId);
-        }
+    public IEnumerable<ThreadModel> SearchThreadByUserId(Guid userId)
+    {
+        return _threadDataStore.Where(x => x.AuthorId == userId);
     }
 }

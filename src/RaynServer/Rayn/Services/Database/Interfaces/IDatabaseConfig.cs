@@ -1,8 +1,7 @@
-namespace Rayn.Services.Database.Interfaces
+namespace Rayn.Services.Database.Interfaces;
+
+public interface IDatabaseConfig
 {
-    public interface IDatabaseConfig
-    {
-        public string ConnectionString { get; }
-        public bool InMemoryMode { get; }
-    }
+    public string ConnectionString { get; }
+    public bool InMemoryMode { get; }
 }

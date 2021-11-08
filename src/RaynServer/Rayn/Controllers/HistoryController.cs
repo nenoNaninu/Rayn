@@ -9,44 +9,43 @@ using Rayn.Services.Models;
 using Rayn.Services.Url;
 using Rayn.ViewModels;
 
-namespace Rayn.Controllers
+namespace Rayn.Controllers;
+
+[Authorize]
+public class HistoryController : Controller
 {
-    [Authorize]
-    public class HistoryController : Controller
+    private readonly IThreadDbReader _threadDbReader;
+
+    public HistoryController(IThreadDbReader threadDbReader)
     {
-        private readonly IThreadDbReader _threadDbReader;
+        _threadDbReader = threadDbReader;
+    }
 
-        public HistoryController(IThreadDbReader threadDbReader)
+    public async Task<IActionResult> Index()
+    {
+        var claim = this.User.FindAll(ClaimTypes.NameIdentifier)
+            .FirstOrDefault(x => x.Issuer == "Rayn");
+
+        if (claim is null)
         {
-            _threadDbReader = threadDbReader;
+            return this.RedirectToAction("Error", "Home");
         }
 
-        public async Task<IActionResult> Index()
-        {
-            var claim = this.User.FindAll(ClaimTypes.NameIdentifier)
-                .FirstOrDefault(x => x.Issuer == "Rayn");
+        var userId = Guid.Parse(claim.Value);
+        var threads = await _threadDbReader.SearchThreadByUserId(userId);
 
-            if (claim is null)
+        var host = this.HttpContext.Request.Host.Value;
+
+        var histories = threads
+            .Select(x =>
             {
-                return this.RedirectToAction("Error", "Home");
-            }
+                var ownerUrl = UrlUtility.StreamerUrl(host, x.ThreadId, x.OwnerId);
+                var shareUrl = UrlUtility.ThreadUrl(host, x.ThreadId);
+                var title = x.ThreadTitle;
+                var scheduledDateTime = x.BeginningDate + x.DateOffset;
+                return new History(ownerUrl, shareUrl, title, scheduledDateTime);
+            });
 
-            var userId = Guid.Parse(claim.Value);
-            var threads = await _threadDbReader.SearchThreadByUserId(userId);
-
-            var host = this.HttpContext.Request.Host.Value;
-
-            var histories = threads
-                .Select(x =>
-                {
-                    var ownerUrl = UrlUtility.StreamerUrl(host, x.ThreadId, x.OwnerId);
-                    var shareUrl = UrlUtility.ThreadUrl(host, x.ThreadId);
-                    var title = x.ThreadTitle;
-                    var scheduledDateTime = x.BeginningDate + x.DateOffset;
-                    return new History(ownerUrl, shareUrl, title, scheduledDateTime);
-                });
-
-            return this.View(new HistoryViewModel(histories));
-        }
+        return this.View(new HistoryViewModel(histories));
     }
 }

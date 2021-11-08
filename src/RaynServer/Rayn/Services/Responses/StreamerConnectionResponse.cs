@@ -1,25 +1,24 @@
 using System;
 
-namespace Rayn.Services.Responses
+namespace Rayn.Services.Responses;
+
+public enum StreamerConnectionRequestStatus
 {
-    public enum StreamerConnectionRequestStatus
-    {
-        Ok,
-        ThreadRoomNotExist,
-        BadRequest
-    }
+    Ok,
+    ThreadRoomNotExist,
+    BadRequest
+}
 
-    public class StreamerConnectionResponse
-    {
-        public StreamerConnectionRequestStatus RequestStatus { get; }
-        public string RealtimeThreadRoomUrl { get; }
-        public Guid ThreadId { get; }
+public class StreamerConnectionResponse
+{
+    public StreamerConnectionRequestStatus RequestStatus { get; }
+    public string RealtimeThreadRoomUrl { get; }
+    public Guid ThreadId { get; }
 
-        public StreamerConnectionResponse(StreamerConnectionRequestStatus requestStatus, string realtimeThreadRoomUrl, Guid threadId)
-        {
-            RequestStatus = requestStatus;
-            RealtimeThreadRoomUrl = realtimeThreadRoomUrl;
-            ThreadId = threadId;
-        }
+    public StreamerConnectionResponse(StreamerConnectionRequestStatus requestStatus, string realtimeThreadRoomUrl, Guid threadId)
+    {
+        RequestStatus = requestStatus;
+        RealtimeThreadRoomUrl = realtimeThreadRoomUrl;
+        ThreadId = threadId;
     }
 }

@@ -2,31 +2,30 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Rayn.Services.Threading
+namespace Rayn.Services.Threading;
+
+public static class TaskExtensions
 {
-    public static class TaskExtensions
+    public static async void Forget(this Task task, ILogger logger)
     {
-        public static async void Forget(this Task task, ILogger logger)
+        try
         {
-            try
-            {
-                await task.ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                logger?.LogError(e, e.Message);
-            }
+            await task.ConfigureAwait(false);
         }
-        public static async void Forget(this ValueTask task, ILogger logger)
+        catch (Exception e)
         {
-            try
-            {
-                await task.ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                logger?.LogError(e, e.Message);
-            }
+            logger?.LogError(e, e.Message);
+        }
+    }
+    public static async void Forget(this ValueTask task, ILogger logger)
+    {
+        try
+        {
+            await task.ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            logger?.LogError(e, e.Message);
         }
     }
 }

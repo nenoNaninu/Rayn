@@ -1,11 +1,10 @@
 using System.Threading.Tasks;
 using Rayn.Services.Realtime.Models;
 
-namespace Rayn.Services.Realtime.Hubs.Interfaces
+namespace Rayn.Services.Realtime.Hubs.Interfaces;
+
+public interface IThreadRoomClient
 {
-    public interface IThreadRoomClient
-    {
-        Task EnterRoomResultAsync(bool result, ThreadMessage[] message);
-        Task ReceiveMessageFromServer(ThreadMessage message);
-    }
+    Task EnterRoomResultAsync(bool result, ThreadMessage[] message);
+    Task ReceiveMessageFromServer(ThreadMessage message);
 }

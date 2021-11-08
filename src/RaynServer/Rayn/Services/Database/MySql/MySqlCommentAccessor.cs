@@ -7,35 +7,34 @@ using MySqlConnector;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Models;
 
-namespace Rayn.Services.Database.MySql
+namespace Rayn.Services.Database.MySql;
+
+public class MySqlCommentAccessor : ICommentAccessor
 {
-    public class MySqlCommentAccessor : ICommentAccessor
+    private const string ReadQuery = "select * from rayn_db.comments where ThreadId = @ThreadId;";
+    private const string InsertQuery = "insert into rayn_db.comments (ThreadId, WrittenTime, Message) values (@ThreadId, @WrittenTime, @Message);";
+
+    private readonly IDatabaseConfig _databaseConfig;
+
+    public MySqlCommentAccessor(IDatabaseConfig databaseConfig)
     {
-        private const string ReadQuery = "select * from rayn_db.comments where ThreadId = @ThreadId;";
-        private const string InsertQuery = "insert into rayn_db.comments (ThreadId, WrittenTime, Message) values (@ThreadId, @WrittenTime, @Message);";
+        _databaseConfig = databaseConfig;
+    }
 
-        private readonly IDatabaseConfig _databaseConfig;
+    public async ValueTask<CommentModel[]> ReadCommentAsync(Guid threadId)
+    {
+        using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
 
-        public MySqlCommentAccessor(IDatabaseConfig databaseConfig)
-        {
-            _databaseConfig = databaseConfig;
-        }
+        var searchResult = await conn.QueryAsync<CommentModel>(ReadQuery, new { ThreadId = threadId });
 
-        public async ValueTask<CommentModel[]> ReadCommentAsync(Guid threadId)
-        {
-            using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
+        // EFと違ってToArray挟む必要ないかも?
+        return searchResult.ToArray();
+    }
 
-            var searchResult = await conn.QueryAsync<CommentModel>(ReadQuery, new { ThreadId = threadId });
+    public async ValueTask InsertCommentAsync(string message, Guid threadId, DateTime writtenTime)
+    {
+        using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
 
-            // EFと違ってToArray挟む必要ないかも?
-            return searchResult.ToArray();
-        }
-
-        public async ValueTask InsertCommentAsync(string message, Guid threadId, DateTime writtenTime)
-        {
-            using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
-
-            await conn.ExecuteAsync(InsertQuery, new { ThreadId = threadId, WrittenTime = writtenTime, Message = message });
-        }
+        await conn.ExecuteAsync(InsertQuery, new { ThreadId = threadId, WrittenTime = writtenTime, Message = message });
     }
 }

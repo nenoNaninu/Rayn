@@ -2,10 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Rayn.Services.Models;
 
-namespace Rayn.Services.Database.Interfaces
+namespace Rayn.Services.Database.Interfaces;
+
+public interface IGoogleAccountRegister
 {
-    public interface IGoogleAccountRegister
-    {
-        ValueTask RegisterAsync(GoogleAccount account);
-    }
+    ValueTask RegisterAsync(GoogleAccount account);
 }

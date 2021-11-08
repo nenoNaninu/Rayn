@@ -1,9 +1,8 @@
 using System;
 
-namespace Rayn.Services.Realtime.Interfaces
+namespace Rayn.Services.Realtime.Interfaces;
+
+public interface IMessageChannelStoreCreator<T>
 {
-    public interface IMessageChannelStoreCreator<T>
-    {
-        void Add(Guid threadId);
-    }
+    void Add(Guid threadId);
 }

@@ -8,40 +8,39 @@ using MySqlConnector;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Models;
 
-namespace Rayn.Services.Database.MySql
+namespace Rayn.Services.Database.MySql;
+
+public class MySqlThreadReader : IThreadDbReader
 {
-    public class MySqlThreadReader : IThreadDbReader
+    private const string SearchThreadByThreadIdQuery = "select * from rayn_db.threads where ThreadId = @ThreadId;";
+    private const string SearchThreadByUserIdQuery = "select * from rayn_db.threads where AuthorID = @AuthorID;";
+
+    private readonly IDatabaseConfig _databaseConfig;
+
+    public MySqlThreadReader(IDatabaseConfig databaseConfig)
     {
-        private const string SearchThreadByThreadIdQuery = "select * from rayn_db.threads where ThreadId = @ThreadId;";
-        private const string SearchThreadByUserIdQuery = "select * from rayn_db.threads where AuthorID = @AuthorID;";
+        _databaseConfig = databaseConfig;
+    }
 
-        private readonly IDatabaseConfig _databaseConfig;
+    public async ValueTask<ThreadModel?> SearchThreadModelAsync(Guid threadId)
+    {
+        using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
 
-        public MySqlThreadReader(IDatabaseConfig databaseConfig)
+        var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByThreadIdQuery, new { ThreadId = threadId });
+
+        return searchResult.FirstOrDefault();
+    }
+
+    public async ValueTask<IEnumerable<ThreadModel>> SearchThreadByUserId(Guid userId)
+    {
+        using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
+        var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByUserIdQuery, new { AuthorID = userId });
+
+        if (searchResult is null)
         {
-            _databaseConfig = databaseConfig;
+            return Array.Empty<ThreadModel>();
         }
 
-        public async ValueTask<ThreadModel?> SearchThreadModelAsync(Guid threadId)
-        {
-            using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
-
-            var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByThreadIdQuery, new { ThreadId = threadId });
-
-            return searchResult.FirstOrDefault();
-        }
-
-        public async ValueTask<IEnumerable<ThreadModel>> SearchThreadByUserId(Guid userId)
-        {
-            using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
-            var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByUserIdQuery, new { AuthorID = userId });
-
-            if (searchResult is null)
-            {
-                return Array.Empty<ThreadModel>();
-            }
-
-            return searchResult;
-        }
+        return searchResult;
     }
 }

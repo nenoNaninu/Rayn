@@ -1,9 +1,8 @@
 using Rayn.Services.Requests;
 
-namespace Rayn.ViewModels
+namespace Rayn.ViewModels;
+
+public class HomeViewModel
 {
-    public class HomeViewModel
-    {
-        public ThreadCreateRequest? ThreadCreateRequest { get; set; }
-    }
+    public ThreadCreateRequest? ThreadCreateRequest { get; set; }
 }
