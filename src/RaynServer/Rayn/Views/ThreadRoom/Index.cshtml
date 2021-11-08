@@ -1,6 +1,6 @@
 @model Rayn.ViewModels.ThreadRoomViewModel
 @{
-    ViewData["BrandOverWriteValue"] = Model.ThreadTitle;
+    ViewData["BrandOverWriteValue"] = Model!.ThreadTitle;
     ViewData["Title"] = Model.ThreadTitle;
 }
 
@@ -32,112 +32,112 @@
 
 
 @section Scripts {
-    <environment include="Development">
-        <script src="~/lib/signalr/dist/browser/signalr.js"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
-    </environment>
+<environment include="Development">
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+</environment>
+<environment exclude="Development">
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+</environment>
 
-    <script>
+<script>
 
-        var messageCount = 1;
+    var messageCount = 1;
 
-        Vue.component('message-item',
-            {
-                props: ['chatdata'],
-                template: `<div class="box">
-                            <p> {{chatdata.message}}</p>
-                        </div > `
-            });
-
-        const app = new Vue({
-            el: '#app',
-            data: {
-                message: '',
-                uri: '@Model.ThreadRoomHubUrl()',
-                isSendButtonDisable: true,
-                connection : null,
-
-                chatMessages: [
-                ]
-            },
-            methods: {
-                Init: function() {
-                    const connection = new signalR.HubConnectionBuilder()
-                        .withUrl(this.uri)
-                        .withAutomaticReconnect()
-                        .build();
-
-                    this.connection = connection;
-
-                    connection.on("EnterRoomResultAsync", function (result, messages) {
-                        console.log(result);
-                        if (result) {
-                            console.log("success enter room");
-
-                            if (messages) {
-                                messages.forEach(message => {
-                                    message["id"] = messageCount;
-                                    messageCount++;
-                                    app.chatMessages.unshift(message);
-                                });
-                            }
-
-                        } else {
-                            // まぁ実際にはモーダルとか出すべきなんでしょう。
-                            console.log("cannot enter room");
-                        }
-                    });
-
-                    connection.on("ReceiveMessageFromServer", function (message) {
-                        console.log(message);
-
-                        console.log("on message!");
-
-                        message["id"] = messageCount;
-                        messageCount++;
-                        app.chatMessages.unshift(message);
-
-                    });
-
-                    connection.start().then(function () {
-                        connection
-                            .invoke("EnterThreadRoom", "@Model.ThreadId.ToString()")
-                            .catch(function (err) {
-                                return console.error(err.toString());
-                            });
-                        app.isSendButtonDisable = false;
-
-                    }).catch(function (err) {
-                        return console.error(err.toString());
-                    });
-                },
-
-                OnSend: function () {
-                    if (this.message) {
-
-                        this.connection
-                            .invoke("PostMessageToServer", { "message": this.message })
-                            .catch(function (e) {
-                                return console.error(e.toString());
-                            });
-
-                        this.message = "";
-                    }
-                },
-
-                OnEnterInTextArea: function (event) {
-                    if (event.keyCode !== 13)
-                    {
-                        return;
-                    }
-
-                    this.OnSend();
-                }
-            }
+    Vue.component('message-item',
+        {
+            props: ['chatdata'],
+            template: `<div class="box">
+                        <p> {{chatdata.message}}</p>
+                    </div > `
         });
 
-        app.Init();
-    </script>
+    const app = new Vue({
+        el: '#app',
+        data: {
+            message: '',
+            uri: '@Model.ThreadRoomHubUrl()',
+            isSendButtonDisable: true,
+            connection : null,
+
+            chatMessages: [
+            ]
+        },
+        methods: {
+            Init: function() {
+                const connection = new signalR.HubConnectionBuilder()
+                    .withUrl(this.uri)
+                    .withAutomaticReconnect()
+                    .build();
+
+                this.connection = connection;
+
+                connection.on("EnterRoomResultAsync", function (result, messages) {
+                    console.log(result);
+                    if (result) {
+                        console.log("success enter room");
+
+                        if (messages) {
+                            messages.forEach(message => {
+                                message["id"] = messageCount;
+                                messageCount++;
+                                app.chatMessages.unshift(message);
+                            });
+                        }
+
+                    } else {
+                        // まぁ実際にはモーダルとか出すべきなんでしょう。
+                        console.log("cannot enter room");
+                    }
+                });
+
+                connection.on("ReceiveMessageFromServer", function (message) {
+                    console.log(message);
+
+                    console.log("on message!");
+
+                    message["id"] = messageCount;
+                    messageCount++;
+                    app.chatMessages.unshift(message);
+
+                });
+
+                connection.start().then(function () {
+                    connection
+                        .invoke("EnterThreadRoom", "@Model.ThreadId.ToString()")
+                        .catch(function (err) {
+                            return console.error(err.toString());
+                        });
+                    app.isSendButtonDisable = false;
+
+                }).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            },
+
+            OnSend: function () {
+                if (this.message) {
+
+                    this.connection
+                        .invoke("PostMessageToServer", { "message": this.message })
+                        .catch(function (e) {
+                            return console.error(e.toString());
+                        });
+
+                    this.message = "";
+                }
+            },
+
+            OnEnterInTextArea: function (event) {
+                if (event.keyCode !== 13)
+                {
+                    return;
+                }
+
+                this.OnSend();
+            }
+        }
+    });
+
+    app.Init();
+</script>
 }

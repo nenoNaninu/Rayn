@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="~/bulma/css/bulma.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@100;300;400&family=Noto+Sans+JP:wght@100;300;400&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="~/favicon.ico">
 </head>
 <body class="wf-notosanjp">
     <header id="rayn-header">
@@ -19,11 +18,11 @@
                     <a class="navbar-item" asp-controller="Home" asp-action="Index">
                         @if (ViewData.ContainsKey("BrandOverWriteValue"))
                         {
-                        <label class="label is-large">@ViewData["BrandOverWriteValue"]</label>
+                            <label class="label is-large">@ViewData["BrandOverWriteValue"]</label>
                         }
                         else
                         {
-                        <label class="label is-large">Rayn</label>
+                            <label class="label is-large">Rayn</label>
                         }
                     </a>
 
@@ -41,18 +40,18 @@
 
                         @if (User.Identity?.IsAuthenticated ?? false)
                         {
-                        <div class="navbar-item has-dropdown is-hoverable">
-                            <a class="navbar-link">@User.FindFirst(ClaimTypes.Email)?.Value</a>
-                            <div class="navbar-dropdown">
-                                <a class="navbar-item" asp-action="Index" asp-controller="History">History</a>
-                                <hr class="navbar-divider">
-                                <a class="navbar-item" asp-controller="Account" asp-action="Logout">Logout</a>
+                            <div class="navbar-item has-dropdown is-hoverable">
+                                <a class="navbar-link">@User.FindFirst(ClaimTypes.Email)?.Value</a>
+                                <div class="navbar-dropdown">
+                                    <a class="navbar-item" asp-action="Index" asp-controller="History">History</a>
+                                    <hr class="navbar-divider">
+                                    <a class="navbar-item" asp-controller="Account" asp-action="Logout">Logout</a>
+                                </div>
                             </div>
-                        </div>
                         }
                         else
                         {
-                        <a class="navbar-item" asp-controller="Account" asp-action="Login">Login</a>
+                            <a class="navbar-item" asp-controller="Account" asp-action="Login">Login</a>
                         }
                     </div>
                 </div>
