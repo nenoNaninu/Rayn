@@ -8,7 +8,7 @@
 
 # Server(ASP.NET Core)
 ## Require
-- [.NET5](https://dotnet.microsoft.com/download/dotnet/5.0)
+- [.NET6](https://dotnet.microsoft.com/download/dotnet/6.0)
 
 ## Usage
 Linux/Macだともしかしたら以下のコマンドが必要になるかもしれない。WindowsでVisual Studio使っている場合は特に気にする必要なし。

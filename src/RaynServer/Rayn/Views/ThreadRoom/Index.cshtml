@@ -1,6 +1,8 @@
-@model Rayn.ViewModels.ThreadRoomViewModel
+@model ThreadRoomViewModel
 @{
-    ViewData["BrandOverWriteValue"] = Model!.ThreadTitle;
+    Debug.Assert(Model is not null);
+
+    ViewData["BrandOverWriteValue"] = Model.ThreadTitle;
     ViewData["Title"] = Model.ThreadTitle;
 }
 
