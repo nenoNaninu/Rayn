@@ -54,7 +54,7 @@ public class ThreadRoomController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<StreamerConnectionResponse>> Streamer(string threadId, string ownerId, string method)
+    public async Task<ActionResult<StreamerConnectionResponse>> Streamer(string? threadId, string? ownerId, string? method)
     {
         if (threadId == null || ownerId == null || !Guid.TryParse(threadId, out var threadGuid) || !Guid.TryParse(ownerId, out var ownerGuid))
         {
@@ -73,12 +73,12 @@ public class ThreadRoomController : Controller
             return new StreamerConnectionResponse(StreamerConnectionRequestStatus.BadRequest, string.Empty, Guid.Empty);
         }
 
-        // SignalR全体なのに、なんでpollingなんて自前実装しているかというと、Mac版のMonoでSignalR clientが動かないから。
+        // SignalR使うのに、なんでpollingなんて自前実装しているかというと、Mac版のMonoでSignalR clientが動かないから。
         // Windowsだと動くけどMacOSだと動かないという...。
         if (!string.IsNullOrEmpty(method) && method == "polling")
         {
             var pollingUrl = this.PollingMessageUrl(threadGuid, ownerGuid);
-            _messageChannelStoreCreator.Add(threadGuid);
+            _messageChannelStoreCreator.Create(threadGuid);
             return new StreamerConnectionResponse(StreamerConnectionRequestStatus.Ok, pollingUrl, threadGuid);
         }
 
@@ -98,15 +98,22 @@ public class ThreadRoomController : Controller
     {
         var protocol = this.HttpContext.Request.Scheme;
 
-        return this.Url.Action(nameof(this.FetchMessages), "ThreadRoom",
-            new { threadId = threadId.ToString(), ownerId = ownerId.ToString() },
+        return this.Url.Action(
+            nameof(this.FetchMessages),
+            "ThreadRoom",
+            new { threadId = threadId.ToString() },
             protocol)!;
     }
 
     [HttpGet]
-    public IReadOnlyList<ThreadMessage> FetchMessages(Guid threadId, Guid ownerId)
+    public IReadOnlyList<ThreadMessage> FetchMessages(Guid? threadId)
     {
-        var (isExist, messageChannel) = _messageChannelStoreReader.GetMessageChannel(threadId);
+        if (threadId is null)
+        {
+            return Array.Empty<ThreadMessage>();
+        }
+
+        var (isExist, messageChannel) = _messageChannelStoreReader.GetMessageChannel(threadId.Value);
 
         if (!isExist)
         {

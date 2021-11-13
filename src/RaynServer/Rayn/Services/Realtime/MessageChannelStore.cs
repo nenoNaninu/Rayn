@@ -30,7 +30,7 @@ public class MessageChannelStore<T> : IMessageChannelStoreReader<T>, IMessageCha
         return (isExist, messageChannel);
     }
 
-    public void Add(Guid threadId)
+    public void Create(Guid threadId)
     {
         var thread = new MessageChannel<T>();
         _messageChannelDictionary.TryAdd(threadId, thread);

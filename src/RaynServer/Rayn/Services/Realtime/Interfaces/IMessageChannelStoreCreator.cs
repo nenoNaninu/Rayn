@@ -4,5 +4,5 @@ namespace Rayn.Services.Realtime.Interfaces;
 
 public interface IMessageChannelStoreCreator<T>
 {
-    void Add(Guid threadId);
+    void Create(Guid threadId);
 }
