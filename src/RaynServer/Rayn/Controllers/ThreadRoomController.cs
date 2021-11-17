@@ -29,7 +29,7 @@ public class ThreadRoomController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(string threadId)
+    public async Task<IActionResult> Index(string? threadId)
     {
         if (threadId is null)
         {
