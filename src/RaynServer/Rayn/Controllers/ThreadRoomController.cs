@@ -31,7 +31,7 @@ public class ThreadRoomController : Controller
     [HttpGet]
     public async Task<IActionResult> Index(string threadId)
     {
-        if (threadId == null)
+        if (threadId is null)
         {
             return this.RedirectToAction(nameof(this.Error));
         }
@@ -43,7 +43,7 @@ public class ThreadRoomController : Controller
 
         var thread = await _threadDbReader.SearchThreadModelAsync(threadGuid);
 
-        if (thread == null)
+        if (thread is null)
         {
             return this.RedirectToAction(nameof(this.Error));
         }
@@ -56,14 +56,14 @@ public class ThreadRoomController : Controller
     [HttpGet]
     public async Task<ActionResult<StreamerConnectionResponse>> Streamer(string? threadId, string? ownerId, string? method)
     {
-        if (threadId == null || ownerId == null || !Guid.TryParse(threadId, out var threadGuid) || !Guid.TryParse(ownerId, out var ownerGuid))
+        if (threadId is null || ownerId is null || !Guid.TryParse(threadId, out var threadGuid) || !Guid.TryParse(ownerId, out var ownerGuid))
         {
             return new StreamerConnectionResponse(StreamerConnectionRequestStatus.BadRequest, string.Empty, Guid.Empty);
         }
 
         var thread = await _threadDbReader.SearchThreadModelAsync(threadGuid);
 
-        if (thread == null)
+        if (thread is null)
         {
             return new StreamerConnectionResponse(StreamerConnectionRequestStatus.ThreadRoomNotExist, string.Empty, Guid.Empty);
         }

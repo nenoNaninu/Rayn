@@ -16,6 +16,7 @@ public class AccountController : Controller
     private readonly IAccountRegister _accountRegister;
     private readonly IGoogleAccountReader _googleAccountReader;
     private readonly IGoogleAccountRegister _googleAccountRegister;
+
     public AccountController(
         IGoogleAccountReader googleAccountReader,
         IAccountRegister accountRegister,

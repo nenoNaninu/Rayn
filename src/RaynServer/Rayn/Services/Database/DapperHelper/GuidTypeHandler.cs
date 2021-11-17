@@ -19,7 +19,7 @@ public class NullAbleGuidTypeHandler : SqlMapper.TypeHandler<Guid?>
 {
     public override void SetValue(IDbDataParameter parameter, Guid? value)
     {
-        if (value != null)
+        if (value is not null)
         {
             var bytes = value.Value.ToByteArray();
             parameter.Value = bytes;
@@ -32,7 +32,7 @@ public class NullAbleGuidTypeHandler : SqlMapper.TypeHandler<Guid?>
 
     public override Guid? Parse(object value)
     {
-        if (value != null)
+        if (value is not null)
         {
             return new Guid((byte[])value);
         }

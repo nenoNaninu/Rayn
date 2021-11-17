@@ -34,7 +34,7 @@ public class ThreadRoomHub : Hub<IThreadRoomClient>, IThreadRoomHub
     {
         var thread = await _threadDbReader.SearchThreadModelAsync(threadId);
 
-        if (thread == null)
+        if (thread is null)
         {
             await Clients.Caller.EnterRoomResultAsync(false, Array.Empty<ThreadMessage>());
         }

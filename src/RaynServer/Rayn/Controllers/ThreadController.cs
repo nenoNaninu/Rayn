@@ -49,7 +49,7 @@ public class ThreadController : Controller
     [HttpGet]
     public async Task<IActionResult> Index(string? threadId)
     {
-        if (threadId == null)
+        if (threadId is null)
         {
             return this.RedirectToAction(nameof(this.Error));
         }
@@ -61,7 +61,7 @@ public class ThreadController : Controller
 
         var thread = await _threadDbReader.SearchThreadModelAsync(threadGuid);
 
-        if (thread == null)
+        if (thread is null)
         {
             return this.RedirectToAction(nameof(this.Error));
         }
