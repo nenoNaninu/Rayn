@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Database.MySql;
 
@@ -8,11 +9,11 @@ public static class MySqlModeDependencyInjectionExtensions
 {
     public static void AddMySqlDatabaseModeServices(this IServiceCollection services)
     {
-        services.AddTransient<IThreadDbReader, MySqlThreadReader>();
-        services.AddTransient<IThreadCreator, MySqlThreadCreator>();
-        services.AddTransient<ICommentAccessor, MySqlCommentAccessor>();
-        services.AddTransient<IAccountRegister, MySqlAccountRegister>();
-        services.AddTransient<IGoogleAccountRegister, MySqlGoogleAccountRegister>();
-        services.AddTransient<IGoogleAccountReader, MySqlGoogleAccountReader>();
+        services.TryAddTransient<IThreadDbReader, MySqlThreadReader>();
+        services.TryAddTransient<IThreadCreator, MySqlThreadCreator>();
+        services.TryAddTransient<ICommentAccessor, MySqlCommentAccessor>();
+        services.TryAddTransient<IAccountRegister, MySqlAccountRegister>();
+        services.TryAddTransient<IGoogleAccountRegister, MySqlGoogleAccountRegister>();
+        services.TryAddTransient<IGoogleAccountReader, MySqlGoogleAccountReader>();
     }
 }

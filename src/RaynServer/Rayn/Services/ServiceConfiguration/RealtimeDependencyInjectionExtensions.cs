@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rayn.Services.Realtime;
 using Rayn.Services.Realtime.Interfaces;
 using Rayn.Services.Realtime.Models;
@@ -12,7 +13,7 @@ public static class RealtimeDependencyInjectionExtensions
         services.AddSingleton<IConnectionGroupCache, ConnectionGroupCache>();
 
         var messageChannelStore = new MessageChannelStore<ThreadMessage>();
-        services.AddSingleton<IMessageChannelStoreCreator<ThreadMessage>>(messageChannelStore);
-        services.AddSingleton<IMessageChannelStoreReader<ThreadMessage>>(messageChannelStore);
+        services.TryAddSingleton<IMessageChannelStoreCreator<ThreadMessage>>(messageChannelStore);
+        services.TryAddSingleton<IMessageChannelStoreReader<ThreadMessage>>(messageChannelStore);
     }
 }
