@@ -1,6 +1,6 @@
 using Rayn.Services.Realtime.Models;
 
-namespace Rayn.Services.Realtime.Interfaces;
+namespace Rayn.Services.Realtime.Abstractions;
 
 public interface IConnectionGroupCache
 {

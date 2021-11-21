@@ -8,8 +8,8 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Rayn.Services.Database.Abstractions;
 using Rayn.Services.Database.Configuration;
-using Rayn.Services.Database.Interfaces;
 using Rayn.Services.Realtime.Hubs;
 using Rayn.Services.ServiceConfiguration;
 

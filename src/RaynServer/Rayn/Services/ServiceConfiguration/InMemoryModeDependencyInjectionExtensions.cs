@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Rayn.Services.Database.Abstractions;
 using Rayn.Services.Database.InMemory;
-using Rayn.Services.Database.Interfaces;
 
 namespace Rayn.Services.ServiceConfiguration;
 

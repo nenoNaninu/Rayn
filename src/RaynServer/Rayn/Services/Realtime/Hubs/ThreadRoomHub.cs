@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using Rayn.Services.Database.Interfaces;
-using Rayn.Services.Realtime.Hubs.Interfaces;
-using Rayn.Services.Realtime.Interfaces;
+using Rayn.Services.Database.Abstractions;
+using Rayn.Services.Realtime.Abstractions;
+using Rayn.Services.Realtime.Hubs.Abstractions;
 using Rayn.Services.Realtime.Models;
 
 namespace Rayn.Services.Realtime.Hubs;

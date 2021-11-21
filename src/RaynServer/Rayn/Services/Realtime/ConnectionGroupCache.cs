@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Rayn.Services.Realtime.Interfaces;
+using Rayn.Services.Realtime.Abstractions;
 using Rayn.Services.Realtime.Models;
 
 namespace Rayn.Services.Realtime;

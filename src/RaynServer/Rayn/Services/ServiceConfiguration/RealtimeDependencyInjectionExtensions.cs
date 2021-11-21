@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rayn.Services.Realtime;
-using Rayn.Services.Realtime.Interfaces;
+using Rayn.Services.Realtime.Abstractions;
 using Rayn.Services.Realtime.Models;
 
 namespace Rayn.Services.ServiceConfiguration;

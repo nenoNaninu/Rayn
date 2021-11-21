@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Rayn.Services.Realtime.Interfaces;
+namespace Rayn.Services.Realtime.Abstractions;
 
 public interface IMessageChannel<T>
 {

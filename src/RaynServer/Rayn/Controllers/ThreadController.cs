@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Rayn.Services.Database.Interfaces;
+using Rayn.Services.Database.Abstractions;
 using Rayn.Services.Models;
 using Rayn.Services.Requests;
 using Rayn.Services.Url;

@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Rayn.Services.Database.Interfaces;
+using Rayn.Services.Database.Abstractions;
 using Rayn.Services.Models;
 using Rayn.Services.Url;
 using Rayn.ViewModels;

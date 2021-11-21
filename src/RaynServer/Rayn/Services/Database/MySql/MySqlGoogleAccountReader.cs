@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
-using Rayn.Services.Database.Interfaces;
+using Rayn.Services.Database.Abstractions;
 using Rayn.Services.Models;
 
 namespace Rayn.Services.Database.MySql;

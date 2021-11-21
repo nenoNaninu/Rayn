@@ -1,6 +1,6 @@
 using System;
 
-namespace Rayn.Services.Realtime.Interfaces;
+namespace Rayn.Services.Realtime.Abstractions;
 
 public interface IMessageChannelStoreCreator<T>
 {

@@ -1,4 +1,4 @@
-namespace Rayn.Services.Database.Interfaces;
+namespace Rayn.Services.Database.Abstractions;
 
 public interface IDatabaseConfig
 {

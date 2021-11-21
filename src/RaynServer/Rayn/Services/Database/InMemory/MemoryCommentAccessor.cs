@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Rayn.Services.Database.Interfaces;
+using Rayn.Services.Database.Abstractions;
 using Rayn.Services.Models;
 using Rayn.Services.Threading;
 

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using Rayn.Services.Realtime.Interfaces;
+using Rayn.Services.Realtime.Abstractions;
 
 namespace Rayn.Services.Realtime;
 
