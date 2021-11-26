@@ -11,16 +11,16 @@ public class MySqlGoogleAccountRegister : IGoogleAccountRegister
     private const string GoogleAccountRegisterQuery =
         "insert into rayn_db.google_accounts (UserId, Identifier, Email) values (@UserId, @Identifier, @Email);";
 
-    private readonly IDatabaseConfig _databaseConfig;
+    private readonly IDatabaseConfiguration _databaseConfiguration;
 
-    public MySqlGoogleAccountRegister(IDatabaseConfig databaseConfig)
+    public MySqlGoogleAccountRegister(IDatabaseConfiguration databaseConfiguration)
     {
-        _databaseConfig = databaseConfig;
+        _databaseConfiguration = databaseConfiguration;
     }
 
     public async ValueTask RegisterAsync(GoogleAccount account)
     {
-        var connection = new MySqlConnection(_databaseConfig.ConnectionString);
+        var connection = new MySqlConnection(_databaseConfiguration.ConnectionString);
         await connection.ExecuteAsync(GoogleAccountRegisterQuery, account);
     }
 }

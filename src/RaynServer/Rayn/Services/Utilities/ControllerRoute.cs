@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Rayn.Services.Extensions;
+namespace Rayn.Services.Utilities;
 
 public static class ControllerRoute
 {

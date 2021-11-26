@@ -1,10 +1,10 @@
 using System;
 using Dapper;
-using Rayn.Services.Database.DapperHelper;
+using Rayn.Services.Database.Dapper;
 
-namespace Rayn.Services.ServiceConfiguration;
+namespace Rayn.Services.Dapper;
 
-public static class DapperConfiguration
+public static class DapperTypeHandlerConfiguration
 {
     public static void Configure()
     {

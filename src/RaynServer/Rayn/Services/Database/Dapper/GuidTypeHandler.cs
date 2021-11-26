@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using Dapper;
 
-namespace Rayn.Services.Database.DapperHelper;
+namespace Rayn.Services.Database.Dapper;
 
 public class GuidTypeHandler : SqlMapper.TypeHandler<Guid>
 {

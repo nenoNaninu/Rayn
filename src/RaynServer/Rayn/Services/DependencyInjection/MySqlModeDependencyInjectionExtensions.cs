@@ -3,11 +3,11 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rayn.Services.Database.Abstractions;
 using Rayn.Services.Database.MySql;
 
-namespace Rayn.Services.ServiceConfiguration;
+namespace Rayn.Services.DependencyInjection;
 
 public static class MySqlModeDependencyInjectionExtensions
 {
-    public static void AddMySqlDatabaseModeServices(this IServiceCollection services)
+    public static void AddMySqlDatabaseServices(this IServiceCollection services)
     {
         services.TryAddTransient<IThreadDbReader, MySqlThreadReader>();
         services.TryAddTransient<IThreadCreator, MySqlThreadCreator>();

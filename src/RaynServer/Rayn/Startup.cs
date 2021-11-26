@@ -8,10 +8,11 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Rayn.Services.Dapper;
 using Rayn.Services.Database.Abstractions;
 using Rayn.Services.Database.Configuration;
+using Rayn.Services.DependencyInjection;
 using Rayn.Services.Realtime.Hubs;
-using Rayn.Services.ServiceConfiguration;
 
 namespace Rayn;
 
@@ -27,10 +28,12 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        DapperConfiguration.Configure();
+        DapperTypeHandlerConfiguration.Configure();
 
-        IDatabaseConfig dbConfig = this.Configuration.GetSection("DatabaseConfig").Get<DatabaseConfiguration>();
-        services.AddSingleton(dbConfig);
+        var dbConfig = this.Configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
+        services.AddSingleton<IDatabaseConfiguration>(dbConfig);
+
+        services.AddDataProtection();
 
         services.AddControllersWithViews()
 #if DEBUG
@@ -54,11 +57,11 @@ public class Startup
 
         if (dbConfig.InMemoryMode)
         {
-            services.AddMemoryDatabaseModeServices();
+            services.AddInMemoryDatabaseServices();
         }
         else
         {
-            services.AddMySqlDatabaseModeServices();
+            services.AddMySqlDatabaseServices();
         }
 
         services.AddRealtimeServices();

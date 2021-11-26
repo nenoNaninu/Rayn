@@ -4,15 +4,16 @@ using Rayn.Services.Realtime;
 using Rayn.Services.Realtime.Abstractions;
 using Rayn.Services.Realtime.Models;
 
-namespace Rayn.Services.ServiceConfiguration;
+namespace Rayn.Services.DependencyInjection;
 
 public static class RealtimeDependencyInjectionExtensions
 {
     public static void AddRealtimeServices(this IServiceCollection services)
     {
-        services.AddSingleton<IConnectionGroupCache, ConnectionGroupCache>();
+        services.TryAddSingleton<IConnectionGroupCache, ConnectionGroupCache>();
 
         var messageChannelStore = new MessageChannelStore<ThreadMessage>();
+
         services.TryAddSingleton<IMessageChannelStoreCreator<ThreadMessage>>(messageChannelStore);
         services.TryAddSingleton<IMessageChannelStoreReader<ThreadMessage>>(messageChannelStore);
     }

@@ -1,6 +1,6 @@
 using System;
 using Rayn.Controllers;
-using Rayn.Services.Extensions;
+using Rayn.Services.Utilities;
 
 namespace Rayn.Services.Url;
 

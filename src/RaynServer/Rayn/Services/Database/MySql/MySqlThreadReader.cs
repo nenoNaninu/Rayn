@@ -15,16 +15,16 @@ public class MySqlThreadReader : IThreadDbReader
     private const string SearchThreadByThreadIdQuery = "select * from rayn_db.threads where ThreadId = @ThreadId;";
     private const string SearchThreadByUserIdQuery = "select * from rayn_db.threads where AuthorID = @AuthorID;";
 
-    private readonly IDatabaseConfig _databaseConfig;
+    private readonly IDatabaseConfiguration _databaseConfiguration;
 
-    public MySqlThreadReader(IDatabaseConfig databaseConfig)
+    public MySqlThreadReader(IDatabaseConfiguration databaseConfiguration)
     {
-        _databaseConfig = databaseConfig;
+        _databaseConfiguration = databaseConfiguration;
     }
 
     public async ValueTask<ThreadModel?> SearchThreadModelAsync(Guid threadId)
     {
-        using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
+        using IDbConnection conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
 
         var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByThreadIdQuery, new { ThreadId = threadId });
 
@@ -33,7 +33,7 @@ public class MySqlThreadReader : IThreadDbReader
 
     public async ValueTask<IEnumerable<ThreadModel>> SearchThreadByUserId(Guid userId)
     {
-        using IDbConnection conn = new MySqlConnection(_databaseConfig.ConnectionString);
+        using IDbConnection conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
         var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByUserIdQuery, new { AuthorID = userId });
 
         if (searchResult is null)

@@ -11,16 +11,16 @@ public class MySqlAccountRegister : IAccountRegister
     private const string AccountRegisterQuery =
         "insert into rayn_db.accounts(UserId, Email, LinkToGoogle) value (@UserId, @Email, @LinkToGoogle)";
 
-    private readonly IDatabaseConfig _databaseConfig;
+    private readonly IDatabaseConfiguration _databaseConfiguration;
 
-    public MySqlAccountRegister(IDatabaseConfig databaseConfig)
+    public MySqlAccountRegister(IDatabaseConfiguration databaseConfiguration)
     {
-        _databaseConfig = databaseConfig;
+        _databaseConfiguration = databaseConfiguration;
     }
 
     public async ValueTask RegisterAsync(Account account)
     {
-        var connection = new MySqlConnection(_databaseConfig.ConnectionString);
+        var connection = new MySqlConnection(_databaseConfiguration.ConnectionString);
         await connection.ExecuteAsync(AccountRegisterQuery, account);
     }
 }
