@@ -30,8 +30,8 @@ public class Startup
     {
         DapperTypeHandlerConfiguration.Configure();
 
-        var dbConfig = this.Configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
-        services.AddSingleton<IDatabaseConfiguration>(dbConfig);
+        var databaseConfiguration = this.Configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
+        services.AddSingleton<IDatabaseConfiguration>(databaseConfiguration);
 
         services.AddDataProtection();
 
@@ -55,7 +55,7 @@ public class Startup
                 options.ClientSecret = googleAuthSection["ClientSecret"];
             });
 
-        if (dbConfig.InMemoryMode)
+        if (databaseConfiguration.InMemoryMode)
         {
             services.AddInMemoryDatabaseServices();
         }
