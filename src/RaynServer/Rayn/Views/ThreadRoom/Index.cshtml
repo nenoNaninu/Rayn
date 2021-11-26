@@ -64,58 +64,57 @@
             chatMessages: [
             ]
         },
-        methods: {
-            Init: function() {
-                const connection = new signalR.HubConnectionBuilder()
+        mounted: function () {
+            const connection = new signalR.HubConnectionBuilder()
                     .withUrl(this.uri)
                     .withAutomaticReconnect()
                     .build();
 
-                this.connection = connection;
+            this.connection = connection;
 
-                connection.on("EnterRoomResultAsync", function (result, messages) {
-                    console.log(result);
-                    if (result) {
-                        console.log("success enter room");
+            connection.on("EnterRoomResultAsync", (result, messages) => {
+                console.log(result);
+                if (result) {
+                    console.log("success enter room");
 
-                        if (messages) {
-                            messages.forEach(message => {
-                                message["id"] = messageCount;
-                                messageCount++;
-                                app.chatMessages.unshift(message);
-                            });
-                        }
-
-                    } else {
-                        // まぁ実際にはモーダルとか出すべきなんでしょう。
-                        console.log("cannot enter room");
-                    }
-                });
-
-                connection.on("ReceiveMessageFromServer", function (message) {
-                    console.log(message);
-
-                    console.log("on message!");
-
-                    message["id"] = messageCount;
-                    messageCount++;
-                    app.chatMessages.unshift(message);
-
-                });
-
-                connection.start().then(function () {
-                    connection
-                        .invoke("EnterThreadRoom", "@Model.ThreadId.ToString()")
-                        .catch(function (err) {
-                            return console.error(err.toString());
+                    if (messages) {
+                        messages.forEach(message => {
+                            message["id"] = messageCount;
+                            messageCount++;
+                            this.chatMessages.unshift(message);
                         });
-                    app.isSendButtonDisable = false;
+                    }
 
-                }).catch(function (err) {
-                    return console.error(err.toString());
-                });
-            },
+                } else {
+                    // まぁ実際にはモーダルとか出すべきなんでしょう。
+                    console.log("cannot enter room");
+                }
+            });
 
+            connection.on("ReceiveMessageFromServer", message => {
+                console.log(message);
+
+                console.log("on message!");
+
+                message["id"] = messageCount;
+                messageCount++;
+                this.chatMessages.unshift(message);
+
+            });
+
+            connection.start().then(() => {
+                connection
+                    .invoke("EnterThreadRoom", "@Model.ThreadId.ToString()")
+                    .catch(err => {
+                        return console.error(err.toString());
+                    });
+                this.isSendButtonDisable = false;
+
+            }).catch(err => {
+                return console.error(err.toString());
+            });
+        },
+        methods: {
             OnSend: function () {
                 if (this.message) {
 
@@ -140,6 +139,5 @@
         }
     });
 
-    app.Init();
 </script>
 }
