@@ -24,7 +24,7 @@ libman restore
 
 ```
 {
-    "DatabaseConfig": {
+    "DatabaseConfiguration": {
         "ConnectionString": "Server=...; Port=...",
         "InMemoryMode": false
     },
@@ -35,16 +35,19 @@ libman restore
 }
 ```
 
-InMemoryModeをtrueにしておけばインメモリで動くためデータベース用意してなくてもOK。その他環境では環境変数などGenericHostが拾ってくれるところに`DatabaseConfig`を設定。ユーザーシークレットではなく環境変数に設定する場合は以下みたいな感じ。
+`DatabaseConfiguration:InMemoryMode`を`true`にしておけばインメモリで動くためデータベース用意してなくても良い。
+その場合`DatabaseConfiguration:ConnectionString`には空文字(`""`)を設定しておけばOK。
+その他環境では環境変数などGenericHostが拾ってくれるところに上記と同等のものを設定。
+例えば、ユーザーシークレットではなく環境変数に設定する場合は以下みたいな感じ。
 
 ```
-export DatabaseConfig__ConnectionString="Server=...; Port=..."
-export DatabaseConfig__InMemoryMode="false"
+export DatabaseConfiguration__ConnectionString="Server=...; Port=..."
+export DatabaseConfiguration__InMemoryMode="false"
 export Authentication__Google__ClientId="xxxxxxx"
 export Authentication__Google__ClientSecret="yyyyyyyy"
 ```
 
-上記の設定が出来たら以下の操作で試せます。
+上記の設定が出来たら以下の操作でサーバを起動できます。
 ```
 cd src/RaynServer/Rayn
 dotnet run --project Rayn.csproj
