@@ -12,7 +12,7 @@
         },
         {
             "provider": "unpkg",
-            "library": "@microsoft/signalr@5.0.5",
+            "library": "@microsoft/signalr@6.0.0",
             "destination": "wwwroot/lib/signalr/",
             "files": [
                 "dist/browser/signalr.js",
