@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rayn.Services.Dapper;
-using Rayn.Services.Database.Abstractions;
 using Rayn.Services.Database.Configuration;
 using Rayn.Services.DependencyInjection;
 using Rayn.Services.Realtime.Hubs;
@@ -31,7 +30,6 @@ public class Startup
         DapperTypeHandlerConfiguration.Configure();
 
         var databaseConfiguration = this.Configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
-        services.AddSingleton<IDatabaseConfiguration>(databaseConfiguration);
 
         services.AddDataProtection();
 
@@ -61,7 +59,7 @@ public class Startup
         }
         else
         {
-            services.AddMySqlDatabaseServices();
+            services.AddMySqlDatabaseServices(databaseConfiguration.ConnectionString);
         }
 
         services.AddRealtimeServices();

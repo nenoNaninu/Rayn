@@ -14,18 +14,16 @@ public class MySqlCommentAccessor : ICommentAccessor
     private const string ReadQuery = "select * from rayn_db.comments where ThreadId = @ThreadId;";
     private const string InsertQuery = "insert into rayn_db.comments (ThreadId, WrittenTime, Message) values (@ThreadId, @WrittenTime, @Message);";
 
-    private readonly IDatabaseConfiguration _databaseConfiguration;
+    private readonly MySqlConnection _connection;
 
-    public MySqlCommentAccessor(IDatabaseConfiguration databaseConfiguration)
+    public MySqlCommentAccessor(MySqlConnection connection)
     {
-        _databaseConfiguration = databaseConfiguration;
+        _connection = connection;
     }
 
     public async ValueTask<CommentModel[]> ReadCommentAsync(Guid threadId)
     {
-        await using var conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
-
-        var searchResult = await conn.QueryAsync<CommentModel>(ReadQuery, new { ThreadId = threadId });
+        var searchResult = await _connection.QueryAsync<CommentModel>(ReadQuery, new { ThreadId = threadId });
 
         // EFと違ってToArray挟む必要ないかも?
         return searchResult.ToArray();
@@ -33,8 +31,6 @@ public class MySqlCommentAccessor : ICommentAccessor
 
     public async ValueTask InsertCommentAsync(string message, Guid threadId, DateTime writtenTime)
     {
-        using IDbConnection conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
-
-        await conn.ExecuteAsync(InsertQuery, new { ThreadId = threadId, WrittenTime = writtenTime, Message = message });
+        await _connection.ExecuteAsync(InsertQuery, new { ThreadId = threadId, WrittenTime = writtenTime, Message = message });
     }
 }

@@ -11,18 +11,16 @@ public class MySqlGoogleAccountReader : IGoogleAccountReader
 {
     private const string SearchQuery = "select * from rayn_db.google_accounts where Identifier = @Identifier;";
 
-    private readonly IDatabaseConfiguration _databaseConfiguration;
+    private readonly MySqlConnection _connection;
 
-    public MySqlGoogleAccountReader(IDatabaseConfiguration databaseConfiguration)
+    public MySqlGoogleAccountReader(MySqlConnection connection)
     {
-        _databaseConfiguration = databaseConfiguration;
+        _connection = connection;
     }
 
     public async ValueTask<GoogleAccount?> SearchAsync(string identifier)
     {
-        await using var connection = new MySqlConnection(_databaseConfiguration.ConnectionString);
-
-        var accounts = await connection.QueryAsync<GoogleAccount>(SearchQuery, new { Identifier = identifier });
+        var accounts = await _connection.QueryAsync<GoogleAccount>(SearchQuery, new { Identifier = identifier });
 
         return accounts?.FirstOrDefault();
     }

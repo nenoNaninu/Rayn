@@ -14,18 +14,16 @@ public class MySqlThreadCreator : IThreadCreator
 @"insert into threads(ThreadId, OwnerId, ThreadTitle, BeginningDate, DateOffset, CreatedDate, AuthorId) 
 values (@ThreadId, @OwnerId, @ThreadTitle, @BeginningDate, @DateOffset, @CreatedDate, @AuthorId)";
 
-    private readonly IDatabaseConfiguration _databaseConfiguration;
+    private readonly MySqlConnection _connection;
 
-    public MySqlThreadCreator(IDatabaseConfiguration databaseConfiguration)
+    public MySqlThreadCreator(MySqlConnection connection)
     {
-        _databaseConfiguration = databaseConfiguration;
+        _connection = connection;
     }
 
     public async ValueTask CreateThreadAsync(ThreadModel thread)
     {
-        await using var conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
-
         // 例外処理は後で...
-        await conn.ExecuteAsync(CreateThreadQuery, thread);
+        await _connection.ExecuteAsync(CreateThreadQuery, thread);
     }
 }
