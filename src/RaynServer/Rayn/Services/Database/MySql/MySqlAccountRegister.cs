@@ -20,7 +20,7 @@ public class MySqlAccountRegister : IAccountRegister
 
     public async ValueTask RegisterAsync(Account account)
     {
-        var connection = new MySqlConnection(_databaseConfiguration.ConnectionString);
+        await using var connection = new MySqlConnection(_databaseConfiguration.ConnectionString);
         await connection.ExecuteAsync(AccountRegisterQuery, account);
     }
 }

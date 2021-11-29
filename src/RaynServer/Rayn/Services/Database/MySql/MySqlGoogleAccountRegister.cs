@@ -20,7 +20,7 @@ public class MySqlGoogleAccountRegister : IGoogleAccountRegister
 
     public async ValueTask RegisterAsync(GoogleAccount account)
     {
-        var connection = new MySqlConnection(_databaseConfiguration.ConnectionString);
+        await using var connection = new MySqlConnection(_databaseConfiguration.ConnectionString);
         await connection.ExecuteAsync(GoogleAccountRegisterQuery, account);
     }
 }

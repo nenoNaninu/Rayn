@@ -24,7 +24,7 @@ public class MySqlThreadReader : IThreadDbReader
 
     public async ValueTask<ThreadModel?> SearchThreadModelAsync(Guid threadId)
     {
-        using IDbConnection conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
+        await using var conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
 
         var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByThreadIdQuery, new { ThreadId = threadId });
 
@@ -33,7 +33,7 @@ public class MySqlThreadReader : IThreadDbReader
 
     public async ValueTask<IEnumerable<ThreadModel>> SearchThreadByUserId(Guid userId)
     {
-        using IDbConnection conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
+        await using var conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
         var searchResult = await conn.QueryAsync<ThreadModel>(SearchThreadByUserIdQuery, new { AuthorID = userId });
 
         if (searchResult is null)

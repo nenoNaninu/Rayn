@@ -23,7 +23,7 @@ public class MySqlCommentAccessor : ICommentAccessor
 
     public async ValueTask<CommentModel[]> ReadCommentAsync(Guid threadId)
     {
-        using IDbConnection conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
+        await using var conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
 
         var searchResult = await conn.QueryAsync<CommentModel>(ReadQuery, new { ThreadId = threadId });
 

@@ -23,7 +23,7 @@ values (@ThreadId, @OwnerId, @ThreadTitle, @BeginningDate, @DateOffset, @Created
 
     public async ValueTask CreateThreadAsync(ThreadModel thread)
     {
-        using IDbConnection conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
+        await using var conn = new MySqlConnection(_databaseConfiguration.ConnectionString);
 
         // 例外処理は後で...
         await conn.ExecuteAsync(CreateThreadQuery, thread);

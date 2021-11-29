@@ -20,7 +20,7 @@ public class MySqlGoogleAccountReader : IGoogleAccountReader
 
     public async ValueTask<GoogleAccount?> SearchAsync(string identifier)
     {
-        var connection = new MySqlConnection(_databaseConfiguration.ConnectionString);
+        await using var connection = new MySqlConnection(_databaseConfiguration.ConnectionString);
 
         var accounts = await connection.QueryAsync<GoogleAccount>(SearchQuery, new { Identifier = identifier });
 
