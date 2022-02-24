@@ -10,7 +10,7 @@
 
     <ItemGroup>
         <PackageReference Include="Dapper" Version="2.0.123" />
-        <PackageReference Include="MySqlConnector" Version="2.1.6" />
+        <PackageReference Include="MySqlConnector" Version="2.1.7" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.2" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.2" />
